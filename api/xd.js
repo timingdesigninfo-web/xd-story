@@ -1,10 +1,10 @@
 // XD戦記：セーブデータのサーバー保存（Vercel Functions + Upstash Redis）
 //
-// POST /api/xd {action:"claim", code}        あいことばを使い始める（すでに使われていれば 409）
-// POST /api/xd {action:"save", code, data}  あいことばに紐づけて保存（上書き）
-// POST /api/xd {action:"load", code}        あいことばから読み出す
+// POST /api/xd {action:"claim", code}        合言葉を使い始める（すでに使われていれば 409）
+// POST /api/xd {action:"save", code, data}  合言葉に紐づけて保存（上書き）
+// POST /api/xd {action:"load", code}        合言葉から読み出す
 //
-// code = プレイヤーが決めた「あいことば」の SHA-256（64桁の16進）。あいことば自体はサーバーに送られない。ログインなし・個人情報なし。
+// code = プレイヤーが決めた「合言葉」の SHA-256（64桁の16進）。合言葉自体はサーバーに送られない。ログインなし・個人情報なし。
 // 環境変数は api/eye.js と同じ（KV_REST_API_URL / KV_REST_API_TOKEN など）
 
 const crypto = require('crypto');
@@ -59,13 +59,13 @@ module.exports = async (req, res) => {
     if (await rateLimited(req)) return send(res, 429, { error: 'しばらく 待ってから もう一度 ためしてください' });
     const body = await readBody(req);
     const code = String(body.code || '');
-    if (!CODE_RE.test(code)) return send(res, 400, { error: 'あいことばの形がちがいます' });
+    if (!CODE_RE.test(code)) return send(res, 400, { error: '合言葉の形がちがいます' });
     const key = 'xd:save:' + code;
     if (body.action === 'claim') {
       const [r] = await db([['SET', 'xd:claim:' + code, '1', 'NX', 'EX', TTL]]);
       const [has] = await db([['EXISTS', key]]);
       if (r !== 'OK' && !has) return send(res, 200, { ok: true }); // 以前に決めたが まだ保存していない
-      if (r !== 'OK') return send(res, 409, { error: 'その あいことばは すでに 使われています。べつの ことばに してください' });
+      if (r !== 'OK') return send(res, 409, { error: 'その 合言葉は すでに 使われています。べつの ことばに してください' });
       return send(res, 200, { ok: true });
     }
     if (body.action === 'save') {

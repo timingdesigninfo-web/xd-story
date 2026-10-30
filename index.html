@@ -1381,35 +1381,35 @@ let G,B,SNAP;
 const SAVE='xd-senki-v5';
 function save(){/* 自動セーブはしない。教会でのいのり（prayAsk）だけが記録する */}
 /* ---- サーバー保存（自分のサイトで公開したときだけ有効。アーティファクト内では使わない） ----
-   鍵は「あいことば」。プレイヤーが自分で決める。サーバーには あいことばそのものではなく、そのハッシュだけを送る */
+   鍵は「合言葉」。プレイヤーが自分で決める。サーバーには 合言葉そのものではなく、そのハッシュだけを送る */
 const SYNC=/^https?:$/.test(location.protocol)&&!/claude|anthropic/i.test(location.hostname)&&location.hostname!==''&&!!(window.crypto&&crypto.subtle);
 const PH_KEY='xd-senki-phrase',PH_MIN=8,PH_MAX=40;
 const normPh=v=>String(v||'').normalize('NFKC').replace(/\s+/g,'').toLowerCase();
 function getPh(){try{const v=localStorage.getItem(PH_KEY);return v&&[...v].length>=PH_MIN?v:null}catch(e){return null}}
 async function phHash(ph){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('xd-story:'+ph));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function phCheck(raw){const v=normPh(raw);const n=[...v].length;if(n<PH_MIN)return{err:'あいことばは '+PH_MIN+'文字以上にしてください（いま '+n+'文字）。ほかの人に 思いつかれない ことばに してね。'};if(n>PH_MAX)return{err:PH_MAX+'文字までです'};return{v}}
+function phCheck(raw){const v=normPh(raw);const n=[...v].length;if(n<PH_MIN)return{err:'合言葉は '+PH_MIN+'文字以上にしてください（いま '+n+'文字）。ほかの人に 思いつかれない ことばに してね。'};if(n>PH_MAX)return{err:PH_MAX+'文字までです'};return{v}}
 function syncToast(m,bad){let t=document.getElementById('synct');if(!t){t=document.createElement('div');t.id='synct';t.style.cssText='position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:6px 12px;border-radius:6px;background:#000c;color:#fff;font:12px/1.5 system-ui,sans-serif;pointer-events:none;transition:opacity .4s';document.body.appendChild(t)}
   t.textContent=m;t.style.color=bad?'#ffb0a0':'#fff';t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',3800)}
 async function syncApi(body){const r=await fetch('/api/xd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j}
 let PH_ASKED=false;
 async function syncPush(){if(!SYNC)return;const ph=getPh();
   if(!ph){if(!PH_ASKED){PH_ASKED=true;phDlg('set')}return}
-  try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（あいことば: '+ph+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
+  try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（合言葉: '+ph+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
 async function syncPull(raw){const c=phCheck(raw);if(c.err)throw new Error(c.err);
-  const j=await syncApi({action:'load',code:await phHash(c.v)});if(!j.data)throw new Error('その あいことばの 記録は 見つかりません');
+  const j=await syncApi({action:'load',code:await phHash(c.v)});if(!j.data)throw new Error('その 合言葉の 記録は 見つかりません');
   const o=JSON.parse(j.data);if(!(o&&o.g&&typeof o.g.ch==='number'))throw new Error('記録が こわれています');
   localStorage.setItem(SAVE,j.data);localStorage.setItem(PH_KEY,c.v)}
 /* mode: 'set'=はじめて決める / 'change'=変える（いま保存済み）/ 'load'=べつの端末で つづきから */
 function phDlg(mode){document.getElementById('phdlg')&&document.getElementById('phdlg').remove();
   const cur=getPh(),o=document.createElement('div');o.id='phdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
-  const T={set:['あいことばを きめよう','べつの端末でも つづきから 遊べるように、あいことばを 決めます。8文字以上。ほかの人が 思いつかない ことばに してください。自分で おぼえやすい ものが いちばん です。','きめる'],
-    change:['あいことば','いまの あいことばは これです。べつの端末の タイトルで これを 入れると つづきから 遊べます。かえたい ときは 下に 新しく 入れてください。','かえる'],
-    load:['あいことばで つづきから','前に 決めた あいことばを 入れてください。','よみこむ']}[mode];
+  const T={set:['合言葉を きめよう','べつの端末でも つづきから 遊べるように、合言葉を 決めます。8文字以上。ほかの人が 思いつかない ことばに してください。自分で おぼえやすい ものが いちばん です。','きめる'],
+    change:['合言葉','いまの 合言葉は これです。べつの端末の タイトルで これを 入れると つづきから 遊べます。かえたい ときは 下に 新しく 入れてください。','かえる'],
+    load:['合言葉で 続きから','前に 決めた 合言葉を 入れてください。','よみこむ']}[mode];
   o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:10px;padding:16px;max-width:440px;width:100%;font:14px/1.6 system-ui,sans-serif">
   <div style="font-weight:700;font-size:16px;margin-bottom:4px">${T[0]}</div>
   ${mode==='change'&&cur?`<div style="font-size:20px;letter-spacing:.04em;user-select:all;background:#0d0b1a;border-radius:6px;padding:8px 10px;margin:6px 0;word-break:break-all">${cur.replace(/[<>&]/g,'')}</div>`:''}
   <div style="opacity:.85;font-size:12px;margin-bottom:10px">${T[1]}</div>
-  <input id="phin" placeholder="${mode==='load'?'あいことば':'あいことば（8文字以上）'}" autocomplete="off" style="width:100%;box-sizing:border-box;font:18px system-ui,sans-serif;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff">
+  <input id="phin" placeholder="${mode==='load'?'合言葉':'合言葉（8文字以上）'}" autocomplete="off" style="width:100%;box-sizing:border-box;font:18px system-ui,sans-serif;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff">
   <div id="pherr" style="color:#ffb0a0;font-size:12px;min-height:18px;margin-top:4px"></div>
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px"><button id="phno" style="padding:8px 14px;border-radius:6px;border:1px solid #fff6;background:none;color:#fff">${mode==='set'?'あとで':'とじる'}</button><button id="phgo" style="padding:8px 14px;border-radius:6px;border:0;background:#f5c542;color:#222;font-weight:700">${T[2]}</button></div></div>`;
   document.body.appendChild(o);o.addEventListener('click',e=>e.stopPropagation());
@@ -1566,13 +1566,31 @@ function adminPanel(){
   d.innerHTML='<div style="background:#1a1428;border:2px solid #ffcf5a;border-radius:10px;padding:14px 16px;min-width:240px;max-width:90vw;color:#fff;font-size:14px"><b style="color:#ffcf5a">管理者メニュー</b><div id="admb" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div></div>';
   document.body.appendChild(d);const b=d.querySelector('#admb');
   const close=()=>d.remove();
-  const ask=()=>{b.innerHTML='<input id="admpw" type="password" placeholder="あいことば" style="padding:6px;border-radius:6px;border:1px solid #888;background:#000;color:#fff"><div style="display:flex;gap:8px"><button class="ib" id="admok">OK</button><button class="ib" id="admx">やめる</button></div><small id="admm" style="color:#f88"></small>';
+  const ask=()=>{b.innerHTML='<input id="admpw" type="password" placeholder="合言葉" style="padding:6px;border-radius:6px;border:1px solid #888;background:#000;color:#fff"><div style="display:flex;gap:8px"><button class="ib" id="admok">OK</button><button class="ib" id="admx">やめる</button></div><small id="admm" style="color:#f88"></small>';
     d.querySelector('#admx').onclick=close;
     d.querySelector('#admok').onclick=()=>{if(d.querySelector('#admpw').value===ADMIN_PW)pick();else d.querySelector('#admm').textContent='ちがいます'}};
   const pick=()=>{b.innerHTML='<small>どこから はじめる？（テスト用）</small>'+CH.map((c,i)=>`<button class="ib" data-c="${i}">第${i+1}章「${c.t}」${i?'（前章おわり）':'（はじめから）'}</button>`).join('')+'<button class="ib" id="admx">やめる</button>';
     d.querySelector('#admx').onclick=close;
     b.querySelectorAll('[data-c]').forEach(x=>x.onclick=()=>{close();audioInit();sfx('tap');adminStart(+x.dataset.c)})};
   ask()}
+/* ---- ストーリー枠の外に置く操作ボタン（おと／スキップ／合言葉／全画面について） ---- */
+(()=>{const c=document.createElement('style');c.textContent=`
+#optbar{position:fixed;z-index:70;display:flex;gap:6px;left:calc(8px + env(safe-area-inset-left,0px));right:calc(8px + env(safe-area-inset-right,0px));top:calc(max(env(safe-area-inset-top,0px),10px) + 6px);justify-content:space-between;pointer-events:none}
+#optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:30px;padding:4px 8px;font-size:11px;line-height:1.3;background:#000c!important;color:#fff;white-space:nowrap;text-align:center}
+@media screen and (orientation:landscape){#optbar{left:auto;right:calc(3px + env(safe-area-inset-right,0px));top:calc(max(env(safe-area-inset-top,0px),0px) + 6px);flex-direction:column;justify-content:flex-start;width:70px}
+ #optbar button{padding:5px 2px;font-size:10px;white-space:normal}}`;document.head.appendChild(c)})();
+function mkOptBar(o){const old=document.getElementById('optbar');if(old)old.remove();
+  const bar=document.createElement('div');bar.id='optbar';
+  const mk=(t,fn)=>{const b=document.createElement('button');b.className='ib';b.innerHTML=t;b.onclick=e=>{e.stopPropagation();fn()};bar.appendChild(b);return b};
+  const sb=mk('',()=>{audioInit();toggleSound();sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';if(SND.on)sfx('tap')});sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';
+  if(o.skip){o.skip.style.cssText='';bar.appendChild(o.skip)}
+  if(SYNC){mk(o.sv?'合言葉':'合言葉で<br>続きから',()=>phDlg(o.sv?(getPh()?'change':'set'):'load'));mk('全画面の<br>やり方',fsDlg)}
+  document.body.appendChild(bar);
+  const iv=setInterval(()=>{if(!document.body.contains(o.st)||(o.isDone&&o.isDone())){bar.remove();clearInterval(iv)}},150)}
+function fsDlg(){const old=document.getElementById('fsdlg');if(old){old.remove();return}
+  const o=document.createElement('div');o.id='fsdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
+  o.innerHTML='<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:10px;padding:16px;max-width:460px;width:100%;font:13px/1.7 system-ui,sans-serif"><div style="font-weight:700;font-size:16px;margin-bottom:6px">全画面で あそぶには</div><div><b>iPhone（Safari）</b><ol style="margin:2px 0 8px 1.2em;padding:0"><li>画面下の <b>共有ボタン</b>（□に↑）を押す</li><li>メニューを 下へ スクロールして <b>ホーム画面に追加</b> を押す</li><li>ホーム画面の <b>XD戦記</b> アイコンから 開く</li></ol><b>iPhone（Chrome など）</b><div style="margin:2px 0 8px">アドレス欄の 共有ボタンから「ホーム画面に追加」できます（iOS 16.4 以降）。ただし 枠なしで 開くかは ブラウザ しだい。<b>Safari が いちばん たしか</b>です。</div><b>Android（Chrome）</b><div style="margin:2px 0 8px">右上の <b>︙</b> →「アプリをインストール」または「ホーム画面に追加」。</div><b>iPad・パソコン</b><div style="margin:2px 0 8px">ブラウザの 全画面表示（F11 など）を 使ってください。</div><div style="opacity:.75;font-size:12px">※ ホーム画面から 開くと 保存の場所が 別に なります。合言葉で よみこむと 続きから 遊べます。</div></div><div style="text-align:right;margin-top:10px"><button id="fsx" style="padding:8px 14px;border-radius:6px;border:0;background:#f5c542;color:#222;font-weight:700">とじる</button></div></div>';
+  document.body.appendChild(o);o.addEventListener('click',e=>{e.stopPropagation();if(e.target===o||e.target.id==='fsx')o.remove()})}
 function title(){
   music('title');
   const ROT=!isLand();
@@ -1580,7 +1598,7 @@ function title(){
   const st=$('#tst');
   const lay=()=>{const par=st.parentElement,pw=par.clientWidth||500,ph=par.clientHeight||300,k=Math.min(pw/384,ph/216);st.style.width=Math.floor(384*k)+'px';st.style.height=Math.floor(216*k)+'px';st.style.setProperty('--u',(st.clientHeight||300)/100+'px')};
   lay();try{new ResizeObserver(lay).observe(st.parentElement)}catch(e){}
-  {const sb=document.createElement('button');sb.className='ib';sb.style.cssText='position:absolute;right:10px;top:10px;z-index:5;background:#000a';sb.textContent=SND.on?'♪ おと ON':'× おと OFF';sb.onclick=e=>{e.stopPropagation();audioInit();toggleSound();sb.textContent=SND.on?'♪ おと ON':'× おと OFF';if(SND.on)sfx('tap')};st.appendChild(sb)}
+  mkOptBar({st,sv:loadSave()});
   $('#op').onclick=()=>{audioInit();sfx('tap');opening(()=>{newGame()})};
   {let n=0,tm;st.addEventListener('click',e=>{if(e.target.closest('button'))return;n++;clearTimeout(tm);tm=setTimeout(()=>n=0,2500);if(n>=5){n=0;adminPanel()}})}
   const sv=loadSave();
@@ -1762,9 +1780,7 @@ function opening(after,label,sv){window.__bpmSet=0;
     const d=document.createElement('button');d.className='ib';d.style.cssText='position:absolute;left:10px;bottom:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.75';d.textContent='記録を消す';let arm=0,tm;
     d.onclick=e=>{e.stopPropagation();if(!arm){arm=1;d.textContent='本当に消す？（もう一度）';d.style.background='#7a1a1a';d.style.opacity='1';tm=setTimeout(()=>{arm=0;d.textContent='記録を消す';d.style.background='#000a';d.style.opacity='.75'},2200)}else{clearTimeout(tm);clearSave();sfx('lose');finish0();title()}};st.appendChild(d);
     timers0=[b,d]}
-  if(SYNC){const k=document.createElement('button');k.className='ib';k.style.cssText='position:fixed;left:calc(4px + env(safe-area-inset-left,0px));bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:70;background:#000c;font-size:10px;line-height:1.3;padding:4px 4px;opacity:.9;text-align:center';k.innerHTML=sv?'あいことば':'あいことばで<br>つづきから';
-    k.onclick=e=>{e.stopPropagation();phDlg(sv?(getPh()?'change':'set'):'load')};document.body.appendChild(k);
-    const iv=setInterval(()=>{if(!document.body.contains(st)||done){k.remove();clearInterval(iv)}},400)}
+  mkOptBar({st,skip:$('#opskip'),isDone:()=>done,sv});
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
   stb.onclick=()=>{sfx('tap');try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
   function finish(){if(done)return;done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc);try{localStorage.setItem('xd-senki-op','1')}catch(e){}after()}
