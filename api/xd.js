@@ -1,9 +1,10 @@
 // XD戦記：セーブデータのサーバー保存（Vercel Functions + Upstash Redis）
 //
-// POST /api/xd {action:"save", code, data}  引き継ぎコードに紐づけて保存（上書き）
-// POST /api/xd {action:"load", code}        引き継ぎコードから読み出す
+// POST /api/xd {action:"claim", code}        あいことばを使い始める（すでに使われていれば 409）
+// POST /api/xd {action:"save", code, data}  あいことばに紐づけて保存（上書き）
+// POST /api/xd {action:"load", code}        あいことばから読み出す
 //
-// 引き継ぎコード = ブラウザが作る推測できない文字列（XD + 12文字 ≒ 60bit）。ログインなし・個人情報なし。
+// code = プレイヤーが決めた「あいことば」の SHA-256（64桁の16進）。あいことば自体はサーバーに送られない。ログインなし・個人情報なし。
 // 環境変数は api/eye.js と同じ（KV_REST_API_URL / KV_REST_API_TOKEN など）
 
 const crypto = require('crypto');
@@ -15,7 +16,7 @@ function envEnding(suffix) {
 const DB_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || envEnding('KV_REST_API_URL') || envEnding('REDIS_REST_URL');
 const DB_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || envEnding('KV_REST_API_TOKEN') || envEnding('REDIS_REST_TOKEN');
 
-const CODE_RE = /^XD[A-HJ-NP-Z2-9]{12}$/;
+const CODE_RE = /^[0-9a-f]{64}$/;
 const MAX_BYTES = 200 * 1024;
 const TTL = 400 * 86400; // 最後の保存から約13か月で自動削除
 
@@ -58,8 +59,15 @@ module.exports = async (req, res) => {
     if (await rateLimited(req)) return send(res, 429, { error: 'しばらく 待ってから もう一度 ためしてください' });
     const body = await readBody(req);
     const code = String(body.code || '');
-    if (!CODE_RE.test(code)) return send(res, 400, { error: '引き継ぎコードの形がちがいます' });
+    if (!CODE_RE.test(code)) return send(res, 400, { error: 'あいことばの形がちがいます' });
     const key = 'xd:save:' + code;
+    if (body.action === 'claim') {
+      const [r] = await db([['SET', 'xd:claim:' + code, '1', 'NX', 'EX', TTL]]);
+      const [has] = await db([['EXISTS', key]]);
+      if (r !== 'OK' && !has) return send(res, 200, { ok: true }); // 以前に決めたが まだ保存していない
+      if (r !== 'OK') return send(res, 409, { error: 'その あいことばは すでに 使われています。べつの ことばに してください' });
+      return send(res, 200, { ok: true });
+    }
     if (body.action === 'save') {
       const data = typeof body.data === 'string' ? body.data : '';
       if (!data || Buffer.byteLength(data) > MAX_BYTES) return send(res, 400, { error: '記録が 大きすぎるか、空です' });

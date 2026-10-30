@@ -1378,33 +1378,49 @@ const CH=[
 let G,B,SNAP;
 const SAVE='xd-senki-v5';
 function save(){/* 自動セーブはしない。教会でのいのり（prayAsk）だけが記録する */}
-/* ---- サーバー保存（自分のサイト /xd/ で公開したときだけ有効。アーティファクト内では使わない） ---- */
-const SYNC=/^https?:$/.test(location.protocol)&&!/claude|anthropic/i.test(location.hostname)&&location.hostname!=='';
-const CODE_KEY='xd-senki-code',CODE_RE=/^XD[A-HJ-NP-Z2-9]{12}$/;
-function getCode(make){let c=null;try{c=localStorage.getItem(CODE_KEY)}catch(e){}
-  if(c&&CODE_RE.test(c))return c;if(!make)return null;
-  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=new Uint8Array(12);try{crypto.getRandomValues(b)}catch(e){for(let i=0;i<12;i++)b[i]=Math.random()*256}
-  c='XD'+[...b].map(x=>A[x%32]).join('');try{localStorage.setItem(CODE_KEY,c)}catch(e){}return c}
-const fmtCode=c=>c.slice(0,2)+'-'+c.slice(2,6)+'-'+c.slice(6,10)+'-'+c.slice(10);
+/* ---- サーバー保存（自分のサイトで公開したときだけ有効。アーティファクト内では使わない） ----
+   鍵は「あいことば」。プレイヤーが自分で決める。サーバーには あいことばそのものではなく、そのハッシュだけを送る */
+const SYNC=/^https?:$/.test(location.protocol)&&!/claude|anthropic/i.test(location.hostname)&&location.hostname!==''&&!!(window.crypto&&crypto.subtle);
+const PH_KEY='xd-senki-phrase',PH_MIN=8,PH_MAX=40;
+const normPh=v=>String(v||'').normalize('NFKC').replace(/\s+/g,'').toLowerCase();
+function getPh(){try{const v=localStorage.getItem(PH_KEY);return v&&[...v].length>=PH_MIN?v:null}catch(e){return null}}
+async function phHash(ph){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('xd-story:'+ph));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function phCheck(raw){const v=normPh(raw);const n=[...v].length;if(n<PH_MIN)return{err:'あいことばは '+PH_MIN+'文字以上にしてください（いま '+n+'文字）。ほかの人に 思いつかれない ことばに してね。'};if(n>PH_MAX)return{err:PH_MAX+'文字までです'};return{v}}
 function syncToast(m,bad){let t=document.getElementById('synct');if(!t){t=document.createElement('div');t.id='synct';t.style.cssText='position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:6px 12px;border-radius:6px;background:#000c;color:#fff;font:12px/1.5 system-ui,sans-serif;pointer-events:none;transition:opacity .4s';document.body.appendChild(t)}
   t.textContent=m;t.style.color=bad?'#ffb0a0':'#fff';t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',3800)}
 async function syncApi(body){const r=await fetch('/api/xd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j}
-async function syncPush(){if(!SYNC)return;try{const code=getCode(true);await syncApi({action:'save',code,data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（引き継ぎコード '+fmtCode(code)+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
-async function syncPull(raw){const code=String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(!CODE_RE.test(code))throw new Error('コードの形がちがいます（XD- で はじまる 14文字）');
-  const j=await syncApi({action:'load',code});if(!j.data)throw new Error('そのコードの 記録は 見つかりません');
+let PH_ASKED=false;
+async function syncPush(){if(!SYNC)return;const ph=getPh();
+  if(!ph){if(!PH_ASKED){PH_ASKED=true;phDlg('set')}return}
+  try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（あいことば: '+ph+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
+async function syncPull(raw){const c=phCheck(raw);if(c.err)throw new Error(c.err);
+  const j=await syncApi({action:'load',code:await phHash(c.v)});if(!j.data)throw new Error('その あいことばの 記録は 見つかりません');
   const o=JSON.parse(j.data);if(!(o&&o.g&&typeof o.g.ch==='number'))throw new Error('記録が こわれています');
-  localStorage.setItem(SAVE,j.data);localStorage.setItem(CODE_KEY,code)}
-function codeDlg(has){const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
-  const code=getCode(false);
-  o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:10px;padding:16px;max-width:420px;width:100%;font:14px/1.6 system-ui,sans-serif">
-  ${has&&code?`<div style="font-weight:700;margin-bottom:4px">引き継ぎコード</div><div style="font-size:22px;letter-spacing:.08em;font-family:ui-monospace,monospace;user-select:all;margin:6px 0">${fmtCode(code)}</div><div style="opacity:.8;font-size:12px;margin-bottom:12px">べつの端末で タイトルの「コードで つづきから」に これを 入れると、いのった ところから 再開できます。人に 教えないでください。</div>`:''}
-  <div style="font-weight:700;margin-bottom:4px">コードで つづきから</div>
-  <input id="cin" placeholder="XD-XXXX-XXXX-XXXX" autocapitalize="characters" autocomplete="off" style="width:100%;box-sizing:border-box;font:18px ui-monospace,monospace;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff">
-  <div id="cerr" style="color:#ffb0a0;font-size:12px;min-height:18px;margin-top:4px"></div>
-  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px"><button id="cno" style="padding:8px 14px;border-radius:6px;border:1px solid #fff6;background:none;color:#fff">とじる</button><button id="cgo" style="padding:8px 14px;border-radius:6px;border:0;background:#f5c542;color:#222;font-weight:700">よみこむ</button></div></div>`;
+  localStorage.setItem(SAVE,j.data);localStorage.setItem(PH_KEY,c.v)}
+/* mode: 'set'=はじめて決める / 'change'=変える（いま保存済み）/ 'load'=べつの端末で つづきから */
+function phDlg(mode){document.getElementById('phdlg')&&document.getElementById('phdlg').remove();
+  const cur=getPh(),o=document.createElement('div');o.id='phdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
+  const T={set:['あいことばを きめよう','べつの端末でも つづきから 遊べるように、あいことばを 決めます。8文字以上。ほかの人が 思いつかない ことばに してください。自分で おぼえやすい ものが いちばん です。','きめる'],
+    change:['あいことば','いまの あいことばは これです。べつの端末の タイトルで これを 入れると つづきから 遊べます。かえたい ときは 下に 新しく 入れてください。','かえる'],
+    load:['あいことばで つづきから','前に 決めた あいことばを 入れてください。','よみこむ']}[mode];
+  o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:10px;padding:16px;max-width:440px;width:100%;font:14px/1.6 system-ui,sans-serif">
+  <div style="font-weight:700;font-size:16px;margin-bottom:4px">${T[0]}</div>
+  ${mode==='change'&&cur?`<div style="font-size:20px;letter-spacing:.04em;user-select:all;background:#0d0b1a;border-radius:6px;padding:8px 10px;margin:6px 0;word-break:break-all">${cur.replace(/[<>&]/g,'')}</div>`:''}
+  <div style="opacity:.85;font-size:12px;margin-bottom:10px">${T[1]}</div>
+  <input id="phin" placeholder="${mode==='load'?'あいことば':'あいことば（8文字以上）'}" autocomplete="off" style="width:100%;box-sizing:border-box;font:18px system-ui,sans-serif;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff">
+  <div id="pherr" style="color:#ffb0a0;font-size:12px;min-height:18px;margin-top:4px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px"><button id="phno" style="padding:8px 14px;border-radius:6px;border:1px solid #fff6;background:none;color:#fff">${mode==='set'?'あとで':'とじる'}</button><button id="phgo" style="padding:8px 14px;border-radius:6px;border:0;background:#f5c542;color:#222;font-weight:700">${T[2]}</button></div></div>`;
   document.body.appendChild(o);o.addEventListener('click',e=>e.stopPropagation());
-  o.querySelector('#cno').onclick=()=>o.remove();
-  o.querySelector('#cgo').onclick=async()=>{const b=o.querySelector('#cgo');b.disabled=true;try{await syncPull(o.querySelector('#cin').value);location.reload()}catch(e){o.querySelector('#cerr').textContent=e.message;b.disabled=false}}}
+  const inp=o.querySelector('#phin'),err=o.querySelector('#pherr'),go=o.querySelector('#phgo');
+  o.querySelector('#phno').onclick=()=>o.remove();
+  go.onclick=async()=>{go.disabled=true;err.textContent='';
+    try{
+      if(mode==='load'){await syncPull(inp.value);location.reload();return}
+      const c=phCheck(inp.value);if(c.err)throw new Error(c.err);
+      if(c.v===cur){o.remove();return}
+      await syncApi({action:'claim',code:await phHash(c.v)});
+      localStorage.setItem(PH_KEY,c.v);o.remove();syncPush()
+    }catch(e){err.textContent=e.message;go.disabled=false}}}
 function saveNow(){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({g:G,snap:SNAP}));ok=true}catch(e){}syncPush();return ok}
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
@@ -1744,7 +1760,7 @@ function opening(after,label,sv){window.__bpmSet=0;
     const d=document.createElement('button');d.className='ib';d.style.cssText='position:absolute;left:10px;bottom:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.75';d.textContent='記録を消す';let arm=0,tm;
     d.onclick=e=>{e.stopPropagation();if(!arm){arm=1;d.textContent='本当に消す？（もう一度）';d.style.background='#7a1a1a';d.style.opacity='1';tm=setTimeout(()=>{arm=0;d.textContent='記録を消す';d.style.background='#000a';d.style.opacity='.75'},2200)}else{clearTimeout(tm);clearSave();sfx('lose');finish0();title()}};st.appendChild(d);
     timers0=[b,d]}
-  if(SYNC){const k=document.createElement('button');k.className='ib';k.style.cssText='position:absolute;right:10px;bottom:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.85';k.textContent=sv?'引き継ぎコード':'コードで つづきから';k.onclick=e=>{e.stopPropagation();codeDlg(!!sv)};st.appendChild(k);if(timers0&&timers0.push)timers0.push(k)}
+  if(SYNC){const k=document.createElement('button');k.className='ib';k.style.cssText='position:absolute;right:10px;bottom:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.85';k.textContent=sv?'あいことば':'あいことばで つづきから';k.onclick=e=>{e.stopPropagation();phDlg(sv?(getPh()?'change':'set'):'load')};st.appendChild(k);if(timers0&&timers0.push)timers0.push(k)}
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
   stb.onclick=()=>{sfx('tap');try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
   function finish(){if(done)return;done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc);try{localStorage.setItem('xd-senki-op','1')}catch(e){}after()}
