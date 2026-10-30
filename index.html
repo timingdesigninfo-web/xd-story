@@ -1575,16 +1575,24 @@ function adminPanel(){
   ask()}
 /* ---- ストーリー枠の外に置く操作ボタン（おと／スキップ／合言葉／全画面について） ---- */
 (()=>{const c=document.createElement('style');c.textContent=`
-#optbar{position:fixed;z-index:70;display:flex;gap:6px;left:calc(8px + env(safe-area-inset-left,0px));right:calc(8px + env(safe-area-inset-right,0px));top:calc(max(env(safe-area-inset-top,0px),10px) + 6px);justify-content:space-between;pointer-events:none}
-#optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:30px;padding:4px 8px;font-size:11px;line-height:1.3;background:#000c!important;color:#fff;white-space:nowrap;text-align:center}
-@media screen and (orientation:landscape){#optbar{left:auto;right:calc(3px + env(safe-area-inset-right,0px));top:calc(max(env(safe-area-inset-top,0px),0px) + 6px);flex-direction:column;justify-content:flex-start;width:70px}
- #optbar button{padding:5px 2px;font-size:10px;white-space:normal}}`;document.head.appendChild(c)})();
+#optbar{position:fixed;z-index:70;pointer-events:none;right:calc(3px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 6px);display:flex;flex-direction:column;gap:6px;width:70px}
+#optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:30px;padding:5px 2px;font-size:10px;line-height:1.3;background:#000c!important;color:#fff;white-space:normal;text-align:center}
+@media screen and (orientation:portrait) and (max-width:900px){
+ #optbar{inset:0;width:auto;display:block}
+ #optbar button{position:absolute!important;min-height:44px;padding:8px 18px;font-size:15px;white-space:nowrap;border:2px solid #6a5a8a;border-radius:12px;background:#1b1530e6!important;box-shadow:0 3px 0 #0008;letter-spacing:.04em}
+ #optbar button:active{transform:translateY(2px);box-shadow:0 1px 0 #0008}
+ #optbar .k-snd{left:calc(14px + env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
+ #optbar .k-skip{right:calc(14px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
+ #optbar .k-code{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 74px);font-size:17px;padding:10px 34px}
+ #optbar .k-code:active{transform:translateX(-50%) translateY(2px)}
+ #optbar .k-fs{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 26px);min-height:32px;padding:4px 12px;font-size:12px;border-color:transparent;background:transparent!important;box-shadow:none;text-decoration:underline;opacity:.8}
+}`;document.head.appendChild(c)})();
 function mkOptBar(o){const old=document.getElementById('optbar');if(old)old.remove();
   const bar=document.createElement('div');bar.id='optbar';
-  const mk=(t,fn)=>{const b=document.createElement('button');b.className='ib';b.innerHTML=t;b.onclick=e=>{e.stopPropagation();fn()};bar.appendChild(b);return b};
-  const sb=mk('',()=>{audioInit();toggleSound();sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';if(SND.on)sfx('tap')});sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';
-  if(o.skip){o.skip.style.cssText='';bar.appendChild(o.skip)}
-  if(SYNC){mk(o.sv?'合言葉':'合言葉で<br>続きから',()=>phDlg(o.sv?(getPh()?'change':'set'):'load'));mk('全画面の<br>やり方',fsDlg)}
+  const mk=(cls,t,fn)=>{const b=document.createElement('button');b.className='ib '+cls;b.innerHTML=t;b.onclick=e=>{e.stopPropagation();fn()};bar.appendChild(b);return b};
+  const sb=mk('k-snd','',()=>{audioInit();toggleSound();sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';if(SND.on)sfx('tap')});sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';
+  if(o.skip){o.skip.style.cssText='';o.skip.classList.add('k-skip');bar.appendChild(o.skip)}
+  if(SYNC){mk('k-code',innerWidth>innerHeight?(o.sv?'合言葉':'合言葉で<br>続きから'):'合言葉',()=>phDlg(o.sv?(getPh()?'change':'set'):'load'));mk('k-fs',innerWidth>innerHeight?'全画面の<br>やり方':'全画面のやり方',fsDlg)}
   document.body.appendChild(bar);
   const iv=setInterval(()=>{if(!document.body.contains(o.st)||(o.isDone&&o.isDone())){bar.remove();clearInterval(iv)}},150)}
 function fsDlg(){const old=document.getElementById('fsdlg');if(old){old.remove();return}
