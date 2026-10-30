@@ -1423,9 +1423,6 @@ function phDlg(mode){document.getElementById('phdlg')&&document.getElementById('
       await syncApi({action:'claim',code:await phHash(c.v)});
       localStorage.setItem(PH_KEY,c.v);o.remove();syncPush()
     }catch(e){err.textContent=e.message;go.disabled=false}}}
-function iosHint(){const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
-  o.innerHTML='<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:10px;padding:16px;max-width:440px;width:100%;font:14px/1.7 system-ui,sans-serif"><div style="font-weight:700;font-size:16px;margin-bottom:6px">全画面で あそぶには</div><div style="font-size:13px">iPhone の Safari には 全画面ボタンが ありません。かわりに、<b>ホーム画面に追加</b>すると、ブラウザの 枠なしで 遊べます。<ol style="margin:8px 0 0 1.2em;padding:0"><li>画面下の <b>共有ボタン</b>（□に↑）を押す</li><li><b>ホーム画面に追加</b> を押す</li><li>ホーム画面の <b>XD戦記</b> アイコンから 開く</li></ol><div style="opacity:.75;font-size:12px;margin-top:8px">記録は そのまま 引き継がれません。あいことばで よみこんでください。</div></div><div style="text-align:right;margin-top:10px"><button style="padding:8px 14px;border-radius:6px;border:0;background:#f5c542;color:#222;font-weight:700">とじる</button></div></div>';
-  document.body.appendChild(o);o.addEventListener('click',e=>{e.stopPropagation();if(e.target===o||e.target.tagName==='BUTTON')o.remove()})}
 function saveNow(){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({g:G,snap:SNAP}));ok=true}catch(e){}syncPush();return ok}
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
@@ -1765,12 +1762,6 @@ function opening(after,label,sv){window.__bpmSet=0;
     const d=document.createElement('button');d.className='ib';d.style.cssText='position:absolute;left:10px;bottom:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.75';d.textContent='記録を消す';let arm=0,tm;
     d.onclick=e=>{e.stopPropagation();if(!arm){arm=1;d.textContent='本当に消す？（もう一度）';d.style.background='#7a1a1a';d.style.opacity='1';tm=setTimeout(()=>{arm=0;d.textContent='記録を消す';d.style.background='#000a';d.style.opacity='.75'},2200)}else{clearTimeout(tm);clearSave();sfx('lose');finish0();title()}};st.appendChild(d);
     timers0=[b,d]}
-  if(SYNC){const fs=document.createElement('button');fs.className='ib';fs.style.cssText='position:absolute;left:10px;top:44px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.85';fs.textContent='全画面';
-    fs.onclick=e=>{e.stopPropagation();const el=document.documentElement,f=el.requestFullscreen||el.webkitRequestFullscreen;
-      const standalone=navigator.standalone||matchMedia('(display-mode:fullscreen),(display-mode:standalone)').matches;
-      if(standalone){syncToast('すでに 全画面です');return}
-      if(f&&!/iPhone|iPod/.test(navigator.userAgent)){try{const r=f.call(el);if(r&&r.catch)r.catch(()=>iosHint())}catch(_){iosHint()}}else iosHint()};
-    st.appendChild(fs);if(timers0&&timers0.push)timers0.push(fs)}
   if(SYNC){const k=document.createElement('button');k.className='ib';k.style.cssText='position:absolute;left:10px;top:10px;z-index:5;background:#000a;font-size:11px;padding:3px 8px;opacity:.85';k.textContent=sv?'あいことば':'あいことばで つづきから';k.onclick=e=>{e.stopPropagation();phDlg(sv?(getPh()?'change':'set'):'load')};st.appendChild(k);if(timers0&&timers0.push)timers0.push(k)}
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
   stb.onclick=()=>{sfx('tap');try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
