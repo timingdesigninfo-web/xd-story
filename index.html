@@ -824,7 +824,8 @@ function toggleSound(){
   audioInit();if(SND.master)SND.master.gain.value=SND.on?.5:0;
   document.querySelectorAll('.sndbtn').forEach(b=>b.textContent=SND.on?'♪':'×');
 }
-document.addEventListener('pointerdown',audioInit,{once:true});document.addEventListener('touchend',audioInit,{once:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SND.ctx&&SND.ctx.state!=='running')SND.ctx.resume()});
+document.addEventListener('pointerdown',audioInit,{once:true});document.addEventListener('touchend',audioInit,{once:true});function sndBg(hide){try{if(hide){if(SND.ctx&&SND.ctx.state==='running')SND.ctx.suspend();if(SND.sil)SND.sil.pause()}else{if(SND.ctx&&SND.ctx.state!=='running')SND.ctx.resume();if(SND.sil)SND.sil.play().catch(()=>{})}}catch(e){}}
+document.addEventListener('visibilitychange',()=>sndBg(document.hidden));addEventListener('pagehide',()=>sndBg(true));addEventListener('pageshow',()=>{if(!document.hidden)sndBg(false)});addEventListener('blur',()=>{if(document.hidden)sndBg(true)});
 
 /* ================= pixel sprites (placeholders) ================= */
 const SPR={};
