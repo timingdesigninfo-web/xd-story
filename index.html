@@ -4328,7 +4328,13 @@ function render(){
 }
 function cameo(k){const h=$('.fwrap .mid');if(!h)return;const a=ALLIES[k],im=document.createElement('img');im.className='cameo';im.src=sprite(a.n,a.col[0],a.col[1]);im.alt='';h.appendChild(im);setTimeout(()=>im.remove(),1700)}
 function say(h){const l=$('#log');if(l)l.innerHTML=h}
-function pop(sel,txt,cls,ei){const host=$(sel);if(!host)return;const s=document.createElement('span');s.className='float '+cls;s.textContent=txt;s.style.left=(ei!==undefined&&B.es.length>1?((ei+.5)/B.es.length*100-6):30+Math.random()*40)+'%';host.appendChild(s);setTimeout(()=>s.remove(),900)}
+/* 回復・守り・強化：その人の 欄の 上に 3コマの 演出 */
+const SUPFX={heal:304,guard:250,buff:283};
+function supFx(host,nm){try{if(!host||!SUPFX[nm])return;const r=host.getBoundingClientRect();if(!r.width)return;const W=Math.min(150,Math.max(70,r.width*.9)),H=Math.round(W*SUPFX[nm]/450),d=document.createElement('div');
+  d.style.cssText=`position:fixed;left:${Math.round(r.left+r.width/2-W/2)}px;top:${Math.round(r.top+r.height*.75-H)}px;width:${W}px;height:${H}px;pointer-events:none;z-index:60;background:url(sprites/fx_${nm}.png) 0 0/${W*3}px ${H}px no-repeat;image-rendering:pixelated`;
+  document.body.appendChild(d);let f=0;const iv=setInterval(()=>{f++;if(f>2){clearInterval(iv);d.animate([{opacity:1},{opacity:0}],{duration:220,fill:'forwards'}).onfinish=()=>d.remove();return}d.style.backgroundPosition=`${-f*W}px 0`},170)}catch(e){}}
+function pop(sel,txt,cls,ei){const host=$(sel);if(!host)return;
+  {const t=String(txt);if(cls==='hp'&&t[0]==='+')supFx(host,'heal');else if(cls==='blk'&&t[0]==='+')supFx(host,'guard');else if(cls==='pw'&&sel!=='#foe'&&/アップ|攻撃\+|ちから/.test(t))supFx(host,'buff')}const s=document.createElement('span');s.className='float '+cls;s.textContent=txt;s.style.left=(ei!==undefined&&B.es.length>1?((ei+.5)/B.es.length*100-6):30+Math.random()*40)+'%';host.appendChild(s);setTimeout(()=>s.remove(),900)}
 function jolt(sel,cls){const el=$(sel);if(!el)return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
 let Q=[];
 const wait=ms=>new Promise(res=>{let done=false;const f=()=>{if(done)return;done=true;if(B&&B.skipWait===f)B.skipWait=null;res()};if(B)B.skipWait=f;
