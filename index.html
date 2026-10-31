@@ -1205,6 +1205,67 @@ function tmChoose(items,path,back){ /* 選んだ あとも マップのまま：
   const m=$('#tmsg');if(m&&path)m.insertAdjacentHTML('afterbegin',`<div class="tmh">${path}${back?'<small>　Bで もどる</small>':'<small>　Bで とじる</small>'}</div>`);
 }
 function tmClose(){const m=$('#tmsg');if(m)m.remove();shxClear();TMBACK=null;SHOPONLY=null;TW.busy=false}
+/* ===== スクショで シェア（基本は X） ===== */
+const SHOT_URL=(/^https?:$/.test(location.protocol)&&!/claude|anthropic|localhost|127\./i.test(location.hostname))?location.origin+'/':'https://xd-story.vercel.app/';
+let H2C=null;
+function loadH2C(){if(window.html2canvas)return Promise.resolve(window.html2canvas);if(H2C)return H2C;
+  H2C=new Promise((ok,ng)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';sc.onload=()=>ok(window.html2canvas);sc.onerror=()=>{H2C=null;ng(new Error('load'))};document.head.appendChild(sc)});return H2C}
+function shotText(){let t='XD戦記 プレイ中！';try{const c=CH[G.ch];if(c)t+=`　${c.y}年「${c.t}」`;t+=`　Lv${G.lv||1}`}catch(e){}return t+'\n#XD戦記\n'+SHOT_URL}
+async function shotShare(){
+  sfx('tap');
+  const busy=document.createElement('div');busy.id='shotbusy';busy.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99999;background:#000c;color:#fff;padding:6px 14px;border-radius:20px;font:13px system-ui,sans-serif;pointer-events:none';busy.textContent='スクショを とっています…';
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  let cv=null;
+  try{const h2c=await loadH2C();const tgt=app||document.body,dpr=Math.min(2,Math.max(1,window.devicePixelRatio||1));
+    const HIDE='.pad,.abtns,.pmenu,.qm,.opts,#tmsg';
+    /* ボタンの 場所を はかって、そこへ ロゴを おく */
+    const ar=tgt.getBoundingClientRect(),vis=[...tgt.querySelectorAll('.pad,.abtns,.pmenu')].map(e=>e.getBoundingClientRect()).filter(r=>r.width>4&&r.height>4);
+    const vw=tgt.querySelector('.view'),vr=vw&&vw.getBoundingClientRect();
+    let box=null;if(vis.length){const u={l:Math.min(...vis.map(r=>r.left)),t:Math.min(...vis.map(r=>r.top)),r:Math.max(...vis.map(r=>r.right)),b:Math.max(...vis.map(r=>r.bottom))};
+      const hitView=vr&&u.l<vr.right&&u.r>vr.left&&u.t<vr.bottom&&u.b>vr.top;
+      if(!hitView&&(u.b-u.t)<ar.height*.45)box=u;else{const pr=tgt.querySelector('.pad');const r=pr&&pr.getBoundingClientRect(),cr=pr&&pr.closest('.lcol')?pr.closest('.lcol').getBoundingClientRect():r;if(r&&r.width>4)box={l:cr.left,t:r.top,r:cr.right,b:r.bottom}}}
+    if(!box)box={l:ar.left+ar.width*.2,t:ar.bottom-ar.height*.14,r:ar.right-ar.width*.2,b:ar.bottom-ar.height*.02};
+    const logo=new Image();logo.src='sprites/logo_s.png';await new Promise(r=>{if(logo.complete&&logo.naturalWidth)return r();logo.onload=logo.onerror=r});
+    cv=await h2c(tgt,{backgroundColor:'#140d1a',scale:dpr,useCORS:true,logging:false,width:tgt.clientWidth,height:tgt.clientHeight,windowWidth:document.documentElement.clientWidth,windowHeight:document.documentElement.clientHeight,ignoreElements:e=>e.id==='shotbusy'||e.id==='shotdlg',
+      onclone:d=>{d.querySelectorAll(HIDE).forEach(e=>e.style.visibility='hidden')}});
+    if(logo.naturalWidth){const g=cv.getContext('2d'),k=cv.width/ar.width,bw=(box.r-box.l)*k,bh=(box.b-box.t)*k,sc=Math.min(bw*.88/logo.naturalWidth,bh*.75/logo.naturalHeight),w=logo.naturalWidth*sc,h=logo.naturalHeight*sc;
+      g.imageSmoothingEnabled=false;g.drawImage(logo,(box.l-ar.left)*k+(bw-w)/2,(box.t-ar.top)*k+(bh-h)/2,w,h)}
+  }catch(e){cv=null}
+  document.body.appendChild(busy);setTimeout(()=>busy.remove(),300);
+  shotDlg(cv);
+}
+function shotDlg(cv){
+  const old=document.getElementById('shotdlg');if(old)old.remove();
+  let blob=null,url='';
+  if(cv){try{url=cv.toDataURL('image/png')}catch(e){url=''}}
+  const o=document.createElement('div');o.id='shotdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000c;display:flex;padding:14px;overflow-y:auto';
+  const B='border-radius:8px;padding:9px 14px;font:700 14px system-ui,sans-serif;cursor:pointer;';
+  o.innerHTML=`<div style="margin:auto;background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:12px;padding:14px;max-width:460px;width:100%;font:14px/1.6 system-ui,sans-serif;display:flex;flex-direction:column;gap:10px">
+    <b style="color:#ffcf5a;font-size:16px">スクショで シェア</b>
+    ${url?`<img src="${url}" alt="いまの 画面" style="width:100%;max-height:46vh;object-fit:contain;border-radius:6px;background:#000;display:block">`:'<p style="margin:0;color:#ffb3c8">スクショが とれませんでした。文だけ シェアできます。</p>'}
+    <textarea id="shotTxt" rows="3" style="width:100%;box-sizing:border-box;border-radius:6px;padding:8px;font:13px/1.5 system-ui,sans-serif;background:#0f0c1c;color:#fff;border:1px solid #fff4">${shotText()}</textarea>
+    <button id="shotX" style="${B}background:#000;color:#fff;border:2px solid #ff4d9a;font-size:15px">𝕏 で シェア</button>
+    <div style="display:flex;gap:8px"><button id="shotSave" style="${B}flex:1;background:transparent;color:#fff;border:1px solid #fff6"${url?'':' disabled'}>画像を ほぞん</button><button id="shotClose" style="${B}flex:1;background:transparent;color:#fff;border:1px solid #fff6">とじる</button></div>
+    <p id="shotMsg" style="margin:0;font-size:12px;color:#cbbfe6"></p></div>`;
+  document.body.appendChild(o);
+  if(cv)try{cv.toBlob(b=>{blob=b},'image/png')}catch(e){}
+  const msg=t=>{const m=o.querySelector('#shotMsg');if(m)m.textContent=t};
+  const txt=()=>o.querySelector('#shotTxt').value;
+  const kd=e=>{if(e.target&&e.target.id==='shotTxt'&&e.key!=='Escape')return;e.stopPropagation();if(e.key==='Escape'){e.preventDefault();close()}};
+  const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)};
+  document.addEventListener('keydown',kd,true);
+  o.onclick=e=>{if(e.target===o)close()};
+  o.querySelector('#shotClose').onclick=()=>{sfx('tap');close()};
+  o.querySelector('#shotSave').onclick=()=>{sfx('tap');if(!url)return;const a=document.createElement('a');a.href=url;a.download='xd-senki.png';document.body.appendChild(a);a.click();a.remove();msg('ほぞんできない ときは、上の 画像を 長押しして ほぞんしてね。')};
+  o.querySelector('#shotX').onclick=async()=>{sfx('tap');const t=txt();
+    const f=blob?new File([blob],'xd-senki.png',{type:'image/png'}):null;
+    if(f&&navigator.canShare&&navigator.share){try{if(navigator.canShare({files:[f]})){await navigator.share({files:[f],text:t});return}}catch(e){if(e&&e.name==='AbortError')return}}
+    /* パソコンなど：画像を コピーして、Xの 投稿画面を ひらく */
+    let copied=false;
+    if(blob&&navigator.clipboard&&window.ClipboardItem){try{const p=navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);window.open('https://x.com/intent/post?text='+encodeURIComponent(t),'_blank','noopener');await p;copied=true}catch(e){}}
+    else window.open('https://x.com/intent/post?text='+encodeURIComponent(t),'_blank','noopener');
+    msg(copied?'画像を コピーしました。Xの 投稿画面に 貼りつけ（⌘V / Ctrl+V）してね。':(url?'Xの 投稿画面を ひらきました。画像は「画像を ほぞん」してから つけてね。':'Xの 投稿画面を ひらきました。'))};
+}
 function tmain(){
   if(!app.querySelector('.view'))return openSettings();
   tmChoose([
@@ -1213,6 +1274,7 @@ function tmain(){
     {l:'つよさ',s:`HP ${G.hp}/${G.max}　CR ${crOf()}`,f:()=>tmStatus()},
     {l:'せかいちず',s:'いまの いちと おとずれた 場所',f:()=>tmMap()},
     {l:'せってい',s:'おと・文字おくり・ルール',f:()=>tmSet()},
+    {l:'スクショで シェア',s:'いまの 画面を Xに のせる',f:()=>{tmClose();shotShare()}},
     {l:'アイデアを 送る',s:'みんなで ゲームを つくろう',f:()=>ideaDlg()},
     {l:'とじる',s:'',f:()=>tmClose()}],'メニュー',null);
 }
@@ -1552,12 +1614,13 @@ function openSettings(){
     {l:'そうび',s:'武器と 防具を つけかえる',f:()=>showEquip()},
     {l:'つよさ',s:'',f:()=>showStatus()},
     {l:'ルール',s:'バトルの あそびかた',f:()=>showRules()},
+    {l:'スクショで シェア',s:'いまの 画面を Xに のせる',f:()=>shotShare()},
   ]);
 }
 function fieldMenu(){
   if(TW.on)return townTalk();
   if(app.querySelector('.view'))return tmain();
-  menuOv('コマンド',[{l:'そうび',s:'武器と 防具を つけかえる',f:()=>showEquip()},{l:'つよさ',s:'',f:()=>showStatus()},{l:'ルール',s:'バトルの あそびかた',f:()=>showRules()},{l:'アイデアを 送る',s:'みんなで ゲームを つくろう',f:()=>ideaDlg()}]);
+  menuOv('コマンド',[{l:'そうび',s:'武器と 防具を つけかえる',f:()=>showEquip()},{l:'つよさ',s:'',f:()=>showStatus()},{l:'ルール',s:'バトルの あそびかた',f:()=>showRules()},{l:'スクショで シェア',s:'いまの 画面を Xに のせる',f:()=>shotShare()},{l:'アイデアを 送る',s:'みんなで ゲームを つくろう',f:()=>ideaDlg()}]);
 }
 function showRules(onClose){
   overlay(`<h2>バトルのルール</h2>
