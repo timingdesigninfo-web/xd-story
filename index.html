@@ -1917,10 +1917,11 @@ function toggleFlip(){FLIP=!FLIP;try{localStorage.setItem('xd-senki-flip',FLIP?'
 (function(){const PORT=()=>matchMedia('(orientation:portrait) and (max-width:900px)').matches;let st=null;
   const dirOf=(e,r)=>{const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);if(Math.hypot(dx,dy)<r.width*.17)return null;return Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')};
   const press=d=>{if(FLD.on||TW.on)setHeld(d,true);else if(PADHOOK)PADHOOK(d)},rel=d=>{if(FLD.on||TW.on)setHeld(d,false)};
-  const set=d=>{if(st.d===d)return;if(st.d)rel(st.d);st.d=d;if(d){st.any=true;press(d)}};
+  const set=d=>{if(st.dead)return;if(st.d===d)return;if(st.d)rel(st.d);st.d=d;if(d){st.any=true;press(d)}};
   addEventListener('pointerdown',e=>{if(!PORT())return;const p=e.target.closest&&e.target.closest('#pad');if(!p)return;e.preventDefault();try{p.setPointerCapture(e.pointerId)}catch(_){}
     st={p,id:e.pointerId,d:null,any:false,t:performance.now(),mv:0,x:e.clientX,y:e.clientY};set(dirOf(e,p.getBoundingClientRect()))},true);
-  addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id)return;if(!st.p.isConnected){const np=document.getElementById('pad');if(!np){st=null;return}st.p=np;st.d=null} /* 画面が切り替わって十字キーが作り直されたら、新しい方を基準にする */
+  window.padLock=()=>{if(st){if(st.d)rel(st.d);st.d=null;st.dead=true}}; /* 戦闘や 選択肢に 切りかわったら、指を はなすまで 十字キーを 止める */
+  addEventListener('pointermove',e=>{if(!st||e.pointerId!==st.id||st.dead)return;if(!st.p.isConnected){const np=document.getElementById('pad');if(!np){st=null;return}if(!(FLD.on||TW.on)){st.dead=true;st.d=null;return}st.p=np;st.d=null} /* 画面が切り替わって十字キーが作り直されたら、新しい方を基準にする */
     st.mv=Math.max(st.mv,Math.hypot(e.clientX-st.x,e.clientY-st.y));set(dirOf(e,st.p.getBoundingClientRect()))},true);
   const end=e=>{if(!st||e.pointerId!==st.id)return;const s=st;set(null);st=null};
   addEventListener('pointerup',end,true);addEventListener('pointercancel',end,true);
@@ -2844,7 +2845,7 @@ const PDW='sprites/ally_dw_f.png',PFF='sprites/ally_ff.png';
 function endPort(){const im=$('#tport');if(im)im.remove()}
 function townFin(f){if(GPW){setTimeout(()=>townFin(f),120);return}endPort();townOff();f&&f()}
 function tsel(d){const ops=[...document.querySelectorAll('#tmsg .topt')];if(!ops.length)return;let i=ops.findIndex(b=>b.classList.contains('sel'));if(i<0)i=0;i=(d==='up'||d==='left')?Math.max(0,i-1):Math.min(ops.length-1,i+1);ops.forEach(b=>b.classList.remove('sel'));ops[i].classList.add('sel');ops[i].scrollIntoView({block:'nearest'});sfx('tap');TSELHOOK&&TSELHOOK()}
-function townChoice(sub,items){endPort();const old=$('#tmsg');if(old)old.remove();const v=app.querySelector('.view');if(!v)return;
+function townChoice(sub,items){staleInput();endPort();const old=$('#tmsg');if(old)old.remove();const v=app.querySelector('.view');if(!v)return;
   const m=document.createElement('div');m.id='tmsg';m.className='tmsg tch';
   m.innerHTML=(sub?`<b>${sub}</b>`:'')+items.map((o,i)=>`<div class="topt${i?'':' sel'}" data-i="${i}">▶ <b>${o.l}</b><small>${o.s||''}</small></div>`).join('')+'<i>↑↓で えらんで Aで けってい</i>';
   v.appendChild(m);
@@ -4008,7 +4009,7 @@ function screenHurt(big){
 function hurtAnim(k){const el=$('#pm_'+k);if(el){el.classList.remove('hurt');void el.offsetWidth;el.classList.add('hurt')}}
 function mkE(f,i,ks){return {...f,m:f.m.map(mv=>({...mv,v:(mv.t==='A'||mv.t==='M')?Math.round(mv.v*ks):mv.v})),max:f.hp,block:0,str:0,weak:0,mi:0,skip:false,id:i,blur:!!f.blur&&Math.random()<.5}}
 const aliveEs=()=>B.es.filter(e=>e.hp>0);
-function startBattle(f0,boss,opt={}){
+function startBattle(f0,boss,opt={}){staleInput();
   music(battleTrack(boss,f0));
   const ks=boss?1+G.ch*.04:1,fl=[].concat(f0),f=fl[0];
   const es=fl.map((x,i)=>mkE(x,i,ks));
@@ -4707,6 +4708,12 @@ function epilogue(back){
 }
 function peekMenu(){menuOv('どの 未来を のぞく？',Object.keys(ENDINGS).map(k=>({l:ENDINGS[k].n,s:ENDINGS[k].sub,f:()=>showEnding(k,ending)})),'妖精と どう いきるか。それは、クリエイターが どうなるか。')}
 
+/* 画面が かわった ときに 押しっぱなしの キーを、いちど はなすまで 無視する */
+const KDOWN=new Set(),STALE=new Set();
+addEventListener('keydown',e=>{if(STALE.has(e.key)){e.preventDefault();e.stopImmediatePropagation();return}KDOWN.add(e.key)},true);
+addEventListener('keyup',e=>{KDOWN.delete(e.key);STALE.delete(e.key)},true);
+addEventListener('blur',()=>{KDOWN.clear();STALE.clear()});
+function staleInput(){KDOWN.forEach(k=>STALE.add(k));try{window.padLock&&window.padLock()}catch(e){}}
 document.addEventListener('keydown',e=>{
   const isA=e.key==='Enter'||e.key===' '||e.key==='z'||e.key==='Z';
   if(!$('#ov').hidden){const dk2={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down'}[e.key];if(dk2&&$('#ovin .opt')){e.preventDefault();ovSel(dk2);return}if(isA){e.preventDefault();pressA()}else if(e.key==='Escape'||e.key==='x'||e.key==='X'){e.preventDefault();$('#ovclose').click()}return}
