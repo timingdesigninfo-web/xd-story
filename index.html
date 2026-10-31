@@ -1210,7 +1210,7 @@ const SHOT_URL=(/^https?:$/.test(location.protocol)&&!/claude|anthropic|localhos
 let H2C=null;
 function loadH2C(){if(window.html2canvas)return Promise.resolve(window.html2canvas);if(H2C)return H2C;
   H2C=new Promise((ok,ng)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';sc.onload=()=>ok(window.html2canvas);sc.onerror=()=>{H2C=null;ng(new Error('load'))};document.head.appendChild(sc)});return H2C}
-function shotText(){let t='XD戦記 プレイ中！';try{const c=CH[G.ch];if(c)t+=`　${c.y}年「${c.t}」`;t+=`　Lv${G.lv||1}`}catch(e){}return t+'\n#XD戦記\n'+SHOT_URL}
+function shotText(){let lv=1;try{lv=G.lv||1}catch(e){}return `あなたはAdobe XDをおぼえているか？\nXDと雲の仲間たちが妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG XD戦記 プレイ中！\n\n現在Lv${lv}\n#XD戦記\n${SHOT_URL}`}
 async function shotShare(){
   sfx('tap');
   const busy=document.createElement('div');busy.id='shotbusy';busy.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99999;background:#000c;color:#fff;padding:6px 14px;border-radius:20px;font:13px system-ui,sans-serif;pointer-events:none';busy.textContent='スクショを とっています…';
@@ -1243,7 +1243,7 @@ function shotDlg(cv){
   o.innerHTML=`<div style="margin:auto;background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:12px;padding:14px;max-width:460px;width:100%;font:14px/1.6 system-ui,sans-serif;display:flex;flex-direction:column;gap:10px">
     <b style="color:#ffcf5a;font-size:16px">スクショで シェア</b>
     ${url?`<img src="${url}" alt="いまの 画面" style="width:100%;max-height:46vh;object-fit:contain;border-radius:6px;background:#000;display:block">`:'<p style="margin:0;color:#ffb3c8">スクショが とれませんでした。文だけ シェアできます。</p>'}
-    <textarea id="shotTxt" rows="3" style="width:100%;box-sizing:border-box;border-radius:6px;padding:8px;font:13px/1.5 system-ui,sans-serif;background:#0f0c1c;color:#fff;border:1px solid #fff4">${shotText()}</textarea>
+    <textarea id="shotTxt" rows="6" style="width:100%;box-sizing:border-box;border-radius:6px;padding:8px;font:13px/1.5 system-ui,sans-serif;background:#0f0c1c;color:#fff;border:1px solid #fff4">${shotText()}</textarea>
     <button id="shotX" style="${B}background:#000;color:#fff;border:2px solid #ff4d9a;font-size:15px">𝕏 で シェア</button>
     <div style="display:flex;gap:8px"><button id="shotSave" style="${B}flex:1;background:transparent;color:#fff;border:1px solid #fff6"${url?'':' disabled'}>画像を ほぞん</button><button id="shotClose" style="${B}flex:1;background:transparent;color:#fff;border:1px solid #fff6">とじる</button></div>
     <p id="shotMsg" style="margin:0;font-size:12px;color:#cbbfe6"></p></div>`;
