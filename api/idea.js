@@ -65,6 +65,7 @@ module.exports = async (req, res) => {
       if (text.length < 3) return send(res, 400, { error: 'もう少し くわしく 書いてください（3文字以上）' });
       if (text.length > MAX_TEXT) text = text.slice(0, MAX_TEXT);
       const cat = CATS.includes(body.cat) ? body.cat : 'その他';
+      const nick = String(body.nick || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 20);
       const ih = crypto.createHash('sha256').update(ipOf(req)).digest('hex').slice(0, 16);
       // 同じ端末から、10分に5件まで
       const rl = 'xd:idea:rl:' + ih + ':' + Math.floor(Date.now() / 600000);
@@ -74,7 +75,7 @@ module.exports = async (req, res) => {
       const dk = 'xd:idea:dup:' + crypto.createHash('sha256').update(cat + '|' + text).digest('hex').slice(0, 20);
       const [ok] = await db([['SET', dk, '1', 'NX', 'EX', 86400]]);
       if (ok !== 'OK') return send(res, 200, { ok: true, dup: true });
-      const item = JSON.stringify({ id: crypto.randomBytes(5).toString('hex'), t: Date.now(), cat, text, v: String(body.v || '').slice(0, 20) });
+      const item = JSON.stringify({ id: crypto.randomBytes(5).toString('hex'), t: Date.now(), cat, text, nick, v: String(body.v || '').slice(0, 20) });
       await db([['LPUSH', LIST, item], ['LTRIM', LIST, 0, MAX_KEEP - 1]]);
       return send(res, 200, { ok: true });
     }

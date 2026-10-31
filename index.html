@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031101542"><script id="xd-upd">(function(){var B="20261031101542";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031101802"><script id="xd-upd">(function(){var B="20261031101802";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
 <title>XD戦記</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1650,20 +1650,22 @@ function ideaDlg(){const old=document.getElementById('ideadlg');if(old){old.remo
   const o=document.createElement('div');o.id='ideadlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
   o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:12px;padding:16px;max-width:440px;width:100%;font:14px/1.6 system-ui,sans-serif">
   <div style="font-weight:700;font-size:17px">アイデアを 送る</div>
-  <div style="font-size:12px;opacity:.85;margin:2px 0 10px">敵・道具・ストーリー・あそびやすさ・不具合など、なんでも 教えてください。みんなで このゲームを つくります。<br>※ 名前・連絡先・住所などは 書かないでください。</div>
+  <div style="font-size:12px;opacity:.85;margin:2px 0 10px">敵・道具・ストーリー・あそびやすさ・不具合など、なんでも 教えてください。みんなで このゲームを つくります。<br>※ 本名・連絡先・住所などは 書かないでください。名前欄は ハンドルネームで OK です。</div>
   <div id="ideacats" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
   <textarea id="ideatx" maxlength="400" rows="5" placeholder="たとえば「こんな敵がいたら おもしろい」「ここが 分かりにくい」" style="width:100%;box-sizing:border-box;font:16px/1.5 system-ui,sans-serif;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff;resize:vertical"></textarea>
+  <input id="ideanick" maxlength="20" placeholder="エンドロールに のせる 名前（ハンドルネームで OK・空でも OK）" style="width:100%;box-sizing:border-box;font:15px system-ui,sans-serif;padding:8px;border-radius:6px;border:1px solid #fff6;background:#0d0b1a;color:#fff;margin-top:8px">
   <div style="display:flex;justify-content:space-between;font-size:12px;opacity:.7;margin-top:2px"><span id="ideams" style="color:#ffb0a0;opacity:1"></span><span id="ideact">0/400</span></div>
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button id="ideano" style="padding:8px 14px;border-radius:6px;border:1px solid #fff6;background:none;color:#fff">とじる</button><button id="ideago" style="font-family:var(--display);letter-spacing:.2em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:5px;padding:8px 22px;cursor:pointer">送る</button></div></div>`;
   document.body.appendChild(o);o.addEventListener('click',e=>e.stopPropagation());
   const q=x=>o.querySelector(x),box=q('#ideacats'),tx=q('#ideatx'),ms=q('#ideams'),go=q('#ideago');
   const paint=()=>{box.innerHTML=CATS.map(c=>`<button data-c="${c}" style="padding:4px 10px;border-radius:14px;font-size:13px;border:1px solid ${c===cat?'#fff':'#fff4'};background:${c===cat?'#9b1d7a':'none'};color:#fff;cursor:pointer">${c}</button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{cat=b.dataset.c;paint()})};paint();
+  try{q('#ideanick').value=localStorage.getItem('xd-senki-nick')||''}catch(e){}
   tx.oninput=()=>{q('#ideact').textContent=tx.value.length+'/400'};
   q('#ideano').onclick=()=>o.remove();
   go.onclick=async()=>{ms.textContent='';const t=tx.value.trim();if(t.length<3){ms.textContent='もう少し くわしく 書いてください';return}
     if(!SYNC){ms.textContent='このページからは 送れません';return}
-    go.disabled=true;go.style.opacity=.6;
-    try{const r=await fetch('/api/idea',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'post',cat,text:t,v:'ver4'})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'送れませんでした');
+    go.disabled=true;go.style.opacity=.6;try{localStorage.setItem('xd-senki-nick',q('#ideanick').value.trim().slice(0,20))}catch(e){}
+    try{const r=await fetch('/api/idea',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'post',cat,text:t,nick:q('#ideanick').value.trim().slice(0,20),v:'ver4'})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'送れませんでした');
       q('div').innerHTML='<div style="text-align:center;padding:18px 6px"><div style="font-size:18px;font-weight:700;margin-bottom:6px">ありがとう！</div><div style="font-size:13px;opacity:.85">アイデアを 受けとりました。<br>みんなの アイデアで ゲームが 育ちます。</div><button id="ideaok" style="margin-top:14px;padding:8px 20px;border-radius:6px;border:1px solid #fff6;background:none;color:#fff">とじる</button></div>';
       q('#ideaok').onclick=()=>o.remove()}catch(e){ms.textContent=e.message;go.disabled=false;go.style.opacity=1}}}
 function fsDlg(){const old=document.getElementById('fsdlg');if(old){old.remove();return}
@@ -4362,6 +4364,9 @@ const fkcLine=()=>G.fkc&&FKC[G.fkc]?`<p class="mute" style="margin:0">妖精の�
 function ending(){
   if(!G.endSeen){G.endSeen=1;save();const ek0=endingKind();return openingLong(endingHub,'スキップ ▶',{ending:1,text:endText(ek0),mus:'ending',small:'おわり',btn:'つづく'})}
   return endingHub()}
+let CREDIT_NAMES=[];try{fetch('data/credits.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&Array.isArray(j.names))CREDIT_NAMES=j.names.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim().slice(0,24))}).catch(()=>{})}catch(e){}
+const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+function creditNamesHtml(){if(!CREDIT_NAMES.length)return '';return '<p class="gp"><br></p><p class="h">みんなの アイデア</p><p class="gp"><br></p>'+CREDIT_NAMES.map(n=>`<p>${escH(n)}</p>`).join('')+'<p class="gp"><br></p>'}
 function endText(ek){
   const E=ENDINGS[ek],KL={t:'ツールは ますます 賢くなり、画面は ひと言で 生まれるように なった。',h:'ツールは めまぐるしく 入れかわり、それでも 手で引いた線だけは 色あせなかった。',c:'ツールは いくつも 入れかわり、そのたびに 妖精と 相談しては 新しい 形を つくった。',m:'ツールは 変わりつづけ、XDは そのたびに 悩み、迷い、また 灯を かかげた。'}[ek];
   const wj=(t,n=17)=>t.split('<br>').map(seg=>{if(/</.test(seg))return seg;const tk=seg.match(/[^ 、。]+[、。]?|[ ]/g)||[seg],out=[];let cur='';
@@ -4391,7 +4396,7 @@ function endText(ek){
     gp,gp,
     '<p class="h">STAFF</p>',gp,
     '<p>企画・シナリオ・演出・監修<br>TIMING DESIGN　たあ</p>',
-    gp,
+    gp,creditNamesHtml(),
     '<p class="h">Thank you for playing</p>',gp];
   return story.join('')}
 function credits(back){
@@ -4403,6 +4408,7 @@ function credits(back){
     ${R.map(([a,b])=>`<div class="crd-r"><small>${a}</small><b>${b}</b></div>`).join('')}
     <p class="crd-k" style="margin-top:56px">監修</p>
     <div class="crd-big">TIMING DESIGN</div><div class="crd-big" style="margin-top:6px">たあ</div>
+    ${CREDIT_NAMES.length?`<p class="crd-k" style="margin-top:56px">みんなの アイデア</p>${CREDIT_NAMES.map(n=>`<div class="crd-r"><b>${escH(n)}</b></div>`).join('')}`:''}
     <p class="crd-k" style="margin-top:64px">Thank you for playing</p>
     <p class="crd-k" style="margin-top:12px">XD戦記　おわり</p></div></div>`;
   const el=$('#crdin'),H=innerHeight,h=el.scrollHeight;let done=false;

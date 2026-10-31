@@ -15,7 +15,7 @@ button{cursor:pointer}button.pri{background:linear-gradient(#e0309a,#9b1d7a);bor
 </style></head><body>
 <h1>XD戦記 アイデア箱</h1>
 <div class="bar"><input id="key" type="password" placeholder="管理用の鍵" autocomplete="off" style="flex:1;min-width:160px"><button class="pri" id="go">開く</button></div>
-<div class="bar"><select id="f"><option value="">すべて</option></select><button id="cp">表示中をコピー</button><span id="cnt" style="color:var(--mute)"></span></div>
+<div class="bar"><select id="f"><option value="">すべて</option></select><button id="cp">表示中をコピー</button><button id="cn">名前の一覧をコピー</button><span id="cnt" style="color:var(--mute)"></span></div>
 <div id="msg"></div><div id="list"></div>
 <script>
 const $=s=>document.querySelector(s);let ALL=[];
@@ -25,12 +25,13 @@ try{$('#key').value=sessionStorage.getItem('xd-ideas-key')||''}catch(e){}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 async function api(b){const r=await fetch('/api/idea',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('エラー '+r.status));return j}
 function show(){const f=$('#f').value,rows=ALL.filter(x=>!f||x.o.cat===f);$('#cnt').textContent=rows.length+' 件'+(ALL.length!==rows.length?'（全'+ALL.length+'件）':'');
-  $('#list').innerHTML=rows.map((x,i)=>{const d=new Date(x.o.t);return `<div class="item"><div class="meta"><span class="cat">${esc(x.o.cat)}</span><span>${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span>${x.o.v?`<span>${esc(x.o.v)}</span>`:''}<button class="del" data-i="${ALL.indexOf(x)}">削除</button></div><div class="txt">${esc(x.o.text)}</div></div>`}).join('')||'<div class="item">まだ ありません</div>'}
+  $('#list').innerHTML=rows.map((x,i)=>{const d=new Date(x.o.t);return `<div class="item"><div class="meta"><span class="cat">${esc(x.o.cat)}</span><span>${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span>${x.o.nick?`<span>👤 ${esc(x.o.nick)}</span>`:''}<button class="del" data-i="${ALL.indexOf(x)}">削除</button></div><div class="txt">${esc(x.o.text)}</div></div>`}).join('')||'<div class="item">まだ ありません</div>'}
 async function load(){$('#msg').textContent='読み込み中…';try{const j=await api({action:'list',key:$('#key').value});try{sessionStorage.setItem('xd-ideas-key',$('#key').value)}catch(e){}
   ALL=(j.items||[]).map(raw=>{try{return{raw,o:JSON.parse(raw)}}catch(e){return null}}).filter(Boolean);$('#msg').textContent='';show()}catch(e){$('#msg').textContent=e.message}}
 $('#go').onclick=load;$('#f').onchange=show;
 $('#list').onclick=async e=>{const b=e.target.closest('.del');if(!b)return;const x=ALL[+b.dataset.i];if(!x)return;if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='本当に削除';setTimeout(()=>{b.dataset.arm='';b.textContent='削除'},2500);return}
   try{await api({action:'delete',key:$('#key').value,raw:x.raw});ALL.splice(+b.dataset.i,1);show()}catch(er){$('#msg').textContent=er.message}};
 $('#cp').onclick=()=>{const f=$('#f').value,t=ALL.filter(x=>!f||x.o.cat===f).map(x=>`【${x.o.cat}】${x.o.text}`).join('\n\n');navigator.clipboard.writeText(t).then(()=>$('#msg').textContent='コピーしました',()=>$('#msg').textContent='コピーできませんでした')};
+$('#cn').onclick=()=>{const ns=[...new Set(ALL.map(x=>x.o.nick).filter(Boolean))].reverse();navigator.clipboard.writeText(JSON.stringify({names:ns},null,1)).then(()=>$('#msg').textContent='名前 '+ns.length+' 件を コピーしました（data/credits.json 用）',()=>$('#msg').textContent='コピーできませんでした')};
 if($('#key').value)load();
 </script></body></html>
