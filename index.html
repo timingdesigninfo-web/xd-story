@@ -3404,6 +3404,9 @@ function mkDG(id,o){
     o=Object.assign({},o,{w:M[0].length,h:M.length,rects:rc,spawn:sp,exit:ex.length?[Math.min(...ex),Math.max(...ex)]:null,sdn,sup,torch:tc,props:pc,mobs:mb.map(([x,y],i)=>[x,y,o.mobs[i%o.mobs.length]]),herbs:hb,boss:bo?[bo[0],bo[1],o.boss]:null,chest:ch,rest:rs})}
   const p=mkP(id,'dg',o.w,o.h,{name:o.name,sub:o.sub,base:'W',ds:o.ds||0,q:o.q,tint:o.tint||'#06062a40',spawn:o.spawn,exit:o.exit});
   solidR(p,0,0,o.w,o.h);o.rects.forEach(([x,y,w,h])=>{fillG(p,'c',x,y,w,h);solidR(p,x,y,w,h,false)});
+  /* 祠・迷宮：うすい 壁は 上の マスまで 壁の 上面を 描くので、そこは 歩けない ように する */
+  if(o.map&&(o.ds===1||o.ds===2)){const M=o.map,W_=(x,y)=>y<0||y>=M.length||x<0||x>=M[0].length||M[y][x]==='#';
+    for(let y=1;y<M.length-1;y++)for(let x=0;x<M[0].length;x++)if(W_(x,y)&&!W_(x,y+1)&&!W_(x,y-1)&&!'SECB>< '.includes(M[y-1][x]))solidR(p,x,y-1)}
   (o.torch||[]).forEach(([x,y])=>prop(p,'torch',x,y));(o.props||[]).forEach(([k,x,y,op])=>prop(p,k,x,y,op||{}));
   const col=nm=>{const m=MINIONS.find(m=>m.n===nm)||BOSSES[nm];return m?m.col:['#999','#444']};
   (o.mobs||[]).forEach(([x,y,nm],i)=>{const mid=id+':m'+i,c=col(nm);npc(p,x,y,{n:'魔物',k:'mob',tn:nm,mid,spr:sprite(nm,c[0],c[1]),h:30,Rw:o.map?1:3,hideIf:()=>!!(G.dg&&G.dg[mid])})});
