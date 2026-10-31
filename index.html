@@ -3179,8 +3179,8 @@ function furnishChapel(p,H,o={}){const x=H.x,y=H.y;
   const hm=house(p,{x:1,y:10,w:7,h:5,img:'bld_brown'});furnishHome(p,hm,{npc:{n:'おばあさん',c:NM.old,say:['まあ、おかえり。彗星の子や。','むかしは みんな、手で ぱんを こねたものさ。いまは 「おまかせ」で すぐ できるから、だれも こねなくなってねえ。','……便利なのは いいことさ。でも、この村の 灯が 弱くなったのも、そのころからなんだよ。']}});
   {const wm=house(p,{x:9,y:3,w:5,h:5,img:'bld_windmill',sc:.72,dc:2});
     prop(p,'barrel',wm.x+1,wm.y+1);prop(p,'crate',wm.x+3,wm.y+1);prop(p,'barrel',wm.x+3,wm.y+3,{ns:0});
-    npc(p,wm.x+2,wm.y+2,{n:'こなひきの おじさん',c:NM.man,say:['いらっしゃい。ここは 村の 風車小屋さ。','むかしは みんなが 麦を もってきて、わしが ぱんの 粉に ひいたもんだ。','いまは 「おまかせ」で できあいの 粉が とどく。……でも、手で ひいた 粉の ぱんは、ぜんぜん 味が ちがうんじゃよ。','羽根が まわるのを 見ると、村の 灯も まだ 消えて いないと 思えるのさ。']});
-    npc(p,wm.x+1,wm.y+3,{n:'パンやの むすめ',c:NM.woman,say:['この 粉で、毎朝 ぱんを やくの。','今日は ちょっと こげちゃった……。でも、こげめも 手づくりの あじ、でしょ？']})}
+    npc(p,wm.x+2,wm.y+2,{n:'こなひきの おじさん',dsp:'miller',c:NM.man,say:['いらっしゃい。ここは 村の 風車小屋さ。','むかしは みんなが 麦を もってきて、わしが ぱんの 粉に ひいたもんだ。','いまは 「おまかせ」で できあいの 粉が とどく。……でも、手で ひいた 粉の ぱんは、ぜんぜん 味が ちがうんじゃよ。','羽根が まわるのを 見ると、村の 灯も まだ 消えて いないと 思えるのさ。']});
+    npc(p,wm.x+1,wm.y+3,{n:'パンやの むすめ',dsp:'baker',c:NM.woman,say:['この 粉で、毎朝 ぱんを やくの。','今日は ちょっと こげちゃった……。でも、こげめも 手づくりの あじ、でしょ？']})}
   const ch=house(p,{x:16,y:10,w:7,h:6,img:'bld_chapel'});furnishChapel(p,ch,{npc:{n:'しんぷ',k:'pray',c:NM.mage,say:['ここは 旅人の 無事を いのる 小さな 礼拝堂です。','十年前の 春、空から 光が おちた 夜も、村じゅうが ここに 集まって いのっていました。','このごろ、灯が 日ごとに 弱まります。いのる 人も 減りました。……広場の おじいさんが、お話を したがっていますよ。']}});
   /* 村の 灯：正式版（第1章の さいご）までは 小さく、そのあと 大きく 灯る */
   {const q=prop(p,'torch',13,11,{say:['村の 灯。……ちいさく、ゆれている。'],vtorch:1});q.sc=.72; /* 台の 大きさは かえない。灯ったら 火の 光だけ 強くする */
@@ -3276,7 +3276,7 @@ npc(PLACES.mac,17,13,{n:'Fw',k:'fw',dsp:'fw',still:1,c:['#484728','#e3e40a']});
   prop(p,'torch',12,11);prop(p,'torch',17,11);prop(p,'obelisk',7,13,{say:'古い 石碑。「ここに 灯を 預けた」と かすれて 読める。'});prop(p,'obelisk',20,13);
   prop(p,'bench',8,17,{fw:2});prop(p,'bush1',19,17);prop(p,'dead_tree',22,9);prop(p,'dead_tree',5,6);prop(p,'dead_tree',4,16);prop(p,'dead_tree',24,16);prop(p,'signboard',17,15,{say:['眠りの塔','いまは しずかな 保守の 灯だけが ともっている']});
   npc(p,11,14,{n:'Fl',k:'fl',dsp:'fl',still:1,c:['#cf302a','#5e3134']});
-  npc(p,18,14,{n:'たびの おじいさん',c:NM.old,say:['この 塔の 上では、ひとつの 光が ねむっておる。','起こしては ならん。じゃが、こわがる ことも ない。']});
+  npc(p,18,14,{n:'たびの おじいさん',dsp:'wanderer',c:NM.old,say:['この 塔の 上では、ひとつの 光が ねむっておる。','起こしては ならん。じゃが、こわがる ことも ない。']});
 }
 {const p=mkP('tower_in','tower',11,11,{name:'塔の いちばん うえ',sub:'ねむる 光の へや',base:'c',spawn:[5,9],stop:{x:5,y:5,dir:'down'}});
   fillG(p,'W',0,0,11,2);fillG(p,'W',0,0,1,11);fillG(p,'W',10,0,1,11);fillG(p,'W',0,10,11,1);fillG(p,'c',5,10,1,1);
@@ -3515,7 +3515,7 @@ dgLink('dg_choose','dg_choose2');
   chap('mac',1,2,7,6,['島の 小さな 礼拝堂です。波の 音を 聞きながら、いのって いきなさい。','いのれば、旅の ようすを 記録して おきますよ。']);
   chap('tower',20,4,6,5,['塔の ふもとの 小さな 礼拝所です。眠る 光の ために いのって います。','いのれば、旅の ようすを 記録して おきますよ。']);
   {const p=PLACES.east;p.npcs=p.npcs.filter(n=>n.n!=='こども');
-    const H=p.houses.find(h=>h.img==='bld_jp_shrine');npc(p,H.x+3,H.y+3,{n:'かんぬし',k:'pray',c:NM.mage,say:['ここは 東の国の 社。桜の 下で、旅の 無事を いのります。','いのれば、旅の ようすを 記録して おきますよ。']})}
+    const H=p.houses.find(h=>h.img==='bld_jp_shrine');npc(p,H.x+3,H.y+3,{n:'かんぬし',k:'pray',dsp:'kannushi',c:NM.mage,say:['ここは 東の国の 社。桜の 下で、旅の 無事を いのります。','いのれば、旅の ようすを 記録して おきますよ。']})}
 }
 /* ---- 関所（東西に通り抜ける拡大マップ） ---- */
 const GATEREQ={gate:1,pass:2};
@@ -3708,7 +3708,7 @@ function townLoop(t){
   if(TW.on){drawTown();TW.raf=requestAnimationFrame(townLoop)}
 }
 const NMID=new Map([[NM.child,'kid'],[NM.woman,'woman'],[NM.man,'man'],[NM.old,'elder'],[NM.guard,'guard'],[NM.orange,'shop'],[NM.mage,'priest'],[NM.green,'man'],[NM.red,'kid'],[NM.cook,'inn']]);
-const NPCH={navi:37,captain:38,minister:36,keeper:35,lamp:34,ferry:37,sign:35,net:34,fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
+const NPCH={miller:34,baker:34,kannushi:38,wanderer:35,navi:37,captain:38,minister:36,keeper:35,lamp:34,ferry:37,sign:35,net:34,fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
 function npcId(n){if(n.k==='inn')return'inn';if(n.k==='shop')return'shop';if(n.n==='おばあさん')return'inn';return NMID.get(n.c)||null}
 function drawNpc(cx,n,x,y){
   cx.fillStyle='#00000040';cx.fillRect(x-9,y-3,18,4);
