@@ -1441,7 +1441,7 @@ function migrateG(g){const d={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,m
 function resumeSave(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const au=G.auto&&PLACES[G.auto.id]?G.auto:null;const pr=au||(G.pray&&PLACES[G.pray.id]?G.pray:null);const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(au)placeScreen(au.id);else if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
 function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old.remove();return}
   const o=document.createElement('div');o.id='contdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
-  const bs='display:block;width:100%;box-sizing:border-box;font-family:var(--display);font-size:17px;letter-spacing:.12em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:10px;padding:12px 8px;margin:10px 0 2px;box-shadow:0 0 10px rgba(255,160,220,.6);cursor:pointer';
+  const bs='display:block;width:100%;box-sizing:border-box;font-family:var(--display);font-size:17px;letter-spacing:.25em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:5px;padding:12px 8px;margin:10px 0 2px;box-shadow:0 0 12px rgba(255,160,220,.7);cursor:pointer';
   const sm='font-size:12px;opacity:.8;line-height:1.5';
   const lv=sv&&sv.g?'（第'+((sv.g.ch|0)+1)+'章・Lv'+(sv.g.lv|0)+'）':'';
   o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:12px;padding:16px;max-width:420px;width:100%;font:14px/1.6 system-ui,sans-serif">
@@ -1608,18 +1608,18 @@ function adminPanel(){
   ask()}
 /* ---- ストーリー枠の外に置く操作ボタン（おと／スキップ／合言葉／全画面について） ---- */
 (()=>{const c=document.createElement('style');c.textContent=`
-#optbar{position:fixed;z-index:70;pointer-events:none;right:calc(6px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;gap:8px;width:84px}
-#optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:34px;padding:7px 4px;font-family:var(--display);font-size:12px;line-height:1.25;letter-spacing:.08em;color:#fff!important;background:linear-gradient(#e0309a,#9b1d7a)!important;border:2px solid #fff!important;border-radius:8px;box-shadow:0 0 10px rgba(255,160,220,.6)!important;white-space:normal;text-align:center;cursor:pointer;text-shadow:0 1px 0 #6a0f50}
+#optbar{position:fixed;z-index:70;pointer-events:none;right:calc(6px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;gap:8px;width:92px}
+#optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:34px;padding:7px 4px;font-family:var(--display);font-size:12px;line-height:1.25;letter-spacing:.06em;color:#fff!important;background:linear-gradient(#e0309a,#9b1d7a)!important;border:2px solid #fff!important;border-radius:5px;box-shadow:0 0 12px rgba(255,160,220,.7)!important;text-shadow:none;white-space:normal;text-align:center;cursor:pointer;text-shadow:0 1px 0 #6a0f50}
 #optbar button:active{filter:brightness(.9)}
 @media screen and (orientation:portrait) and (max-width:900px){
  #optbar{inset:0;width:auto;display:block}
- #optbar button{position:absolute!important;min-height:46px;padding:9px 20px;font-size:16px;white-space:nowrap;border-radius:10px;letter-spacing:.2em}
+ #optbar button{position:absolute!important;min-height:44px;padding:8px 20px;font-size:16px;white-space:nowrap;border-radius:5px;letter-spacing:.3em}
  #optbar .k-snd{left:calc(14px + env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
  #optbar .k-skip{right:calc(14px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
  #optbar .k-code{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 70px);font-size:18px;padding:10px 40px}
  #optbar .k-fs{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:auto!important;font-size:15px;letter-spacing:.12em}
  .op .logo2{top:50%!important;transform:translateY(-50%)}
- .op .opstart{bottom:calc(env(safe-area-inset-bottom,0px) + 132px)!important}
+ .op .opstart{bottom:calc(env(safe-area-inset-bottom,0px) + 132px)!important;font-size:18px!important;padding:.45em 1.8em!important;border-width:2px!important;border-radius:5px!important}
  .op #cont{bottom:calc(env(safe-area-inset-bottom,0px) + 182px)!important}
 }`;document.head.appendChild(c)})();
 function mkOptBar(o){const old=document.getElementById('optbar');if(old)old.remove();
