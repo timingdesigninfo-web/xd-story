@@ -4161,8 +4161,10 @@ function mkE(f,i,ks){return {...f,m:f.m.map(mv=>({...mv,v:(mv.t==='A'||mv.t==='M
 const aliveEs=()=>B.es.filter(e=>e.hp>0);
 function startBattle(f0,boss,opt={}){staleInput();
   music(battleTrack(boss,f0));
-  const ks=boss?1+G.ch*.04:1,fl=[].concat(f0),f=fl[0];
-  const es=fl.map((x,i)=>mkE(x,i,ks));
+  /* ボスは 章と 仲間の 人数に あわせて 強く する（仲間が ふえるほど 楽に なりすぎない ように） */
+  const nAl=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&ASK[k]).length,c1=Math.max(0,G.ch-1);
+  const ks=boss?1+c1*.13+nAl*.06:1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
+  const es=fl.map((x,i)=>{const e=mkE(x,i,ks);if(boss&&hk!==1){e.hp=e.max=Math.round(e.max*hk)}return e});
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
   B={es,t:0,allies:alk.map(k=>({k,n:SNM[k]||dn(ALLIES[k]),hp:aHp(k),max:allyMax(k),mp:allyMp(k),mpm:allyMp(k),block:0,sel:'#al_'+k})),boss,minion:!boss,final:!!opt.noAlly,ord:{},ordN:0,paid:0,mp:mpMax(),block:0,str:0,defend:false,used:{},turn:0,busy:true,over:false,menu:'atk',ci:0,li:0,pane:'cmd',pend:null};
