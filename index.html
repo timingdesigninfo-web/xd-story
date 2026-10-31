@@ -4870,37 +4870,60 @@ function dxResult(){const kind=endingKind(),T=DT.types[kind],fl=(G.wins||0)>=8?'
   const tags=DT.hashtags.map(x=>'#'+x).join(' ');
   const text=DT.shareTpl.replace('{type}',T.n).replace('{future}',T.future).replace('{tags}',tags);
   return{kind,T,fl,F,sc:dxScores(),text}}
+/* 診断カード：ゲームの 背景・XD・いちばん 近い なかま */
+const DXNEAR={t:['ff','Fi','言われた ことを すぐ 形に する'],h:['dw','Dw','ひとつの 道を ほりつづける'],c:['ae','Ae','みんなを つないで 動かす'],m:['ps','Ps','光と 影の あいだで 迷いつづける']};
+const DXBG={t:'cloud',h:'forest',c:'apple',m:'snow'};
 function dxCard(R,cb){
   const W=1200,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
-  const grd=g.createLinearGradient(0,0,W,H);grd.addColorStop(0,'#0b0820');grd.addColorStop(1,'#241a4a');g.fillStyle=grd;g.fillRect(0,0,W,H);
-  for(let i=0;i<60;i++){g.fillStyle='rgba(255,255,255,'+(.15+((i*37)%10)/30)+')';g.fillRect((i*197)%W,(i*83)%H,2,2)}
-  g.fillStyle=R.T.col;g.globalAlpha=.16;g.beginPath();g.arc(W-170,170,260,0,7);g.fill();g.globalAlpha=1;
+  const nk=DXNEAR[R.kind]||DXNEAR.m,src={bg:'bg/bg_'+(DXBG[R.kind]||'grass')+'.png',xd:'sprites/ch_xd_d.png',al:'sprites/ch_'+nk[0]+'_d.png',logo:'sprites/logo_s.png'},im={};let n=0;
   const F="'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif";
-  g.textBaseline='alphabetic';g.fillStyle='#ffffffcc';g.font='700 34px '+F;g.fillText('XD戦記　クリエイター診断',60,84);
-  g.fillStyle='#fff';g.font='700 40px '+F;g.fillText('わたしは、こんな クリエイターに なりそう',60,170);
-  g.fillStyle=R.T.col;g.font='800 104px '+F;g.fillText(R.T.n,60,300);
-  g.fillStyle='#fff';g.font='700 42px '+F;g.fillText('2030年の肩書き　'+R.T.future,60,372);
-  g.fillStyle='#ffffffb0';g.font='600 32px '+F;g.fillText(R.T.catch,60,426);
-  const ax=DT.axes;ax.forEach((a,i)=>{const y=462+i*38,v=R.sc[a.id];g.fillStyle='#fff';g.font='700 26px '+F;g.fillText(a.n,60,y+6);
-    g.fillStyle='#ffffff26';g.fillRect(300,y-16,560,22);g.fillStyle=R.T.col;g.fillRect(300,y-16,Math.round(5.6*v),22);g.fillStyle='#fff';g.fillText(String(v),880,y+6)});
-  g.fillStyle='#ffffffb0';g.font='600 28px '+F;g.fillText('#'+DT.hashtags.join('  #'),W-60-g.measureText('#'+DT.hashtags.join('  #')).width,H-12);
-  const im=new Image();im.onload=()=>{try{const w=220,h=Math.round(im.naturalHeight*w/im.naturalWidth);g.drawImage(im,W-w-50,36,w,h)}catch(e){}cb(c)};im.onerror=()=>cb(c);im.src='sprites/logo_s.png'}
+  const draw=()=>{
+    g.fillStyle='#0b0820';g.fillRect(0,0,W,H);
+    if(im.bg){g.imageSmoothingEnabled=false;const k=Math.max(W/im.bg.width,H/im.bg.height);g.drawImage(im.bg,(W-im.bg.width*k)/2,(H-im.bg.height*k)/2,im.bg.width*k,im.bg.height*k)}
+    let gr=g.createLinearGradient(0,0,W,0);gr.addColorStop(0,'rgba(8,6,24,.94)');gr.addColorStop(.52,'rgba(8,6,24,.82)');gr.addColorStop(.78,'rgba(8,6,24,.15)');gr.addColorStop(1,'rgba(8,6,24,0)');g.fillStyle=gr;g.fillRect(0,0,W,H);
+    gr=g.createLinearGradient(0,H-120,0,H);gr.addColorStop(0,'rgba(8,6,24,0)');gr.addColorStop(1,'rgba(8,6,24,.7)');g.fillStyle=gr;g.fillRect(0,H-120,W,120);
+    g.imageSmoothingEnabled=false;
+    const feet=H-70;
+    if(im.al){const h=230,w=im.al.width*h/im.al.height;g.fillStyle='#0006';g.beginPath();g.ellipse(1000,feet,w*.38,12,0,0,7);g.fill();g.drawImage(im.al,1000-w/2,feet-h,w,h)}
+    if(im.xd){const h=300,w=im.xd.width*h/im.xd.height;g.fillStyle='#0006';g.beginPath();g.ellipse(830,feet+6,w*.4,14,0,0,7);g.fill();g.drawImage(im.xd,830-w/2,feet+6-h,w,h)}
+    g.imageSmoothingEnabled=true;g.textBaseline='alphabetic';
+    if(im.logo){const w=170,h=im.logo.height*w/im.logo.width;g.drawImage(im.logo,58,40,w,h)}
+    g.fillStyle='#ffffffb0';g.font='700 26px '+F;g.fillText('クリエイター診断',58+186,40+52);
+    g.fillStyle='#ffffffdd';g.font='700 32px '+F;g.fillText('わたしは、こんな クリエイターに なりそう',62,196);
+    {let fs=112;g.font='800 '+fs+'px '+F;while(g.measureText(R.T.n).width>640&&fs>56){fs-=4;g.font='800 '+fs+'px '+F}g.lineWidth=10;g.strokeStyle='#0b0820';g.strokeText(R.T.n,58,320);g.fillStyle=R.T.col;g.fillText(R.T.n,58,320)}
+    g.fillStyle='#ffffff99';g.font='700 24px '+F;g.fillText('2030年の 肩書き',62,392);
+    g.fillStyle='#fff';g.font='800 42px '+F;g.fillText(R.T.future,62,444);
+    g.fillStyle='#ffffff99';g.font='700 24px '+F;g.fillText('いちばん 近い なかま',62,512);
+    g.fillStyle=R.T.col;g.font='800 36px '+F;g.fillText(nk[1],62,558);const w1=g.measureText(nk[1]).width;g.fillStyle='#ffffffcc';g.font='600 26px '+F;g.fillText('　'+nk[2],62+w1,556);
+    {const t='#'+DT.hashtags.join('  #');g.fillStyle='#ffffffb0';g.font='600 22px '+F;g.fillText(t,W-40-g.measureText(t).width,H-24)}
+    cb(c)};
+  const keys=Object.keys(src);keys.forEach(k=>{const i=new Image();i.onload=()=>{im[k]=i;if(++n===keys.length)draw()};i.onerror=()=>{if(++n===keys.length)draw()};i.src=src[k]})}
 function showDiagnosis(back){
   loadDT(()=>{const R=dxResult();music('ending');
-    shell(`<div class="scroll cs"><p class="kicker">${DT.title}</p>
-      <h2 style="margin:4px 0;color:${R.T.col}">${R.T.n}</h2>
-      <p class="lead" style="margin:0">${R.T.catch}　<span class="mute">（${R.F.n}タイプ）</span></p>
-      <p class="lead" style="margin:6px 0 0">2030年の 肩書き：<b>${R.T.future}</b></p>
-      ${fkcLine()}
-      <img id="dxImg" alt="診断結果の画像" style="width:100%;max-width:520px;border-radius:8px;margin:8px 0;display:block;background:#111">
-      ${R.T.desc.map(t=>`<p class="lead">${t}</p>`).join('')}
-      <p class="lead"><b>とくい</b>　${R.T.strong.join('／')}<br><b>きをつけて</b>　${R.T.watch}<br><b>つぎの一歩</b>　${R.T.next}<br><span class="mute">${R.F.line}</span></p>
-      <textarea id="dxText" rows="4" style="width:100%;min-height:7.5em;box-sizing:border-box;border-radius:6px;padding:8px;font:inherit">${R.text}</textarea>
-      <div class="row"><button class="btn" id="dxShare">シェア</button><a class="btn ghost" id="dxX" target="_blank" rel="noopener">X</a><a class="btn ghost" id="dxLine" target="_blank" rel="noopener">LINE</a></div>
-      <div class="row"><button class="btn ghost" id="dxCopy">文をコピー</button><button class="btn ghost" id="dxSave">画像を 大きく見る</button><button class="btn ghost" id="dxBack">もどる</button></div>
-      <p class="mute" style="margin:0">画像は 長押しで 保存できます。XやLINEに 画像を つけるときは、先に 保存してください。</p></div>`,{al:'もどる'});
+    shell(`<div class="scroll cs" style="display:flex;flex-direction:column;gap:14px">
+      <p class="kicker" style="margin:0">${DT.title}</p>
+      <img id="dxImg" alt="診断結果の画像" style="width:100%;max-width:520px;border-radius:10px;display:block;background:#111">
+      <div><h2 style="margin:0;color:${R.T.col}">${R.T.n}</h2><p class="lead" style="margin:4px 0 0">${R.T.catch}</p></div>
+      <div class="row" style="margin:0"><button class="btn" id="dxShare">シェア</button><a class="btn ghost" id="dxX" target="_blank" rel="noopener">X</a><a class="btn ghost" id="dxLine" target="_blank" rel="noopener">LINE</a></div>
+      <div>${R.T.desc.map(t=>`<p class="lead" style="margin:0 0 8px">${t}</p>`).join('')}</div>
+      <details style="border-top:1px solid #fff2;padding-top:10px"><summary class="lead" style="cursor:pointer">もっと くわしく</summary>
+        <p class="lead" style="margin:10px 0 0"><b>とくい</b><br>${R.T.strong.join('／')}</p>
+        <p class="lead" style="margin:10px 0 0"><b>きをつけて</b><br>${R.T.watch}</p>
+        <p class="lead" style="margin:10px 0 0"><b>つぎの一歩</b><br>${R.T.next}</p>
+        <p class="mute" style="margin:10px 0 0">${R.F.n}タイプ　${R.F.line}</p>
+        ${fkcLine()}
+        <p class="mute" style="margin:14px 0 4px">シェアの 文（書きかえられます）</p>
+        <textarea id="dxText" rows="4" style="width:100%;box-sizing:border-box;border-radius:6px;padding:8px;font:inherit">${R.text}</textarea>
+        <div class="row"><button class="btn ghost" id="dxCopy">文をコピー</button><button class="btn ghost" id="dxSave">画像を 大きく見る</button></div>
+        <p class="mute" style="margin:0">画像は 長押しで 保存できます。</p></details>
+      <div class="row" style="margin:0"><button class="btn ghost" id="dxBack">もどる</button></div></div>`,{al:'もどる'});
     let blob=null,url='';
-    dxCard(R,cv=>{url=cv.toDataURL('image/png');const im=$('#dxImg');if(im)im.src=url;try{cv.toBlob(b=>{blob=b})}catch(e){}});
+    dxCard(R,cv=>{url=cv.toDataURL('image/png');const im=$('#dxImg');if(im)im.src=url;try{cv.toBlob(b=>{blob=b})}catch(e){}
+      /* 画面シェアと おなじく、カードを サーバーに 置いて その URL で シェア（Xで カードが 出る） */
+      if(/^https?:$/.test(location.protocol)&&!/claude|anthropic|localhost|127\./i.test(location.hostname)){const xb=$('#dxX');if(xb){xb.style.opacity=.6;xb.textContent='カード じゅんび中…'}
+        (async()=>{try{const r=await fetch('/api/shot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({img:shotJpeg(cv)})});const j=await r.json();
+          if(r.ok&&j.url){const ta=$('#dxText');if(ta){let v=ta.value;const re=/https?:\/\/[^\s]*xd-story[^\s]*|https?:\/\/[^\s]+\/(?=\s|$)/;v=re.test(v)?v.replace(re,j.url):v.trim()+'\n'+j.url;ta.value=v;setLinks()}}}catch(e){}
+          const xb2=$('#dxX');if(xb2){xb2.style.opacity=1;xb2.textContent='X'}})()}});
     const txt=()=>($('#dxText')||{}).value||R.text,enc=encodeURIComponent;
     const setLinks=()=>{$('#dxX').href='https://twitter.com/intent/tweet?text='+enc(txt());$('#dxLine').href='https://line.me/R/msg/text/?'+enc(txt())};
     setLinks();$('#dxText').oninput=setLinks;
