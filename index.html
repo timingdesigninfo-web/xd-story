@@ -1249,11 +1249,17 @@ async function shotCard(src){
     for(const [t,col,r] of info){const n=Math.round(26*r);let m=n;g.font=F(m);while(m>14&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
     y+=GAP2;g.font=F(22);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
   }else{ /* 横（または 画面なし）：上に ゲーム画面、下に ロゴと じょうたい */
-    let y=SY;
-    if(src){const gw=760,k=gw/src.width,gh=Math.min(Math.round(src.height*k),Math.round(SQ*.66)),w=Math.round(src.width*(gh/src.height)),x=Math.round((W-w)/2);drawGame(x,y+4,w,gh);y+=gh+22}
-    const rest=SY+SQ-y,lh=drawLogo(W/2,y,SQ*.8,src?rest*.55:SQ*.5);y+=lh+12;
-    g.textAlign='center';g.textBaseline='top';
-    const line=info.map(i=>i[0]).join('　');g.fillStyle='#ffcf5a';g.fillText(fit(line,24,760),W/2,y);
+    /* まとまり（ゲーム画面＋ロゴ＋じょうたい）を はかってから、上下 中央に おく */
+    let gw=0,gh=0;if(src){gw=Math.min(760,SQ*1.2);gh=Math.min(Math.round(src.height*gw/src.width),Math.round(SQ*.62));gw=Math.round(src.width*gh/src.height)}
+    const G1=src?24:0,lk=logo.naturalWidth?Math.min(SQ*.7/logo.naturalWidth,(src?SQ*.2:SQ*.45)/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,G2=12,th=24,blk=gh+G1+lgh+G2+th;
+    let y=SY+(SQ-blk)/2;
+    if(src){drawGame(Math.round((W-gw)/2),Math.round(y),gw,gh);y+=gh+G1}
+    drawLogo(W/2,y,SQ*.7,src?SQ*.2:SQ*.45);y+=lgh+G2;
+    /* じょうたいは 1行。色は 縦と おなじ（章＝金、場所＝白、Lv＝うす紫） */
+    const parts=info.map(([t,col])=>[t,col]),sep='　';let n=24;g.font=F(n);const tw=()=>g.measureText(parts.map(p=>p[0]).join(sep)).width;
+    while(n>14&&tw()>SQ){n--;g.font=F(n)}
+    let x=W/2-tw()/2;g.textAlign='left';g.textBaseline='top';
+    parts.forEach(([t,col],i)=>{g.fillStyle=col;g.fillText(t,x,y);x+=g.measureText(t+(i<parts.length-1?sep:'')).width});
   }
   return c;
 }
