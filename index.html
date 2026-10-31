@@ -4086,11 +4086,11 @@ function render(){
     return `<div class="er ${x.hp<=0?'dead':''} ${tg?'tg':''}" data-i="${i}"><div class="line"><span>${tg?'▶':''}${x.n}</span><b>${Math.max(0,x.hp)}/${x.max}</b></div><div class="mini"><i style="width:${Math.max(0,x.hp)/x.max*100}%"></i></div><div class="chips">${(x.block?`<span class="chip def">バリア ${x.block}</span>`:'')+(x.str?`<span class="chip str">攻撃+${x.str}</span>`:'')+(x.weak?`<span class="chip weak">弱体 ${x.weak}</span>`:'')+(x.survive?`<span class="chip sv">あと${Math.max(0,x.survive-B.turn+1)}ターン</span>`:'')}</div></div>`}).join('');
   document.querySelectorAll('.eu').forEach(u=>{const i=+u.dataset.i,x=B.es[i];u.classList.toggle('dead',x.hp<=0&&!x._dying);u.classList.toggle('tg',B.pane==='tgt'&&B.t===i&&x.hp>0)});
   partyAll().forEach(m=>{const el=$('#pm_'+m.k);if(el)el.classList.toggle('ko',m.hp<=0)});
-  B.allies.forEach(a=>{const r=$('#al_'+a.k);if(!r)return;r.querySelector('.ah').textContent=Math.max(0,a.hp)+'/'+a.max;r.querySelector('.ahp').style.width=Math.max(0,a.hp)/a.max*100+'%';r.classList.toggle('dead',a.hp<=0);{const ch=a.hp>0?[(B.ord&&B.ord.atk>0?TG('a','攻↑',B.ord.atk):''),(B.ord&&B.ord.grd>0?TG('d','守',B.ord.grd):''),(a.block>0?TG('d','壁',a.block):'')].join(''):'',c2=$('#ac_'+a.k);if(c2)c2.innerHTML=ch||'<span style="opacity:.6">MP</span>';r.classList.toggle('buf',!!ch)}const m2=$('#am_'+a.k);if(m2){m2.querySelector('.ah').textContent=Math.max(0,a.mp)+'/'+a.mpm;m2.querySelector('.amp').style.width=Math.max(0,a.mp)/Math.max(1,a.mpm)*100+'%'}});
+  B.allies.forEach(a=>{const r=$('#al_'+a.k);if(!r)return;r.querySelector('.ah').textContent=Math.max(0,a.hp)+'/'+a.max;r.querySelector('.ahp').style.width=Math.max(0,a.hp)/a.max*100+'%';r.classList.toggle('dead',a.hp<=0);{const ch=a.hp>0?[(B.ord&&B.ord.atk>0?TG('a','攻↑',B.ord.atk):'')+(B.fiDown>0?TG('d','攻↓',B.fiDown):''),(B.ord&&B.ord.grd>0?TG('d','守',B.ord.grd):''),(a.block>0?TG('d','壁',a.block):'')].join(''):'',c2=$('#ac_'+a.k);if(c2)c2.innerHTML=ch||'<span style="opacity:.6">MP</span>';r.classList.toggle('buf',!!ch)}const m2=$('#am_'+a.k);if(m2){m2.querySelector('.ah').textContent=Math.max(0,a.mp)+'/'+a.mpm;m2.querySelector('.amp').style.width=Math.max(0,a.mp)/Math.max(1,a.mpm)*100+'%'}});
   $('#php').style.width=(Math.max(0,G.hp)/G.max*100)+'%';$('#hpv').textContent=`${Math.max(0,G.hp)}/${G.max}`;$('#hpv').className=low?'low':'';
   $('#pmp').style.width=(B.mp/mm*100)+'%';$('#mpv').textContent=`${B.mp}/${mm}GB`;{const cb=$('#pcr');if(cb){cb.style.width=Math.min(100,crOf()/2)+'%';$('#crv').textContent=`${crOf()}CR`}}
   try{$('#me').classList.toggle('fglow',!!ordOn())}catch(e){}
-  $('#pchips').innerHTML=(B.up&&B.up.a?TG('a','攻↑',B.up.a.t):'')+(B.up&&B.up.s?TG('a','技↑',B.up.s.t):'')+(B.ord&&B.ord.atk>0?TG('a','攻↑',B.ord.atk):'')+(B.ord&&B.ord.grd>0?TG('d','守',B.ord.grd):'')+(B.defend?TG('d','防'):'')+(B.block?TG('d','壁',B.block):'')+(B.str?TG('a','力+',B.str):'')+(B.stance==='atk'?TG('a','攻構'):B.stance==='def'?TG('d','守構'):'')+(B.sure?TG('m','会心'):'')+(B.free?TG('m','MP0'):'');
+  $('#pchips').innerHTML=(B.up&&B.up.a?TG('a','攻↑',B.up.a.t):'')+(B.up&&B.up.s?TG('a','技↑',B.up.s.t):'')+(B.ord&&B.ord.atk>0?TG('a','攻↑',B.ord.atk):'')+(B.fiDown>0?TG('d','攻↓',B.fiDown):'')+(B.ord&&B.ord.grd>0?TG('d','守',B.ord.grd):'')+(B.defend?TG('d','防'):'')+(B.block?TG('d','壁',B.block):'')+(B.str?TG('a','力+',B.str):'')+(B.stance==='atk'?TG('a','攻構'):B.stance==='def'?TG('d','守構'):'')+(B.sure?TG('m','会心'):'')+(B.free?TG('m','MP0'):'');
   const off=B.busy||B.over;
   $('#cmdw').innerHTML='<div class="wt">XD</div><div class="sc">'+CMDS.map(([k,l])=>{
     const dim=off||(k==='lamp'&&(!G.lamp||B.lampUsed))||(k==='ai'&&!G.fairy)||(k==='tac'&&!B.allies.length)||(k==='run'&&!B.minion);
@@ -4258,6 +4258,7 @@ async function runQ(){
       let om=1;if(isX&&B.up){om*=1+(B.up.a?B.up.a.m:0)+(B.inSkill&&B.up.s?B.up.s.m:0)}
       if(!isX&&a.who!=='fi'&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
       if(isX&&B.ord&&B.ord.atk>0){if(B.bad){om*=.5;if(!B.badSaid){B.badSaid=1;say('……妖精の光が ぼうそうした！');await wait(520)}}else{om*=B.inSkill?ordM()+.4:(B.ord.m||ordM());if(B.ord.pr)pierce=true}}
+      if(B.fiDown>0&&a.who!=='fi')om*=.75; /* Fiの 暴走で 弱まった */
       if(B.fkc){const fk=B.fkc;if(isX)om*=({h:1.3,c:1.1,f:.8,t:B.awk?1.4:.5})[fk]||1;else if(fk==='c')om*=1.15}
       if(crit){pierce=true;d=Math.round(base*a.m*1.9*om)}
       else d=Math.max(1,Math.round(base*a.m*om*(.9+Math.random()*.2)));
@@ -4351,7 +4352,7 @@ function navOk(){
   pickCmd();
 }
 function navBack(){if(!B||B.busy||B.over)return;if(B.pane==='tgt'){B.pane=B.pend&&B.pend.from==='list'?'list':'cmd';B.pend=null;say('');sfx('tap');render();return}B.pane='cmd';sfx('tap');render()}
-function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});if(B.ord.atk>0)B.bad=!B.ord.nb&&Math.random()<badP();if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
+function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
   if(G.hp<=0){B.busy=true;render();autoRound();return}
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
   B.busy=false;render()}
@@ -4408,7 +4409,11 @@ async function giveOrder(k){
     say('XDは Fiに <b>戦いを 任せた</b>。<br>「たのんだよ、Fi！」');await wait(750);
     if(Math.random()<badP()){ /* まず こうげきに 入ってから、ぼうそうして それる */
       const tg=(B.e&&B.e.hp>0)?B.e:aliveEs()[0];say('Fiの <b>こうげき</b>！');sfx('swing');await wait(500);
-      try{jolt('#foe','shake')}catch(e){}pop('#foe','ミス','blk',tg.id);sfx('junk');say('……妖精の光が ぼうそうした！<br>Fiの こうげきは それて しまった。');await wait(900)}
+      try{jolt('#foe','shake')}catch(e){}pop('#foe','ミス','blk',tg.id);sfx('junk');say('……妖精の光が ぼうそうした！<br>Fiの こうげきは それて しまった。');await wait(800);
+      const rr=Math.random(); /* 暴走の 結果：味方に 少し ダメージ／2ターン 力が 弱まる／クレジットが へる */
+      if(rr<.34){const ms=partyAlive(),m=ms[Math.floor(Math.random()*ms.length)];if(m){const d=Math.max(1,Math.min(m.hp-1,Math.round(m.max*(.08+Math.random()*.04))));m.hp-=d;sfx('hurt');try{jolt(m.sel,'flash')}catch(e){}pop(m.sel,'-'+d,'dmg');render();say(`それた 光が <b>${m.n||'XD'}</b>に あたった！ <b>${d}</b>の ダメージ。`);await wait(900)}}
+      else if(rr<.67){B.fiDown=2;B.allies.forEach(a=>{if(a.hp>0)pop(a.sel,'攻↓','blk')});pop('#me','攻↓','blk');render();say('ぼうそうした 光に のまれて、みんなの 力が 弱まった……<br><b>2ターン</b>、こうげきりょくが さがる。');await wait(900)}
+      else{const lost=Math.min(crOf(),Math.round(ordCost()*.8));crAdd(-lost);sfx('junk');pop('#me','CR-'+lost,'blk');render();say(`ぼうそうした 光が クレジットを のみこんだ……<br>クレジットが <b>${lost}</b> へった。`);await wait(900)}}
     else{ACT='fi';Q=[];ACT_T=((B.e&&B.e.hp>0)?B.e:aliveEs()[0]).id;const gen=Math.random()<Math.min(.5,.2+.03*P);
       if(gen){say('Fiの <b>生成攻撃</b>！<br>光が 敵ぜんたいに ふりそそぐ！');sfx('skill');await wait(500);hitF(.75+.03*P,'burst:',true)}
       else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
