@@ -1438,6 +1438,8 @@ function shotBtns(){
     v.appendChild(b)})}
 /* カメラの ボタンは つかわない（シェアは メニューと 戦闘の「シェア」ボタンから） */
 /* 会話中・バトルの 演出中に メニューを おしたとき：会話は そのままで、シェアだけ えらべる */
+/* 会話も メニューも 出ていないのに 操作中の ままに なって いたら、もどす */
+function staleBusy(){if(inBattle()||$('#tmsg')||TW.door)return false;if(['wmapov','ideadlg','fsdlg','busymenu','shotdlg'].some(id=>document.getElementById(id)))return false;const ov=$('#ov');if(ov&&!ov.hidden)return false;return !!(FLD.on||TW.on)}
 function busyMenu(){
   const old=document.getElementById('busymenu');if(old){old.remove();return}sfx('tap');
   const o=document.createElement('div');o.id='busymenu';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#0007;display:flex;align-items:center;justify-content:center;padding:16px';
@@ -1513,7 +1515,7 @@ function tmain(){
     {l:'どうぐ',s:`やくそう ${G.items.herb||0}　ドリンク ${G.items.dr||0}`,f:()=>tmBag()},
     {l:'そうび',s:'武器と 防具を つけかえる',f:()=>tmEquip()},
     {l:'つよさ',s:`HP ${G.hp}/${G.max}　CR ${crOf()}`,f:()=>tmStatus()},
-    {l:'せかいちず',s:'いまの いちと おとずれた 場所',f:()=>tmMap()},
+    {l:'せかいちず',s:'いまの いちと おとずれた 場所',f:()=>{tmClose();tmMap()}},
     {l:'せってい',s:'おと・文字おくり・ルール',f:()=>tmSet()},
     {l:'画面を シェア',s:'いまの 画面を Xに のせる',f:()=>{tmClose();shotShare()}},
     {l:'アイデアを 送る',s:'みんなで ゲームを つくろう',f:()=>{tmClose();ideaDlg()}},
@@ -1841,7 +1843,7 @@ app.addEventListener('click',e=>{
   if(a==='rules'){sfx('tap');showRules()}
   if(a==='bag'){sfx('tap');showBag()}
   if(a==='q_shot'){shotShare();return}
-  if(a.startsWith('q_')){if(TW.busy||(inBattle()&&B.busy)){if(!$('#tmsg.tch'))busyMenu();return}sfx('tap');tmain()}
+  if(a.startsWith('q_')){if(TW.busy&&staleBusy())TW.busy=false;if(TW.busy||(inBattle()&&B.busy)){if(!$('#tmsg.tch'))busyMenu();return}sfx('tap');tmain()}
   if(a==='talk'||a==='ok')pressA();
   if(a==='back'){const ov=$('#ov');if(ov&&!ov.hidden){const c=$('#ovclose');if(c)c.click()}else if(inBattle()){if(B.busy)tapSkip();else navBack()}else if((TW.on||FLD.on)&&$('#tmsg.tch')){const m=$('#tmsg.tch');if(TMBACK){sfx('tap');TMBACK()}else if(m.querySelector('.tmh')){sfx('tap');tmClose()}else if(m._cancel){m._cancel()}}else if((TW.on||FLD.on)&&$('#tmsg')&&$('#tmsg')._skip){sfx('tap');$('#tmsg')._skip()}else if(TW.on||FLD.on){if(!TW.busy){sfx('tap');tmain()}}else{sfx('tap');showBag()}}
   if(a==='pad'){sfx('tap');const on=!PADON();PADV=on;try{localStorage.setItem('xd-senki-pad',on?'1':'0')}catch(e){}const g=$('#gpad');if(g)g.hidden=!PADV}
@@ -3738,6 +3740,8 @@ function drawTown(){
 /* ================= field ================= */
 let CONT=null;
 function nodeDone(){CONT&&CONT()}
+/* 敵の 出やすさ：陸は 歩数 ENC_MIN〜ENC_MIN+ENC_RND-1 で 1回。海は 1歩を ENC_SEA 歩ぶんと 数える */
+const ENC_MIN=12,ENC_RND=10,ENC_SEA=.4;
 const FLD={on:false,raf:0,held:[],steps:0,thr:16,cv:null,cx:null,lastKey:null,tick:0,last:0,acc:0};
 const P={tx:86,ty:20,px:2752,py:640,dir:'down',moving:false,tgx:0,tgy:0,anim:0};
 const FC=6,ROW={down:0,up:1,left:2,right:3},VEC={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
@@ -3808,7 +3812,7 @@ function fieldScreen(){DGBG=null;
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);setHeld(d,true)});
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>setHeld(d,false)));
   });
-  FLD.steps=0;FLD.thr=5+(Math.random()*6|0);FLD.on=true;FLD.last=performance.now();FLD.acc=0;
+  FLD.steps=0;FLD.thr=ENC_MIN+(Math.random()*ENC_RND|0);FLD.on=true;FLD.last=performance.now();FLD.acc=0;
   save();showName();
   FLD.raf=requestAnimationFrame(fieldLoop);
 if(G.pendLight)setTimeout(showPendLight,700);}
@@ -3837,13 +3841,13 @@ function fieldStep(){
   FLD.tick++;
   if(!P.moving&&FLD.held.length){
     const d=FLD.held[FLD.held.length-1];P.dir=d;const[dx,dy]=VEC[d];
-    if(walkable(P.tx+dx,P.ty+dy)){P.moving=true;P.tgx=P.tx+dx;P.tgy=P.ty+dy}
+    if(walkable((P.tx+dx+MW)%MW,P.ty+dy)){P.moving=true;P.tgx=P.tx+dx;P.tgy=P.ty+dy}
   }
   if(P.moving){
     const sp=2,gx=P.tgx*TS,gy=P.tgy*TS;
     P.px+=Math.sign(gx-P.px)*sp;P.py+=Math.sign(gy-P.py)*sp;P.anim++;trailPush();
     if(P.anim%16===8)sfx('step');
-    if(P.px===gx&&P.py===gy){P.tx=P.tgx;P.ty=P.tgy;P.moving=false;arrive()}
+    if(P.px===gx&&P.py===gy){P.tx=P.tgx;P.ty=P.tgy;if(P.tx<0||P.tx>=MW){const w=P.tx<0?MW:-MW;P.tx+=w;P.px+=w*TS;P.tgx=P.tx;P.trail=[]}P.moving=false;arrive()}
   }else{P.anim=0;if(FLD.tick%20===0){const fs=CH[G.ch]&&CH[G.ch].stops[G.stop],M=fs&&fs.type==='meet'&&MEET[fs.at];if(M&&P.tx===M.x&&P.ty===M.y){stopField();CONT=stopDone;sfx('skill');return meetEvent(M)}}}
 }
 function arrive(){
@@ -3860,7 +3864,7 @@ function arrive(){
   showName();
   const t=grid[P.ty][P.tx];
   if(t!==4&&t!==7&&t!==9){
-    FLD.steps++;
+    FLD.steps+=t===0?ENC_SEA:1;
     if(FLD.steps>=FLD.thr){stopField();CONT=fieldResume;sfx('skill');return encounter()}
   }
 }
@@ -3900,9 +3904,16 @@ function fieldLoop(t){
 }
 function drawField(){
   const cx=FLD.cx;if(!cx)return;
-  let camx=Math.round(P.px+TS/2-VW/2),camy=Math.round(P.py+TS/2-VH/2);
-  camx=Math.max(0,Math.min(MW*TS-VW,camx));camy=Math.max(0,Math.min(MH*TS-VH,camy));
-  cx.clearRect(0,0,VW,VH);cx.drawImage(MAP,camx,camy,VW,VH,0,0,VW,VH);
+  /* 東西は つながっている：左右の はしでは 反対がわも かさねて 描く */
+  let cx0=Math.round(P.px+TS/2-VW/2),cy0=Math.round(P.py+TS/2-VH/2);const WPX=MW*TS;
+  cy0=Math.max(0,Math.min(MH*TS-VH,cy0));
+  cx.clearRect(0,0,VW,VH);
+  const offs=[0];if(cx0<0)offs.push(WPX);if(cx0+VW>WPX)offs.push(-WPX);
+  offs.forEach(o=>drawFieldPass(cx,cx0+o,cy0,o===0));
+}
+function blitWrap(cx,img,camx,camy,alpha){const W=MW*TS,sx=Math.max(0,camx),ex=Math.min(W,camx+VW);if(ex<=sx)return;if(alpha!=null)cx.globalAlpha=alpha;cx.drawImage(img,sx,camy,ex-sx,VH,sx-camx,0,ex-sx,VH);cx.globalAlpha=1}
+function drawFieldPass(cx,camx,camy,main){
+  blitWrap(cx,MAP,camx,camy);
   const objs=[];
   {const fs=CH[G.ch]&&CH[G.ch].stops[G.stop],M=fs&&fs.type==='meet'&&MEET[fs.at];
     if(M&&M.dock)objs.push({y:M.y*TS+TS,f:()=>{const im=timg('sprites/ship.png');if(im.complete&&im.naturalWidth){const w=88*.7,bx=Math.round(M.x*TS+TS/2-camx),by=Math.round((M.y+1)*TS+TS-6-camy+Math.sin(FLD.tick/16)*1.5);cx.drawImage(im,88,176,88,88,Math.round(bx-w/2),Math.round(by-w),w,w)}
@@ -3928,7 +3939,7 @@ function drawField(){
     cx.fillStyle='#6b4a2a';cx.fillRect(x-1,y-20,3,18);cx.fillStyle='#ffcf5a';cx.fillRect(x+2,y-20,11,7);cx.fillStyle='#b8861a';cx.fillRect(x+2,y-14,11,1);}})}
   for(const k in BONUS){const b=BONUS[k];if(G&&G.bonus&&G.bonus[k])continue;objs.push({y:b.y*TS+TS,f:()=>{const bx=Math.round(b.x*TS+TS/2-camx),by=Math.round(b.y*TS+TS/2-camy),r=2+Math.abs(Math.sin(FLD.tick/10))*3;cx.fillStyle='#ffe566';cx.fillRect(bx-1,Math.round(by-r),2,Math.round(r*2));cx.fillRect(Math.round(bx-r),by-1,Math.round(r*2),2);cx.fillStyle='#fff';cx.fillRect(bx-1,by-1,2,2)}})}
   if(!(G&&G.ship&&grid[P.ty][P.tx]===0))objs.push({y:P.py+TS+1,f:()=>fairyDraw(cx,Math.round(P.px+TS/2-camx),Math.round(P.py+TS-6-camy),FLD.tick,P.dir)});
-  const onSea=!!(G&&G.ship&&(grid[P.ty][P.tx]===0||(P.moving&&grid[P.tgy]&&grid[P.tgy][P.tgx]===0)));
+  const onSea=!!(G&&G.ship&&(grid[P.ty][P.tx]===0||(P.moving&&grid[P.tgy]&&grid[P.tgy][(P.tgx+MW)%MW]===0)));
   if(G&&!onSea&&((G.ship&&G.sx!=null)||(G.ch>=5&&!G.ship)))objs.push({y:(G.sy??21)*TS+TS,f:()=>{const im=timg('sprites/ship.png'),sx=G.sx??127,sy=G.sy??21;if(im.complete&&im.naturalWidth){const w=88*.7,bx=Math.round(sx*TS+TS/2-camx),by=Math.round(sy*TS+TS-6-camy+Math.sin(FLD.tick/16)*1.5);cx.fillStyle='#00000030';cx.fillRect(bx-18,by-3,36,4);cx.drawImage(im,88,176,88,88,Math.round(bx-w/2),Math.round(by-w),w,w)}}});
   if(onSea)objs.push({y:P.py+TS,f:()=>{const im=timg('sprites/ship.png');if(!(im.complete&&im.naturalWidth))return;
     const row={down:0,up:1,left:2,right:3}[P.dir]||0,fr=[0,1,2,1][Math.floor(FLD.tick/9)%4],sc=.6,w=88*sc,bob=Math.round(Math.sin(FLD.tick/14)*1.5),
@@ -3938,7 +3949,7 @@ function drawField(){
   if(WALK.complete&&!onSea)objs.push({y:P.py+TS,f:()=>{const fr=P.anim>0?Math.floor(P.anim*FC/42)%FC:0;
     cx.drawImage(WALK,fr*38,ROW[P.dir]*50,38,50,Math.round(P.px+TS/2-15-camx),Math.round(P.py+TS-6-40-camy),30,40)}});
   objs.sort((a,b)=>a.y-b.y);objs.forEach(o=>o.f());
-  cx.globalAlpha=.45;cx.drawImage(CLT,camx,camy,VW,VH,0,0,VW,VH);cx.globalAlpha=1;
+  blitWrap(cx,CLT,camx,camy,.45);
   // target arrow
   const st=CH[G.ch].stops[G.stop];if(st.need&&(G.hunt||0)<st.need)return;const L=loc(st.at),bob=Math.sin(FLD.tick/9)*3;
   const ax=Math.round(L.x*TS+TS/2-camx),ay=Math.round((L.lm?(L.y+1)*TS+4-LH-8:L.y*TS-26)-camy+bob);
