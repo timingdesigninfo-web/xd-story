@@ -1524,18 +1524,21 @@ function tmain(){
 function tmMap(){
   const old=document.getElementById('wmapov');if(old)old.remove();
   const S=.25,c=document.createElement('canvas');c.width=Math.round(MW*TS*S);c.height=Math.round(MH*TS*S);
-  const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(MAP,0,0,c.width,c.height);
+  /* いる 場所を 左右の まんなかに：東西は つながって いるので ずらして 描く */
+  const SH=Math.round((G.tx||0)+.5-MW/2),WX=x=>((x-SH)%MW+MW)%MW;
+  const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+  {const k=((SH%MW)+MW)%MW,a=(MW-k)*TS;g.drawImage(MAP,k*TS,0,a,MH*TS,0,0,a*S,c.height);if(k)g.drawImage(MAP,0,0,k*TS,MH*TS,a*S,0,k*TS*S,c.height)}
   g.font='bold 13px sans-serif';g.textAlign='center';
-  const lab=(x,y,n,col)=>{const px=(x+.5)*TS*S,py=(y+.5)*TS*S;g.fillStyle=col;g.beginPath();g.arc(px,py,4,0,7);g.fill();g.lineWidth=1.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=3.5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,py-8);g.fillStyle='#fff';g.fillText(n,px,py-8)};
+  const lab=(x,y,n,col)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S;g.fillStyle=col;g.beginPath();g.arc(px,py,4,0,7);g.fill();g.lineWidth=1.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=3.5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,py-8);g.fillStyle='#fff';g.fillText(n,px,py-8)};
   for(const k in LM)lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
   const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:absolute;inset:0;z-index:90;background:#000d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px';
   c.style.cssText='max-width:100%;max-height:84%;min-height:0;border:2px solid #fff6;border-radius:6px;image-rendering:pixelated';
-  const t=document.createElement('div');t.style.cssText='color:#fff;font-size:13px';t.textContent='せかいちず　（タップで とじる）　赤い点＝いまの いち';
+  const t=document.createElement('div');t.style.cssText='color:#fff;font-size:13px';t.textContent='せかいちず　（タップで とじる）　赤い点＝いまの いち　左右の はしは つながっている';
   o.append(c,t);
   const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{e.stopPropagation();e.preventDefault();close()};
   o.onclick=close;document.addEventListener('keydown',kd,true);(app||document.body).appendChild(o);
-  let on=true;const blink=()=>{if(!document.getElementById('wmapov'))return;const px=(G.tx+.5)*TS*S,py=(G.ty+.5)*TS*S,cx=c.getContext('2d');on=!on;
+  let on=true;const blink=()=>{if(!document.getElementById('wmapov'))return;const px=(WX(G.tx)+.5)*TS*S,py=(G.ty+.5)*TS*S,cx=c.getContext('2d');on=!on;
     if(!c._base){c._base=cx.getImageData(0,0,c.width,c.height)}cx.putImageData(c._base,0,0);if(on){cx.fillStyle='#ff2020';cx.beginPath();cx.arc(px,py,5,0,7);cx.fill();cx.lineWidth=2;cx.strokeStyle='#fff';cx.stroke()}setTimeout(blink,450)};blink();
 }
 /* 仲間の HPは 戦闘の あとも のこる（G.ahp）。宿・教会などで 全回復 */
