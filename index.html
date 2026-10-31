@@ -2509,7 +2509,12 @@ function npi(q,p){const d=NPR[q.k];if(!d||(!d.a&&/_in$/.test(p.id)))return null;
 let VLT=0; /* 灯が ともった 瞬間（イベント中の 演出用） */
 const villLit=()=>!!G&&(G.vlit||G.ch*10+G.stop>=5); /* はじまりの村の 灯が ともったか */
 const villK=()=>!villLit()?0:(VLT?Math.min(1,(performance.now()-VLT)/2600):1); /* 0＝暗い 1＝明るい */
-function flameDraw(c,ni,q,x,y){const im=ni.im,nw=im.naturalWidth,nh=im.naturalHeight,k=ni.w/nw,t=performance.now()/1000+q.x*1.7+q.y*.9,
+function flameDraw(c,ni,q,x,y){
+  if(q.k==='lantern'){ /* 石の 灯籠：石は うごかさず、火袋の 光だけ ゆらす */
+    const t=performance.now()/1000+q.x*1.7+q.y*.9,top=y-ni.h;c.drawImage(ni.im,Math.round(x-ni.w/2),Math.round(top),ni.w,ni.h);
+    const fl=.55+Math.sin(t*9)*.12+Math.sin(t*6.1)*.1,gx=x,gy=top+ni.h*.42,r=22+fl*6;c.save();c.globalCompositeOperation='lighter';
+    const g=c.createRadialGradient(gx,gy,1,gx,gy,r);g.addColorStop(0,'rgba(255,190,90,'+(.32*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,140,50,0)');c.fillStyle=g;c.fillRect(gx-r,gy-r,r*2,r*2);c.restore();return}
+  const im=ni.im,nw=im.naturalWidth,nh=im.naturalHeight,k=ni.w/nw,t=performance.now()/1000+q.x*1.7+q.y*.9,
     fh=Math.round(nh*.3),N=8,bh=fh/N,top=y-ni.h,L=Math.round(x-ni.w/2);
   c.drawImage(im,0,fh,nw,nh-fh,L,Math.round(top+fh*k),ni.w,Math.round((nh-fh)*k));
   for(let i=0;i<N;i++){const a=Math.pow((N-i)/N,1.5),dx=(Math.sin(t*9+i*.8)*1.2+Math.sin(t*5.3+i*.4)*.8)*a*1.3,sy=1+Math.sin(t*13+q.x)*.04;
