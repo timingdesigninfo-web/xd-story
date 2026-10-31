@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><title>XD戦記 アイデア箱（管理）</title>
+<style>
+:root{color-scheme:dark;--bg:#140d1a;--card:#1f1730;--line:#3a2f55;--fg:#f2ecff;--mute:#a89cc4;--pink:#e0309a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;padding:16px max(16px,env(safe-area-inset-left))}
+h1{font-size:18px;margin:4px 0 12px}.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+input,select,button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+button{cursor:pointer}button.pri{background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;font-weight:700}
+.item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.meta{color:var(--mute);font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.cat{background:#3a2150;border-radius:10px;padding:1px 8px;color:#ffd3f0}
+.txt{white-space:pre-wrap;word-break:break-word;margin:6px 0 4px}.del{margin-left:auto;font-size:12px;padding:3px 10px;color:#ffb0a0}
+#msg{color:var(--mute);min-height:1.4em}
+</style></head><body>
+<h1>XD戦記 アイデア箱</h1>
+<div class="bar"><input id="key" type="password" placeholder="管理用の鍵" autocomplete="off" style="flex:1;min-width:160px"><button class="pri" id="go">開く</button></div>
+<div class="bar"><select id="f"><option value="">すべて</option></select><button id="cp">表示中をコピー</button><span id="cnt" style="color:var(--mute)"></span></div>
+<div id="msg"></div><div id="list"></div>
+<script>
+const $=s=>document.querySelector(s);let ALL=[];
+const CATS=['敵','道具・装備','ストーリー','あそびやすさ','不具合','その他'];
+CATS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;$('#f').appendChild(o)});
+try{$('#key').value=sessionStorage.getItem('xd-ideas-key')||''}catch(e){}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+async function api(b){const r=await fetch('/api/idea',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('エラー '+r.status));return j}
+function show(){const f=$('#f').value,rows=ALL.filter(x=>!f||x.o.cat===f);$('#cnt').textContent=rows.length+' 件'+(ALL.length!==rows.length?'（全'+ALL.length+'件）':'');
+  $('#list').innerHTML=rows.map((x,i)=>{const d=new Date(x.o.t);return `<div class="item"><div class="meta"><span class="cat">${esc(x.o.cat)}</span><span>${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span>${x.o.v?`<span>${esc(x.o.v)}</span>`:''}<button class="del" data-i="${ALL.indexOf(x)}">削除</button></div><div class="txt">${esc(x.o.text)}</div></div>`}).join('')||'<div class="item">まだ ありません</div>'}
+async function load(){$('#msg').textContent='読み込み中…';try{const j=await api({action:'list',key:$('#key').value});try{sessionStorage.setItem('xd-ideas-key',$('#key').value)}catch(e){}
+  ALL=(j.items||[]).map(raw=>{try{return{raw,o:JSON.parse(raw)}}catch(e){return null}}).filter(Boolean);$('#msg').textContent='';show()}catch(e){$('#msg').textContent=e.message}}
+$('#go').onclick=load;$('#f').onchange=show;
+$('#list').onclick=async e=>{const b=e.target.closest('.del');if(!b)return;const x=ALL[+b.dataset.i];if(!x)return;if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='本当に削除';setTimeout(()=>{b.dataset.arm='';b.textContent='削除'},2500);return}
+  try{await api({action:'delete',key:$('#key').value,raw:x.raw});ALL.splice(+b.dataset.i,1);show()}catch(er){$('#msg').textContent=er.message}};
+$('#cp').onclick=()=>{const f=$('#f').value,t=ALL.filter(x=>!f||x.o.cat===f).map(x=>`【${x.o.cat}】${x.o.text}`).join('\n\n');navigator.clipboard.writeText(t).then(()=>$('#msg').textContent='コピーしました',()=>$('#msg').textContent='コピーできませんでした')};
+if($('#key').value)load();
+</script></body></html>
