@@ -1493,9 +1493,22 @@ function tmMap(){
   let on=true;const blink=()=>{if(!document.getElementById('wmapov'))return;const px=(G.tx+.5)*TS*S,py=(G.ty+.5)*TS*S,cx=c.getContext('2d');on=!on;
     if(!c._base){c._base=cx.getImageData(0,0,c.width,c.height)}cx.putImageData(c._base,0,0);if(on){cx.fillStyle='#ff2020';cx.beginPath();cx.arc(px,py,5,0,7);cx.fill();cx.lineWidth=2;cx.strokeStyle='#fff';cx.stroke()}setTimeout(blink,450)};blink();
 }
+/* 仲間の HPは 戦闘の あとも のこる（G.ahp）。宿・教会などで 全回復 */
+const aHp=k=>{const m=allyMax(k),v=G.ahp&&G.ahp[k];return v===undefined?m:Math.max(0,Math.min(m,v))};
+function healAllies(){G.ahp={}}
+function saveAllyHP(){if(!B||!B.allies)return;G.ahp=G.ahp||{};B.allies.forEach(a=>{G.ahp[a.k]=Math.max(0,a.hp)})}
+function useItemOn(k,who){ /* フィールドで つかう。who='xd' か 仲間の k */
+  if(!G.items[k])return false;
+  if(who==='xd'){if(G.hp>=G.max)return false;G.items[k]--;G.hp=Math.min(G.max,G.hp+ITEMS[k].h)}
+  else{const m=allyMax(who),h0=aHp(who);if(h0>=m)return false;G.items[k]--;G.ahp=G.ahp||{};G.ahp[who]=Math.min(m,h0+ITEMS[k].h)}
+  sfx('heal');try{updHud()}catch(e){}return true}
+const bagWho=()=>['xd',...G.allies.filter(k=>k!=='ff'&&ASK[k])];
+const whoName=w=>w==='xd'?'XD':(SNM[w]||dn(ALLIES[w]));
+const whoHp=w=>w==='xd'?`HP ${G.hp}/${G.max}`:(aHp(w)<=0?'力つきて うごけない':`HP ${aHp(w)}/${allyMax(w)}`);
 function tmBag(){
-  tmChoose([...Object.keys(ITEMS).map(k=>({l:`${ITEMS[k].n} ×${G.items[k]||0}`,s:G.items[k]?(G.hp<G.max?ITEMS[k].d:'HPは まんたん'):'もっていない',f:()=>{
-      if(G.items[k]&&G.hp<G.max){G.items[k]--;G.hp=Math.min(G.max,G.hp+ITEMS[k].h);sfx('heal');updHud()}tmBag()}})),
+  tmChoose([...Object.keys(ITEMS).map(k=>({l:`${ITEMS[k].n} ×${G.items[k]||0}`,s:G.items[k]?ITEMS[k].d:'もっていない',f:()=>{
+      if(!G.items[k])return tmBag();const ws=bagWho();if(ws.length===1){useItemOn(k,'xd');return tmBag()}
+      tmChoose([...ws.map(w=>({l:whoName(w),s:whoHp(w),f:()=>{useItemOn(k,w);tmBag()}})),{l:'もどる',s:'',f:()=>tmBag()}],`メニュー ＞ どうぐ ＞ ${ITEMS[k].n}を だれに？`,tmBag)}})),
     {l:'みつけたもの',s:`${Object.keys(G.got||{}).length} / ${FINDS.length}　しらべて あつめよう`,f:()=>tmFound()},{l:'もどる',s:'',f:()=>tmain()}],'メニュー ＞ どうぐ',tmain);
 }
 function tmSet(){
@@ -1508,7 +1521,7 @@ function tmSet(){
 }
 function tmStatus(){
   const rows=[{l:`XD　${vname()}`,s:`HP ${G.hp}/${G.max}　MP ${mpMax()}GB　こうげき ${atkPow()}　ぼうぎょ +${eqSum('xd','def')}`,f:()=>tmStatus()},
-    ...G.allies.map(k=>({l:dn(ALLIES[k]),s:`HP ${allyMax(k)}　こうげき ${allyAtk(k)}　ぼうぎょ +${eqSum(k,'def')}`,f:()=>tmStatus()})),
+    ...G.allies.map(k=>({l:dn(ALLIES[k]),s:`HP ${aHp(k)}/${allyMax(k)}　こうげき ${allyAtk(k)}　ぼうぎょ +${eqSum(k,'def')}`,f:()=>tmStatus()})),
     {l:`CR　${crOf()}`,s:'みんなで つかう おかね',f:()=>tmStatus()},{l:'もどる',s:'',f:()=>tmain()}];
   tmChoose(rows,'メニュー ＞ つよさ',tmain);
 }
@@ -1772,7 +1785,7 @@ function hudL(){const c=CH[G.ch]||CH[CH.length-1];
   <div class="stat"><span class="ver">${vname()}</span><span class="xpbar"><i style="width:${Math.min(100,G.xp/need(G.lv)*100)}%"></i></span>
     <span>HP <b id="hudhp">${G.hp}/${G.max}</b></span><span>MP <b>${mpMax()}GB</b></span><span>やくそう <b id="hudherb">${G.items.herb}</b></span>${G.str?`<span>攻撃 <b>+${G.str}</b></span>`:''}${lampBar()}</div>${partyStrip()}`}
 function partyStrip(){const al=(G.allies||[]).filter(k=>ALLIES[k]);if(!al.length)return '';
-  return `<div class="pstrip">${al.map(k=>`<span class="pc"><b>${SNM[k]||dn(ALLIES[k])}</b> Lv${alv(k)}<i>HP ${allyMax(k)}</i><i>MP ${allyMp(k)}</i></span>`).join('')}</div>`}
+  return `<div class="pstrip">${al.map(k=>`<span class="pc"><b>${SNM[k]||dn(ALLIES[k])}</b> Lv${alv(k)}<i>HP ${aHp(k)}</i><i>MP ${allyMp(k)}</i></span>`).join('')}</div>`}
 function hudLb(){const c=CH[G.ch]||CH[CH.length-1];return `<div class="hud"><span class="ct">${c.t}</span></div>`}
 function spdLbl(){return TXT==='auto'?'会話遅く':'会話早く'}
 function hudR(){return `<div class="hud"></div>`}
@@ -1848,15 +1861,14 @@ function fiGive(item,cb){
   if(app.querySelector('.view')&&!inBattle())townSay(lines,()=>{endPort();cb&&cb()});else{keyToast(item);cb&&cb()}
 }
 function showBag(){
-  const rows=Object.keys(ITEMS).map(k=>`<button class="opt bagrow" data-k="${k}" ${G.items[k]&&G.hp<G.max?'':'disabled'}><b>${ITEMS[k].n} ×${G.items[k]||0}</b><span class="mute">${ITEMS[k].d}</span></button>`).join('');
+  const rows=Object.keys(ITEMS).map(k=>`<button class="opt bagrow" data-k="${k}" ${G.items[k]&&bagWho().some(w=>w==='xd'?G.hp<G.max:aHp(w)<allyMax(w))?'':'disabled'}><b>${ITEMS[k].n} ×${G.items[k]||0}</b><span class="mute">${ITEMS[k].d}</span></button>`).join('');
   overlay(`<h2>どうぐ</h2><p class="mute" style="margin:0">HP ${G.hp}/${G.max}</p><div class="opts">${rows}</div><h2 style="margin-top:10px">たいせつなもの</h2><div class="opts">${(G.keys||[]).map(k=>{const f=fiKey(k);return f?`<div class="opt" style="cursor:default"><b>${kimg(k)}${k}</b><span class="mute">「${FACET[f].pn}」を 手に入れた${FACET[f].fx?"　"+FACET[f].fx:""}</span></div>`:`<div class="opt" style="pointer-events:none"><b>${kimg(k)}${k}</b><span class="mute">届けものを あずかっている</span></div>`}).join('')||'<p class="mute" style="margin:0">なし</p>'}</div>`);
   $('#ovin').querySelectorAll('.fikey').forEach(b=>b.onclick=()=>{const c=$('#ovclose');if(c)c.click();fiGive(b.dataset.k)});
   $('#ovin').querySelectorAll('.bagrow').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.k;if(!G.items[k]||G.hp>=G.max)return;
-    G.items[k]--;G.hp=Math.min(G.max,G.hp+ITEMS[k].h);sfx('heal');save();
-    const h=document.getElementById('hudhp');if(h)h.textContent=G.hp+'/'+G.max;
-    const hb=document.getElementById('hudherb');if(hb)hb.textContent=G.items.herb;
-    showBag();
+    const k=b.dataset.k;if(!G.items[k])return;const ws=bagWho();
+    const done=w=>{if(useItemOn(k,w)){const h=document.getElementById('hudhp');if(h)h.textContent=G.hp+'/'+G.max;const hb=document.getElementById('hudherb');if(hb)hb.textContent=G.items.herb}showBag()};
+    if(ws.length===1)return done('xd');
+    menuOv(`${ITEMS[k].n}を だれに つかう？`,ws.map(w=>({l:whoName(w),s:whoHp(w),f:()=>done(w)})));
   });
 }
 function timeline(){return `<div class="timeline" aria-hidden="true">${CH.map((c,i)=>`<i class="${i<G.ch?'done':i===G.ch?'now':''}"></i>`).join('')}</div>`}
@@ -1867,7 +1879,7 @@ function fixProg(){while(G.ch<CH.length-1&&G.stop>=CH[G.ch].stops.length){G.ch++
 function adminStart(c){
   const lv=[1,3,6,9,12,15,18][Math.min(6,c)];
   G={cr:60,ch:c,stop:0,tx:86,ty:20,hp:50,max:50+(lv-1)*HPGROW,str:c>=1?2:0,mpx:c>=1?4:0,lv,xp:0,turns:0,wins:0,tut:1,allies:['ff','dw','ps','ai','ae'].slice(0,c>=1?2+Math.max(0,c-2):0),pw:['see','hear','make','open'].slice(0,Math.max(0,c-1)),items:{herb:5,dr:0},lamp:c>=1?1:0,fairy:c>=1?1:0,gt:{},admin:1};
-  G.hp=G.max;LASTPL=null;chapterIntro()}
+  G.hp=G.max;healAllies();LASTPL=null;chapterIntro()}
 function adminPanel(){
   if($('#adm'))return;const d=document.createElement('div');d.id='adm';
   d.style.cssText='position:fixed;inset:0;z-index:99;background:#000c;display:flex;align-items:center;justify-content:center';
@@ -3010,7 +3022,7 @@ function stopTalk(st){
 }
 function prayAsk(){
   TW.busy=true;
-  const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
+  const yes=()=>{sfx('heal');G.hp=G.max;healAllies();const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
     townSay(ok?[['','XDは 手を あわせて、しずかに いのった。'],['しんぷ','……旅の 記録は しるされました。（HPも 全回復）'],['しんぷ','タイトルの 「つづきから」で、ここから 再開できます。合言葉を 決めておくと、ほかの端末でも つづけられます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
   const zange=()=>{TW.busy=true;townSay([['','XDは ひざを ついて、こころの うちを うちあけた。'],['しんぷ','……あたらしい ことばを、胸に きざみなさい。']],()=>{TW.busy=false;
     if(!SYNC)return townSay([['しんぷ','……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
@@ -3042,7 +3054,7 @@ function townNPC(n){
     {l:'Dw、来てくれ',s:'Dwが なかまに くわわる',f:()=>{sfx('ally');if(!G.allies.includes('dw'))G.allies.push('dw');delete G.dwStay;TW.npcs=TW.npcs.filter(x=>x!==n);townSay([['Dw　隠者','よかろう。老いぼれの わざ、見せてやろう。',PDW],['','隠者Dwが 旅に くわわった。「方針」で 動きかたを きめられる。']])}},
     {l:'まだ 村で 待っていてくれ',s:'このまま 村に のこる',f:()=>townSay([['Dw　隠者','……そうか。気が 向いたら、また 声を かけなさい。',PDW]])}]))
   if(n.k==='mob'||n.k==='dgboss'||n.k==='dgherb'||n.k==='dgchest'||n.k==='dgrest')return dgNPC(n);
-  if(n.k==='inn'){sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;return townSay([[n.n,'おつかれさま。ゆっくり 休んでいきな。'],[n.n,'……さあ、元気になったよ！（HPが 全回復）']])}
+  if(n.k==='inn'){sfx('heal');G.hp=G.max;healAllies();const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;return townSay([[n.n,'おつかれさま。ゆっくり 休んでいきな。'],[n.n,'……さあ、元気になったよ！（みんなの HPが 全回復）']])}
   if(n.k==='pray'){G.tw=G.tw||{};const first=!G.tw.priest;G.tw.priest=1;return townSay(first?n.say.map(t=>[n.n,t]):[[n.n,'ようこそ。旅の 無事を いのりますか？']],prayAsk)}
   if(n.k==='shop2'){const ct=n.cat,nw=ct==='item'?0:shNew(ct),tx=nw?'新しいの 仕入れたよ！ 見ていきな。':ct==='item'?'やくそうや ドリンクを うっているよ。':ct==='tool'?'武器を うっているよ。クレジットで どうぞ。':ct==='panel'?'防具を うっているよ。クレジットで どうぞ。':'武器も 防具も やくそうも あるよ。クレジットで どうぞ。';return townSay([...(n.say||[]).map(t=>[n.n,t]),[n.n,tx]],()=>{SHOPONLY=ct||null;if(ct)SHOPTAB=ct;showShop(ct?1:0)})}
   if(n.k==='shop'){G.tw=G.tw||{};if(G.tw.shop)return townSay([[n.n,'毎度あり！ やくそうは いるかい？']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)});G.tw.shop=1;G.items.herb+=2;sfx('ally');const h=$('#hudherb');if(h)h.textContent=G.items.herb;return townSay([[n.n,'おう、彗星の子か！ 旅立ちの 祝いだ。'],[n.n,'やくそうを ふたつ おまけしよう！（やくそう +2）'],[n.n,'敵が おとす クレジットで やくそうも 買えるぞ。']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)})}
@@ -3385,7 +3397,7 @@ function dgNPC(n){
     return townSay(line,()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;if(B&&B.won)fl(n.mid);back()};
       if(isB)startBattle(BOSSES[n.boss],true,{});else{const c=G.ch>=2&&Math.random()<.4?2:1;startBattle(Array.from({length:c},()=>makeMinion(tm)),false)}})}
   if(n.k==='dgrest'){TW.busy=true;
-    const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
+    const yes=()=>{sfx('heal');G.hp=G.max;healAllies();const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
       townSay(ok?[['','やわらかな 光が XDを つつんだ。'],['','HPが 全回復した。ここまでの 旅も 記録された。'],['','タイトルの 「つづきから」で、ここから 再開できる。']]:[['','HPが 全回復した。（この ブラウザでは 記録は のこせなかった）']])};
     return townSay([['','洞窟の 奥に、あたたかく 光る 泉が ある。']],()=>townChoice('',[{l:'ひと休みする（きろくする）',s:'HPが 全回復し、旅の 記録を のこす',f:yes},{l:'やめる',s:'',f:()=>{TW.busy=false}}]))}
   if(n.k==='dgherb'){fl(n.mid);G.items.herb+=2;sfx('heal');const h=$('#hudherb');if(h)h.textContent=G.items.herb;n.gone=1;TW.npcs=TW.npcs.filter(m=>m!==n);return townSay([['','小さな 宝箱を 開けた！ やくそうを 2つ 手に入れた。']])}
@@ -4020,7 +4032,7 @@ function storyEvent(k){
   if(k==='merge')return scene('2022年9月','同盟の宣言',
     talk(sprite('フィグム',fig.col[0],fig.col[1]),'フィグム　ブラウザの嵐の主','これからは同じ雲の王国の仲間だな。……おまえの居場所が残っていればいいが。')+
     `<p class="lead">雲の王国が、かつての宿敵と手を組むと決めた。XDはどう動く？</p>`,[
-    {l:'同盟を信じて待つ',s:'HPを全回復',f:()=>{G.hp=G.max;sfx('heal');nodeDone()}},
+    {l:'同盟を信じて待つ',s:'HPを全回復',f:()=>{G.hp=G.max;healAllies();sfx('heal');nodeDone()}},
     {l:'自分の道をゆく',s:'攻撃+1（ずっと続く）',f:()=>{G.str++;sfx('skill');nodeDone()}}]);
   if(k==='sale')return scene('2023年','メンテナンスモード',
     `<p class="lead">XDは保守だけを行う「メンテナンスモード」に入り、新規には単体で手に入らなくなった。最大HPが8下がる。それでも、これまで描いてきた画面は消えない。</p>`,[
@@ -4041,7 +4053,7 @@ function storyEvent(k){
       `<p class="lead">巨人は崩れ落ちた。城下町の空に、あの緑の灯が、ふわりと浮かぶ。</p>`+
       talk(sprite('DreamweaverF',dw.col[0],dw.col[1]),'仮想空間の隠者　（かすれた声）','……ようやった。力が、すこし戻ってきおる。かつてのようにはいかんが、もう一度、おまえの隣に立てそうじゃ。')+
       `<p class="lead">失われた時間は、戻らない。それでも灯は、ふたたび仲間のもとで燃えはじめた。</p>`,
-      [{l:'ふたたび、いっしょに',s:'HPを全回復。隠者Dwが れんけいに もどる',f:()=>{G.hp=G.max;if(!G.allies.includes('dw'))G.allies.push('dw');sfx('heal');nodeDone()}}]);}
+      [{l:'ふたたび、いっしょに',s:'HPを全回復。隠者Dwが れんけいに もどる',f:()=>{G.hp=G.max;healAllies();if(!G.allies.includes('dw'))G.allies.push('dw');sfx('heal');nodeDone()}}]);}
   if(k==='king'){const ck=BOSSES.cloudKing,ff=ALLIES.ff;
     return scene('十年目','雲の王の間',
       talk(sprite('クラウド王',ck.col[0],ck.col[1],16),'クラウド王　雲の王国の主','よくここまで来た、XD。おまえに新しい力を与えなかったのは、このわたしだ。おまえの技も仲間も、すべて雲の王国の中のものにすぎん。')+
@@ -4102,7 +4114,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   const es=fl.map((x,i)=>mkE(x,i,ks));
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
-  B={es,t:0,allies:alk.map(k=>({k,n:SNM[k]||dn(ALLIES[k]),hp:allyMax(k),max:allyMax(k),mp:allyMp(k),mpm:allyMp(k),block:0,sel:'#al_'+k})),boss,minion:!boss,final:!!opt.noAlly,ord:{},ordN:0,paid:0,mp:mpMax(),block:0,str:0,defend:false,used:{},turn:0,busy:true,over:false,menu:'atk',ci:0,li:0,pane:'cmd',pend:null};
+  B={es,t:0,allies:alk.map(k=>({k,n:SNM[k]||dn(ALLIES[k]),hp:aHp(k),max:allyMax(k),mp:allyMp(k),mpm:allyMp(k),block:0,sel:'#al_'+k})),boss,minion:!boss,final:!!opt.noAlly,ord:{},ordN:0,paid:0,mp:mpMax(),block:0,str:0,defend:false,used:{},turn:0,busy:true,over:false,menu:'atk',ci:0,li:0,pane:'cmd',pend:null};
   Object.defineProperty(B,'e',{get(){const e=B.es[B.t];return e&&e.hp>0?e:(B.es.find(x=>x.hp>0)||B.es[0])}});
   const bk=Object.keys(BOSSES).find(k=>BOSSES[k]===f),ter=DGBG?DGBG:boss&&BOSSTER[bk]?BOSSTER[bk]:terrainNow();
   const N=es.length,hp=Math.round((N===1?100:N===2?84:68)*(f.sc||(boss?1:.7)));
@@ -4547,7 +4559,7 @@ async function doDefend(){
 async function doRun(){
   if(!B.minion){sfx('junk');say('にげられない！');return}
   B.busy=true;say('XDは にげだした！');sfx('flee');render();await wait(700);
-  if(Math.random()<.7){B.over=true;music(fieldTrack());return nodeDone()}
+  if(Math.random()<.7){B.over=true;saveAllyHP();music(fieldTrack());return nodeDone()}
   say('しかし まわりこまれてしまった！');await wait(950);
   await afterXD();
 }
@@ -4623,7 +4635,7 @@ async function enemyAct(e){
   e.mi++;render();
   if(partyDead()){B.over=true;say('みんな ちからつきた……');await wait(900);return lose()}
 }
-async function winBattle(survived){
+async function winBattle(survived){saveAllyHP();
   B.over=true;B.won=1;G.wins++;if(!B.boss)G.hunt=(G.hunt||0)+1;render();sfx('win');
   await sleep(300);
   if(G.hp<=0)G.hp=Math.max(1,Math.round(G.max*.2));
@@ -4646,7 +4658,7 @@ function lose(){
     <h2 class="ctitle">${B.e.n}に たおれた……</h2>
     <p class="lead">目の前が まっしろに なった。……気がつくと、はじまりの村の 教会の ベッドに ねかされていた。</p>
     <div class="row"><button class="btn" id="retry">教会で めざめる</button><button class="btn ghost" id="redo">この章の はじめから</button><button class="btn ghost" id="top">タイトルへ</button></div></div>`,{al:'めざめる'});
-  $('#retry').onclick=()=>{sfx('heal');G.hp=G.max;G.tx=LM.village.x;G.ty=LM.village.y;LASTPL=null;CONT=fieldResume;placeScreen('village',19,19,'down');setTimeout(()=>townSay([['しんぷ','……おお、目を さましたか。もう だいじょうぶ。HPは すっかり もどったよ。'],['しんぷ','たおれても、ここで 何度でも 目ざめられる。あせらず 旅を つづけなさい。']]),500)};
+  $('#retry').onclick=()=>{sfx('heal');G.hp=G.max;healAllies();G.tx=LM.village.x;G.ty=LM.village.y;LASTPL=null;CONT=fieldResume;placeScreen('village',19,19,'down');setTimeout(()=>townSay([['しんぷ','……おお、目を さましたか。もう だいじょうぶ。HPは すっかり もどったよ。'],['しんぷ','たおれても、ここで 何度でも 目ざめられる。あせらず 旅を つづけなさい。']]),500)};
   $('#redo').onclick=()=>{sfx('tap');LASTPL=null;G=clone(SNAP);chapterIntro()};
   $('#top').onclick=()=>{sfx('tap');title()};
 }
