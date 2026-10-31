@@ -4151,6 +4151,8 @@ function render(){
   $('#cmdw').innerHTML='<div class="wt">XD</div><div class="sc">'+CMDS.map(([k,l])=>{
     const dim=off||(k==='lamp'&&(!G.lamp||B.lampUsed))||(k==='ai'&&!G.fairy)||(k==='tac'&&!B.allies.length)||(k==='run'&&!B.minion);
     return `<div class="cmd ${CMDS[B.ci][0]===k?'on':''} ${dim?'dim':''}" ${(k==='ai'&&!G.fairy)||(k==='tac'&&!B.allies.length)?'hidden':''} data-c="${k}" role="button"><i class="cur">▶</i>${k==='ai'&&!G.fairy?'？？？':k==='ai'&&B.fiMode?`${l}<small class="fimode">：${FIMODE[B.fiMode]}</small>`:l}</div>`}).join('')+'</div>';
+  /* えらんでいる コマンドが 欄の 外に あれば、見える ところまで 送る（画面が せまい とき） */
+  {const on=$('#cmdw .cmd.on'),sc=on&&on.closest('.sc');if(on&&sc){const y=on.offsetTop-sc.offsetTop;if(y<sc.scrollTop)sc.scrollTop=Math.max(0,y-2);else if(y+on.offsetHeight>sc.scrollTop+sc.clientHeight)sc.scrollTop=y+on.offsetHeight-sc.clientHeight+2}}
   const nm=CMDS.find(c=>c[0]===B.menu);
   let h;
   if(B.pane==='tgt'){h=B.es.map((x,i)=>x.hp>0?`<button class="crow ${B.t===i?'sel':''}" data-t="${i}"><span class="nm2"><i class="cur2">${B.t===i?'▶':'\u3000'}</i>${x.n}</span></button>`:'').join('')}
