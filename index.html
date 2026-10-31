@@ -433,14 +433,15 @@ body #efoe .er .chips:empty{display:none}
 }.btop.n3 .pw .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .pw .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .pw .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .pw .alv{font-size:7px;margin-left:1px}
 @media (orientation:landscape){
  /* 仲間 3人 以上：XDの 下に 仲間を 横ならび。バーの 下に 小さく 数字 */
- .inbt .lcol .info .btop.n3{display:flex!important;flex-wrap:wrap;gap:8px 3px}
+ .inbt .lcol .info .btop.n3{display:flex!important;flex-wrap:wrap;gap:9px 4px}
  .inbt .lcol .info .btop.n3 #me{flex:0 0 100%!important}
- .inbt .lcol .info .btop.n3 .ally{flex:1 1 0!important;min-width:0!important;margin:0!important;padding:8px 3px 2px!important}
+ .inbt .lcol .info .btop.n3 .ally{flex:0 0 calc(50% - 2px)!important;min-width:0!important;margin:0!important;padding:8px 5px 2px!important} /* 2×2 */
  .inbt .lcol .info .btop.n3 .ally .ar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:0;font-size:8px;line-height:1.05}
- .inbt .lcol .info .btop.n3 .ally .ar .mini{order:0;flex:0 0 100%!important}.inbt .lcol .info .btop.n3 .ally .ar .an{order:1;width:auto!important;flex:0 0 auto;font-size:8px!important;opacity:.85}.inbt .lcol .info .btop.n3 .ally .ar>b{order:2;flex:1 1 auto!important;text-align:right;min-width:0}
- .inbt .lcol .info .btop.n3 .ally .ar .ah{font-size:8px!important;text-align:right}
- .inbt .lcol .info .btop.n3 .ally .wt{font-size:9px!important;padding:0 3px!important;left:3px!important}.inbt .lcol .info .btop.n3 .ally .alv{font-size:7px!important}
+ .inbt .lcol .info .btop.n3 .ally .ar .mini{order:0;flex:0 0 100%!important}.inbt .lcol .info .btop.n3 .ally .ar .an{order:1;width:auto!important;flex:0 0 auto;font-size:9px!important;opacity:.85}.inbt .lcol .info .btop.n3 .ally .ar>b{order:2;flex:1 1 auto!important;text-align:right;min-width:0}
+ .inbt .lcol .info .btop.n3 .ally .ar .ah{font-size:9px!important;text-align:right}
+ .inbt .lcol .info .btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important}.inbt .lcol .info .btop.n3 .ally .alv{font-size:8px!important}
  .inbt .lcol .info .btop.n3 .ally .ach2{display:none!important}
+ .inbt .lcol .info .btop #me .wt{font-size:13px!important;padding:0 6px!important;left:8px!important}.inbt .lcol .info .btop #me .alv{font-size:9px!important}
 .inbt .lcol .info .btop.n3 .ally .wt{font-size:11px}.inbt .lcol .info .btop.n3 .ally{padding-top:7px!important;padding-bottom:2px!important}.inbt .lcol .info .btop.n3 .ally .ar .mini{height:4px}}
 .btop .ally.dead{opacity:.55}.stg{display:inline-block;padding:0 3px;font-size:10px;line-height:14px;border-radius:3px;font-weight:700;color:#201000;background:#ffd36a;margin-right:2px;white-space:nowrap}.stg.d{background:#9fe8ff}.stg.m{background:#e2c4ff}#pchips{display:flex;flex-wrap:wrap;gap:2px 0}#allyw .ach2{gap:0!important}
 .esp.ghost{filter:invert(1) brightness(.35) contrast(1.4) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px #ffffffaa);animation:ghg 1.8s ease-in-out infinite}@keyframes ghg{0%,100%{opacity:.8}50%{opacity:1}}.eu:has(.ghost)::before{content:'';position:absolute;left:14%;right:14%;top:10%;bottom:4%;border-radius:45%;background:radial-gradient(ellipse,#ffffff44,#ffffff00 70%);pointer-events:none}.alv{margin-left:5px;padding:0 3px;border-radius:3px;background:#ffd36a;color:#201000;font-size:9px;line-height:12px;font-weight:700;display:inline-block;vertical-align:1px}/* ===== 横画面：ボタンと文字を大きめに、メインの絵は少し狭く ===== */
@@ -4158,7 +4159,7 @@ function startBattle(f0,boss,opt={}){staleInput();
       </section>
     <section class="win msg"><p class="log" id="log" aria-live="polite"></p></section>
     <div class="bcmd"><section class="win cmdw" id="cmdw"><div class="wt">XD</div></section><section class="win listw" id="listw"><div class="wt" id="lt"></div></section></div>
-  </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}${alk.length>=3?' n3':''}${alk.length>=4?' n4':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD<b class="alv">${alk.length>=4?vshort(G.lv).replace(/\.0$/,''):vshort(G.lv)}</b></div>
+  </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}${alk.length>=3?' n3':''}${alk.length>=4?' n4':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD<b class="alv">${vshort(G.lv)}</b></div>
         <div class="ar"><span class="an">HP</span><div class="mini"><i id="php"></i></div><b id="hpv"></b></div>
         <div class="ar"><span class="an">MP</span><div class="mini mp"><i id="pmp"></i></div><b id="mpv"></b></div>${G.fairy?'<div class="ar"><span class="an">CR</span><div class="mini cr"><i id="pcr"></i></div><b id="crv"></b></div>':''}
         <div class="chips" id="pchips"></div></section>${alk.map(k=>`<section class="win pw ally" id="al_${k}"><div class="wt" style="white-space:nowrap">${SNM[k]||dn(ALLIES[k])}<b class="alv">${alk.length>=4?vshort(alv(k)).replace(/\.0$/,''):vshort(alv(k))}</b></div><div class="ar"><span class="an">HP</span><div class="mini"><i class="ahp"></i></div><b class="ah"></b></div><div class="ar am" id="am_${k}"><span class="an">MP</span><div class="mini mp"><i class="amp"></i></div><b class="ah"></b></div><div class="chips ach2" id="ac_${k}"></div></section>`).join('')}</div>`,obj:`<div class="btop"><section class="win efoe" id="efoe"></section></div>`,
