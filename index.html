@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031102947"><script id="xd-upd">(function(){var B="20261031102947";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031103050"><script id="xd-upd">(function(){var B="20261031103050";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
 <title>XD戦記</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3967,9 +3967,28 @@ function fxRun(kind,e){return new Promise(res=>{
         try{jolt('#foe','shake')}catch(e){}
       },110);
       setTimeout(()=>{d.remove();res()},380);return}
-    if(kind&&kind.startsWith('burst')){const c=FXCOL[kind.slice(6)]||'#ffe27a',R=Math.min(150,Math.round(er.height*.9));
-      const d=mk('',`left:${cx-R/2}px;top:${cy-R/2}px;width:${R}px;height:${R}px;border-radius:50%;background:radial-gradient(circle,#fff 0,${c} 35%,${c}00 70%)`);
-      d.animate([{opacity:0,transform:'scale(.2)'},{opacity:1,transform:'scale(1)',offset:.4},{opacity:0,transform:'scale(1.4)'}],{duration:460}).onfinish=()=>{d.remove();res()};setTimeout(()=>{d.remove();res()},800);return}
+    if(kind&&kind.startsWith('burst')){const c=FXCOL[kind.slice(6)]||'#ffe27a',R=Math.min(170,Math.round(er.height*1.1)),els=[];
+      const add=(h,css)=>{const d=mk(h,css);els.push(d);return d};
+      /* 大技：X字の斬線＋衝撃の輪＋放射線 */
+      [[-38,0],[34,90]].forEach(([ang,dl])=>{const L=R*1.5,d=add('',`left:${cx-L/2}px;top:${cy-2}px;width:${L}px;height:4px;background:linear-gradient(90deg,${c}00,${c} 25%,#fff 50%,${c} 75%,${c}00);box-shadow:0 0 8px ${c};transform:rotate(${ang}deg);opacity:0`);
+        d.animate([{opacity:0,transform:`rotate(${ang}deg) scaleX(.1)`},{opacity:1,transform:`rotate(${ang}deg) scaleX(1)`,offset:.35},{opacity:0,transform:`rotate(${ang}deg) scaleX(1.05) scaleY(.2)`}],{duration:320,delay:dl,fill:'both',easing:'cubic-bezier(.2,.7,.2,1)'})});
+      const ring=add('',`left:${cx-R/2}px;top:${cy-R/2}px;width:${R}px;height:${R}px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px ${c}`);
+      ring.animate([{opacity:0,transform:'scale(.15)'},{opacity:.9,offset:.2},{opacity:0,transform:'scale(1.3)'}],{duration:420,delay:70,fill:'both'});
+      for(let k=0;k<10;k++){const an=k*36+Math.random()*10,ln=R*(.3+Math.random()*.25),d=add('',`left:${cx}px;top:${cy-1}px;width:${ln}px;height:2px;background:linear-gradient(90deg,#fff,${c}00);transform-origin:0 50%;transform:rotate(${an}deg)`);
+        d.animate([{opacity:0,width:'0px'},{opacity:1,width:ln+'px',offset:.4},{opacity:0,width:ln*1.1+'px'}],{duration:340,delay:110,fill:'both'})}
+      setTimeout(()=>{try{jolt('#foe','shake')}catch(e){}},110);
+      setTimeout(()=>{els.forEach(x=>x.remove());res()},560);return}
+    if(kind==='thrust'||(kind&&kind.startsWith('thrust'))){const c=FXCOL[kind.slice(7)]||'#fff',els=[];
+      const add=(h,css)=>{const d=mk(h,css);els.push(d);return d},L=Math.min(150,Math.round(er.width*1.2)+40),x0=cx-L-70;
+      for(let k=0;k<3;k++){const y=cy-10+k*10,d=add('',`left:${x0-20}px;top:${y}px;width:${L*.6}px;height:1px;background:linear-gradient(90deg,${c}00,#fff);opacity:0`);
+        d.animate([{opacity:0,transform:'translateX(0)'},{opacity:.8,offset:.4},{opacity:0,transform:`translateX(${L+60}px)`}],{duration:240,delay:k*25,fill:'both',easing:'ease-in'})}
+      const n=add('',`left:${x0}px;top:${cy-2}px;width:${L}px;height:4px;background:linear-gradient(90deg,${c}00,${c} 40%,#fff);clip-path:polygon(0 35%,92% 0,100% 50%,92% 100%,0 65%);filter:drop-shadow(0 0 4px ${c});opacity:0`);
+      n.animate([{opacity:0,transform:'translateX(0)'},{opacity:1,offset:.25},{opacity:1,transform:`translateX(78px)`}],{duration:210,fill:'both',easing:'cubic-bezier(.5,0,.9,.6)'});
+      setTimeout(()=>{for(let k=0;k<8;k++){const an=-60+k*17+Math.random()*8,ln=40+Math.random()*30,d=add('',`left:${cx}px;top:${cy-1}px;width:${ln}px;height:2px;background:linear-gradient(90deg,#fff,${c}00);transform-origin:0 50%;transform:rotate(${an}deg)`);
+        d.animate([{opacity:1,width:'0px'},{opacity:1,width:ln+'px',offset:.4},{opacity:0,width:ln*1.1+'px'}],{duration:240,fill:'both'})}
+        const f=add('',`left:${cx-14}px;top:${cy-14}px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,#fff,${c}00 70%)`);f.animate([{opacity:1,transform:'scale(.3)'},{opacity:0,transform:'scale(1.6)'}],{duration:240,fill:'both'});
+        try{jolt('#foe','shake')}catch(e){}},200);
+      setTimeout(()=>{els.forEach(x=>x.remove());res()},520);return}
   }catch(err){}
   res()})}
 async function runQ(){
