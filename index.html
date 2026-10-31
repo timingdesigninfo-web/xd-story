@@ -388,7 +388,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .crd-big{font-size:28px;font-weight:700;color:#ffe27a;letter-spacing:.14em}
 .crd-skip{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:2}
 .efl{opacity:0;animation:eflin 1.2s ease forwards}@keyframes eflin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.tport{position:absolute;right:-3%;top:2%;height:76%;max-width:58%;object-position:right top;object-fit:contain;z-index:7;image-rendering:pixelated;filter:drop-shadow(0 0 6px #000a);animation:ptin2 .25s ease-out;pointer-events:none}
+.tport{position:absolute;right:-3%;top:2%;height:76%;max-width:58%;object-position:right top;object-fit:contain;z-index:7;image-rendering:pixelated;animation:ptin2 .25s ease-out;pointer-events:none}
 .tport[src*="/b_"]{height:auto;width:68%;max-width:68%;right:-7%;max-height:82%;object-fit:cover;object-position:top right;-webkit-mask-image:linear-gradient(to top,transparent 0,#000 22%),linear-gradient(to right,transparent 0,#000 18%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to top,transparent 0,#000 22%),linear-gradient(to right,transparent 0,#000 18%);mask-composite:intersect}@keyframes ptin2{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 .tmsg i{display:block;text-align:right;font-style:normal;font-size:10px;color:#bcd}
 .tmsg i{position:absolute;right:8px;bottom:4px;font-style:normal;animation:blink 1s steps(2) infinite}
@@ -1357,7 +1357,7 @@ function shotBtns(){
     b.style.cssText='position:absolute;top:4px;right:4px;z-index:8;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid #fff8;background:#0009;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.85';
     const go=e=>{e.preventDefault();e.stopPropagation();shotShare()};b.addEventListener('click',go,true);['pointerdown','touchstart','mousedown'].forEach(t=>b.addEventListener(t,e=>e.stopPropagation(),{capture:true,passive:true}));
     v.appendChild(b)})}
-(()=>{let q=0;const mo=new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;shotBtns()})});mo.observe(app||document.body,{childList:true,subtree:true})})();
+/* カメラの ボタンは つかわない（シェアは メニューと 戦闘の「シェア」ボタンから） */
 /* 会話中・バトルの 演出中に メニューを おしたとき：会話は そのままで、シェアだけ えらべる */
 function busyMenu(){
   const old=document.getElementById('busymenu');if(old){old.remove();return}sfx('tap');
@@ -1385,7 +1385,7 @@ function shotPortrait(g,W,H){
   if(bust){q.globalCompositeOperation='destination-in';
     let gr=q.createLinearGradient(0,o.height,0,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.22,'#000');gr.addColorStop(1,'#000');q.fillStyle=gr;q.fillRect(0,0,o.width,o.height);
     gr=q.createLinearGradient(0,0,o.width,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.18,'#000');gr.addColorStop(1,'#000');q.fillStyle=gr;q.fillRect(0,0,o.width,o.height)}
-  g.save();g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=bust?0:14;g.drawImage(o,x,y);g.restore();
+  g.drawImage(o,x,y);
 }
 function shotJpeg(c){for(const q of [.88,.8,.7,.6]){const u=c.toDataURL('image/jpeg',q);if(u.length*.75<420*1024)return u}return c.toDataURL('image/jpeg',.5)}
 function shotDlg(cv){
