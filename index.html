@@ -1435,6 +1435,26 @@ function migrateG(g){const d={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,m
   g.ch=Math.max(0,Math.min(CH.length-1,g.ch|0));g.stop=Math.max(0,g.stop|0);
   /* ここに「v<2 なら〜を補う」のような移行処理を足していく */
   g.sv=SAVE_VER;return g}
+function resumeSave(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const pr=G.pray&&PLACES[G.pray.id]?G.pray:null;const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
+function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old.remove();return}
+  const o=document.createElement('div');o.id='contdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
+  const bs='display:block;width:100%;box-sizing:border-box;font-family:var(--display);font-size:17px;letter-spacing:.12em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:10px;padding:12px 8px;margin:10px 0 2px;box-shadow:0 0 10px rgba(255,160,220,.6);cursor:pointer';
+  const sm='font-size:12px;opacity:.8;line-height:1.5';
+  const lv=sv&&sv.g?'（第'+((sv.g.ch|0)+1)+'章・Lv'+(sv.g.lv|0)+'）':'';
+  o.innerHTML=`<div style="background:#1b1830;color:#fff;border:2px solid #fff6;border-radius:12px;padding:16px;max-width:420px;width:100%;font:14px/1.6 system-ui,sans-serif">
+  <div style="font-weight:700;font-size:17px;margin-bottom:2px">つづきから</div>
+  <div style="${sm}">どちらで 再開しますか？</div>
+  ${SYNC?`<button id="cdph" style="${bs}">合言葉で 再開</button><div style="${sm}">決めておいた 合言葉を 入れます。べつの端末でも 遊べます。</div>`:''}
+  <button id="cdbr" style="${bs}${sv?'':';filter:grayscale(1);opacity:.45;cursor:default'}">ブラウザの データで 再開</button><div style="${sm}">${sv?'この端末の この ブラウザに ある 記録です '+lv:'この ブラウザには 記録が ありません'}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px">
+   <span>${sv?'<button id="cdph2" style="'+(SYNC?'':'display:none;')+'background:none;border:0;color:#cdb8ff;font-size:12px;text-decoration:underline;padding:6px 2px">合言葉を 見る・決める</button><button id="cddel" style="background:none;border:0;color:#ffb0a0;font-size:12px;text-decoration:underline;padding:6px 2px">記録を 消す</button>':''}</span>
+   <button id="cdx" style="padding:8px 16px;border-radius:8px;border:1px solid #fff6;background:none;color:#fff">とじる</button></div></div>`;
+  document.body.appendChild(o);o.addEventListener('click',e=>e.stopPropagation());
+  const q=x=>o.querySelector(x);q('#cdx').onclick=()=>o.remove();
+  if(q('#cdph'))q('#cdph').onclick=()=>{o.remove();phDlg('load')};
+  if(sv)q('#cdbr').onclick=()=>{o.remove();go()};
+  if(q('#cdph2'))q('#cdph2').onclick=()=>{o.remove();phDlg(getPh()?'change':'set')};
+  if(q('#cddel')){let arm=0,tm;q('#cddel').onclick=()=>{const b=q('#cddel');if(!arm){arm=1;b.textContent='本当に 消す？（もう一度）';tm=setTimeout(()=>{arm=0;b.textContent='記録を 消す'},2600)}else{clearTimeout(tm);clearSave();try{localStorage.removeItem(PH_KEY)}catch(e){}location.reload()}}}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
 function newGame(){G={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
 const need=lv=>Math.round(24+lv*lv*1.7);
@@ -1604,7 +1624,8 @@ function mkOptBar(o){const old=document.getElementById('optbar');if(old)old.remo
   const mk=(cls,t,fn)=>{const b=document.createElement('button');b.className='ib '+cls;b.innerHTML=t;b.onclick=e=>{e.stopPropagation();fn()};bar.appendChild(b);return b};
   const sb=mk('k-snd','',()=>{audioInit();toggleSound();sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';if(SND.on)sfx('tap')});sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';
   if(o.skip){o.skip.style.cssText='';o.skip.classList.add('k-skip');bar.appendChild(o.skip)}
-  if(SYNC){mk('k-code',innerWidth>innerHeight?(o.sv?'合言葉':'合言葉で<br>続きから'):'合言葉',()=>phDlg(o.sv?(getPh()?'change':'set'):'load'));mk('k-fs',innerWidth>innerHeight?'全画面<br>について':'全画面について',fsDlg)}
+  if(o.cont)mk('k-code','つづきから',()=>contDlg(o.sv,o.cont));
+  if(SYNC)mk('k-fs',innerWidth>innerHeight?'全画面<br>について':'全画面について',fsDlg)
   document.body.appendChild(bar);
   const iv=setInterval(()=>{if(!document.body.contains(o.st)||(o.isDone&&o.isDone())){bar.remove();clearInterval(iv)}},150)}
 function fsDlg(){const old=document.getElementById('fsdlg');if(old){old.remove();return}
@@ -1618,7 +1639,7 @@ function title(){
   const st=$('#tst');
   const lay=()=>{const par=st.parentElement,pw=par.clientWidth||500,ph=par.clientHeight||300,k=Math.min(pw/384,ph/216);st.style.width=Math.floor(384*k)+'px';st.style.height=Math.floor(216*k)+'px';st.style.setProperty('--u',(st.clientHeight||300)/100+'px')};
   lay();try{new ResizeObserver(lay).observe(st.parentElement)}catch(e){}
-  mkOptBar({st,sv:loadSave()});
+  {const sv0=loadSave();mkOptBar({st,sv:sv0,cont:()=>resumeSave(sv0)})}
   $('#op').onclick=()=>{audioInit();sfx('tap');opening(()=>{newGame()})};
   {let n=0,tm;st.addEventListener('click',e=>{if(e.target.closest('button'))return;n++;clearTimeout(tm);tm=setTimeout(()=>n=0,2500);if(n>=5){n=0;adminPanel()}})}
   const sv=loadSave();
@@ -1755,7 +1776,6 @@ function opening(after,label,sv){window.__bpmSet=0;
     .o2tint{position:absolute;inset:0;background:#0a0c30;opacity:.25;transition:background 2.5s,opacity 2.5s}.o2tint.storm{background:#2a3a66;opacity:.5}.o2tint.dark{background:#02030c;opacity:.65}
 </style>`;
   const st=$('#opst'),bg=$('#o2bg'),tint=$('#o2tint'),roll=$('#oproll'),cw=$('#opcw'),logo=$('#oplogo'),stb=$('#opstart'),camL=$('#opcam');
-  if(sv)stb.textContent='つづきから';
   const camP=[...roll.querySelectorAll('[data-c]')],tP=[...roll.querySelectorAll('[data-t]')];
   const FC={xd:['xd_stand',.435],xdL:['xd_lantern',.435],xdW:['xd_walk_pose',.435],dwB:['ally_dw_f',.38]};
   const camEl={};Object.keys(FC).forEach(k=>{const im=document.createElement('img');im.className='cam';im.alt='';im.onload=()=>{im.style.height=(im.naturalHeight*FC[k][1])+'%'};im.src='sprites/'+FC[k][0]+'.png';camL.appendChild(im);camEl[k]=im});
@@ -1799,9 +1819,9 @@ function opening(after,label,sv){window.__bpmSet=0;
     if(t>TT-1){stb.classList.add('on');const c=$('#cont');if(c)c.classList.add('on')}
     raf=requestAnimationFrame(frame)}
   
-  mkOptBar({st,skip:$('#opskip'),isDone:()=>done,sv});
+  mkOptBar({st,skip:$('#opskip'),isDone:()=>done,sv,cont:()=>{finish0();resumeSave(sv)}});
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
-  stb.onclick=()=>{sfx('tap');if(sv){audioInit();finish0();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const pr=G.pray&&PLACES[G.pray.id]?G.pray:null;const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down');return}
+  stb.onclick=()=>{sfx('tap');if(sv&&!stb._arm){stb._arm=1;const o0=stb.textContent;stb.textContent='記録が消えます。もう一度';setTimeout(()=>{stb._arm=0;stb.textContent=o0},2600);return}
   try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
   function finish(){if(done)return;done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc);try{localStorage.setItem('xd-senki-op','1')}catch(e){}after()}
   // スキップ：最後のロゴ画面へ飛ぶ。そこで「はじめる」を押してスタート
