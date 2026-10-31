@@ -1392,8 +1392,8 @@ function syncToast(m,bad){let t=document.getElementById('synct');if(!t){t=docume
   t.textContent=m;t.style.color=bad?'#ffb0a0':'#fff';t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',3800)}
 async function syncApi(body){const r=await fetch('/api/xd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j}
 let PH_ASKED=false;
-async function syncPush(){if(!SYNC)return;const ph=getPh();
-  if(!ph){if(!PH_ASKED){PH_ASKED=true;phDlg('set')}return}
+async function syncPush(ask){if(!SYNC)return;const ph=getPh();
+  if(!ph){if(ask)phDlg('set');return}
   try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（合言葉: '+ph+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
 async function syncPull(raw){const c=phCheck(raw);if(c.err)throw new Error(c.err);
   const j=await syncApi({action:'load',code:await phHash(c.v)});if(!j.data)throw new Error('その 合言葉の 記録は 見つかりません');
@@ -1423,7 +1423,7 @@ function phDlg(mode){document.getElementById('phdlg')&&document.getElementById('
       await syncApi({action:'claim',code:await phHash(c.v)});
       localStorage.setItem(PH_KEY,c.v);o.remove();syncPush()
     }catch(e){err.textContent=e.message;go.disabled=false}}}
-function saveNow(){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({v:SAVE_VER,g:G,snap:SNAP}));ok=true}catch(e){}syncPush();return ok}
+function saveNow(ask){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({v:SAVE_VER,g:G,snap:SNAP}));ok=true}catch(e){}syncPush(ask);return ok}
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
 /* セーブの互換：あとから項目や道具が増えても、古い記録に足りない値を補って続けられるようにする。
    章・場面の順番は入れ替えず、末尾に追加すること（記録は ch/stop の番号で持っているため）。 */
@@ -2691,8 +2691,8 @@ function stopTalk(st){
 }
 function prayAsk(){
   TW.busy=true;
-  const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow();TW.busy=false;
-    townSay(ok?[['','XDは 手を あわせて、しずかに いのった。'],['しんぷ','……旅の 記録は しるされました。（HPも 全回復）'],['しんぷ','タイトルの 「つづきから」で、ここから 再開できます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
+  const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
+    townSay(ok?[['','XDは 手を あわせて、しずかに いのった。'],['しんぷ','……旅の 記録は しるされました。（HPも 全回復）'],['しんぷ','タイトルの 「つづきから」で、ここから 再開できます。合言葉を 決めておくと、ほかの端末でも つづけられます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
   townChoice('',[{l:'いのる（きろくする）',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
 const STAGE_SAY={
@@ -3058,7 +3058,7 @@ function dgNPC(n){
     return townSay(line,()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;if(B&&B.won)fl(n.mid);back()};
       if(isB)startBattle(BOSSES[n.boss],true,{});else{const c=G.ch>=2&&Math.random()<.4?2:1;startBattle(Array.from({length:c},()=>makeMinion(tm)),false)}})}
   if(n.k==='dgrest'){TW.busy=true;
-    const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow();TW.busy=false;
+    const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
       townSay(ok?[['','やわらかな 光が XDを つつんだ。'],['','HPが 全回復した。ここまでの 旅も 記録された。'],['','タイトルの 「つづきから」で、ここから 再開できる。']]:[['','HPが 全回復した。（この ブラウザでは 記録は のこせなかった）']])};
     return townSay([['','洞窟の 奥に、あたたかく 光る 泉が ある。']],()=>townChoice('',[{l:'ひと休みする（きろくする）',s:'HPが 全回復し、旅の 記録を のこす',f:yes},{l:'やめる',s:'',f:()=>{TW.busy=false}}]))}
   if(n.k==='dgherb'){fl(n.mid);G.items.herb+=2;sfx('heal');const h=$('#hudherb');if(h)h.textContent=G.items.herb;n.gone=1;TW.npcs=TW.npcs.filter(m=>m!==n);return townSay([['','小さな 宝箱を 開けた！ やくそうを 2つ 手に入れた。']])}
