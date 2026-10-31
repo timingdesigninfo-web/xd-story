@@ -1394,7 +1394,7 @@ async function syncApi(body){const r=await fetch('/api/xd',{method:'POST',header
 let PH_ASKED=false;
 async function syncPush(ask){if(!SYNC)return;const ph=getPh();
   if(!ph){if(ask)phDlg('set');return}
-  try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});syncToast('サーバーにも 保存しました（合言葉: '+ph+'）')}catch(e){syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
+  try{await syncApi({action:'save',code:await phHash(ph),data:JSON.stringify({g:G,snap:SNAP})});if(ask)syncToast('サーバーにも 保存しました（合言葉: '+ph+'）')}catch(e){if(ask)syncToast('サーバー保存に失敗しました（この端末には保存済み）',1)}}
 async function syncPull(raw){const c=phCheck(raw);if(c.err)throw new Error(c.err);
   const j=await syncApi({action:'load',code:await phHash(c.v)});if(!j.data)throw new Error('その 合言葉の 記録は 見つかりません');
   const o=JSON.parse(j.data);if(!(o&&o.g&&typeof o.g.ch==='number'))throw new Error('記録が こわれています');
