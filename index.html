@@ -1915,7 +1915,7 @@ function showRules(onClose){
       <li><b>にげる</b>：ザコ戦だけ。失敗することもある。</li>
       <li><b>印の見かた</b>：<b>攻↑</b>＝攻撃アップ、<b>技↑</b>＝わざアップ、<b>守</b>＝守りの指示、<b>防</b>＝ぼうぎょ、<b>壁</b>＝バリア（数字は のこりターン／量）。仲間の欄にも、同じ印が出る。</li>
     </ol>
-    <p class="mute" style="margin:0">MPは戦闘ごとに全回復、HPは持ち越し。全員たおれたら負け（教会で目ざめる）。勝つと経験値が入り、バージョンが上がるとHPが全回復する。マップでは目的地の光る印に向かって歩く。草むらや雪原を歩くと敵と出会う。道を通れば出会わない。</p>`,onClose);
+    <p class="mute" style="margin:0">HPと MPは 戦闘の あとも 持ち越し（MPは 歩くと 少しずつ もどる）。全員たおれたら負け（教会で目ざめる）。勝つと経験値が入り、バージョンが上がるとHPが全回復する。マップでは目的地の光る印に向かって歩く。草むらや雪原を歩くと敵と出会う。道を通れば出会わない。</p>`,onClose);
 }
 const fiKey=item=>Object.keys(FACET).find(x=>FACET[x].item===item);
 const kimg=item=>{const f=Object.keys(FACET).find(x=>FACET[x].item===item);return f?`<img src="sprites/key_${f}.png" style="height:30px;width:auto;vertical-align:middle;image-rendering:pixelated;margin-right:6px">`:''};
@@ -3091,14 +3091,22 @@ function stopTalk(st){
   if(st.type==='boss'){const b=BOSSES[st.k];const w=BOSSWHY[st.k]||['……来たか、XD。','力を、見せてもらおう。'];return townSay(w.map(t=>[b.n+'　'+b.s,t]).concat([['XD','（たたかうしかない……！）']]),()=>{townOff();runStop(st)})}
   townOff();runStop(st);
 }
-function prayAsk(){
+function prayAsk(n){
+  const K=n&&n.pr==='kyo',W=K?(n.n||'おしょうさん'):'しんぷ';
   TW.busy=true;
   const yes=()=>{sfx('heal');G.hp=G.max;healAllies();const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
-    townSay(ok?[['','XDは 手を あわせて、しずかに いのった。'],['しんぷ','……旅の 記録は しるされました。（HPも 全回復）'],['しんぷ','タイトルの 「つづきから」で、ここから 再開できます。合言葉を 決めておくと、ほかの端末でも つづけられます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
-  const zange=()=>{TW.busy=true;townSay([['','XDは ひざを ついて、こころの うちを うちあけた。'],['しんぷ','……あたらしい ことばを、胸に きざみなさい。']],()=>{TW.busy=false;
-    if(!SYNC)return townSay([['しんぷ','……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
-  townChoice('',[{l:'いのる',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
+    townSay(ok?[...(K?kyoLines(W):[['','XDは 手を あわせて、しずかに いのった。'],[W,'……旅の 記録は しるされました。（HPも 全回復）']]),[W,'タイトルの 「つづきから」で、ここから 再開できます。合言葉を 決めておくと、ほかの端末でも つづけられます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
+  const zange=()=>{TW.busy=true;townSay([...(K?[['','XDは 正座して、こころの うちを うちあけた。'],[W,'……その ことば、ほとけさまに あずけて おきましょう。']]:[['','XDは ひざを ついて、こころの うちを うちあけた。'],[W,'……あたらしい ことばを、胸に きざみなさい。']])],()=>{TW.busy=false;
+    if(!SYNC)return townSay([[W,'……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
+  townChoice('',[{l:K?'お経を あげてもらう':'いのる',s:K?'その日の 旅を お経で となえて 記録。HPが 全回復':'旅の 記録を のこして、HPが 全回復する',f:yes},{l:K?'こころを うちあける':'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
+/* お寺：その日の 旅の 報告を、おしょうさんが お経に して となえる */
+function kyoLines(W){const c=CH[G.ch]||{};let h='';try{h=String(objText()).replace(/<[^>]*>/g,'').replace(/（[^）]*）/g,'').trim()}catch(e){}
+  return [['','ぽく、ぽく、ぽく……　木魚の 音が ひびく。'],
+   [W,`なーむー……　この 者、XD。${vname()}。……${c.y||''}年「${c.t||''}」の 旅の とちゅう。`],
+   [W,`なかま ${(G.allies||[]).filter(k=>k!=='ff').length}人、ともしびは ${lampLv()}つ……${h?'つぎは、'+h+'……':'まよわず すすめ……'}　なーむー……`],
+   ['','ちーん……'],
+   [W,'……きょうの 旅は、たしかに 記しました。（HPも 全回復）']]}
 const STAGE_SAY={
  'village:Dw':[[1,['……外で、もう少し 腕を ならして おいで。灯は、そう すぐには 強くならん。']],[2,['雲の国の 王の城で、Fiが 待っておる。急ぐのじゃ。']],[3,['妖精とは、うまく やっておるか？ 頼りきるなよ。手で 戦うことも、忘れるでないぞ。']],[5,['灯が 明るいのう。……さあ、奪われた 力を 取り戻しに 行け。わしは ここで 灯を 守っておる。']]],
  'village:こども':[[3,['あのね、さっき 光る ちいさい子が 村の 上を とんでたよ。あれが 妖精？　……ちょっと こわいけど、きれい。']],[5,['おじいさんの 灯、ほんとに 明るくなった！　ぼくも 絵、描いてみようかな。']]],
@@ -3126,7 +3134,7 @@ function townNPC(n){
     {l:'まだ 村で 待っていてくれ',s:'このまま 村に のこる',f:()=>townSay([['Dw　隠者','……そうか。気が 向いたら、また 声を かけなさい。',PDW]])}]))
   if(n.k==='mob'||n.k==='dgboss'||n.k==='dgherb'||n.k==='dgchest'||n.k==='dgrest')return dgNPC(n);
   if(n.k==='inn'){sfx('heal');G.hp=G.max;healAllies();const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;return townSay([[n.n,'おつかれさま。ゆっくり 休んでいきな。'],[n.n,'……さあ、元気になったよ！（みんなの HPが 全回復）']])}
-  if(n.k==='pray'){G.tw=G.tw||{};const first=!G.tw.priest;G.tw.priest=1;return townSay(first?n.say.map(t=>[n.n,t]):[[n.n,'ようこそ。旅の 無事を いのりますか？']],prayAsk)}
+  if(n.k==='pray'){G.tw=G.tw||{};const first=!G.tw.priest;G.tw.priest=1;return townSay(first?n.say.map(t=>[n.n,t]):[[n.n,n.pr==='kyo'?'ようこそ おまいり。きょうの 旅を、お経に しましょうか。':'ようこそ。旅の 無事を いのりますか？']],()=>prayAsk(n))}
   if(n.k==='shop2'){const ct=n.cat,nw=ct==='item'?0:shNew(ct),tx=nw?'新しいの 仕入れたよ！ 見ていきな。':ct==='item'?'やくそうや ドリンクを うっているよ。':ct==='tool'?'武器を うっているよ。クレジットで どうぞ。':ct==='panel'?'防具を うっているよ。クレジットで どうぞ。':'武器も 防具も やくそうも あるよ。クレジットで どうぞ。';return townSay([...(n.say||[]).map(t=>[n.n,t]),[n.n,tx]],()=>{SHOPONLY=ct||null;if(ct)SHOPTAB=ct;showShop(ct?1:0)})}
   if(n.k==='shop'){G.tw=G.tw||{};if(G.tw.shop)return townSay([[n.n,'毎度あり！ やくそうは いるかい？']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)});G.tw.shop=1;G.items.herb+=2;sfx('ally');const h=$('#hudherb');if(h)h.textContent=G.items.herb;return townSay([[n.n,'おう、彗星の子か！ 旅立ちの 祝いだ。'],[n.n,'やくそうを ふたつ おまけしよう！（やくそう +2）'],[n.n,'敵が おとす クレジットで やくそうも 買えるぞ。']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)})}
   townSay(stageSay(n).map(t=>[n.n||'',t]));
@@ -3515,7 +3523,7 @@ dgLink('dg_choose','dg_choose2');
   chap('mac',1,2,7,6,['島の 小さな 礼拝堂です。波の 音を 聞きながら、いのって いきなさい。','いのれば、旅の ようすを 記録して おきますよ。']);
   chap('tower',20,4,6,5,['塔の ふもとの 小さな 礼拝所です。眠る 光の ために いのって います。','いのれば、旅の ようすを 記録して おきますよ。']);
   {const p=PLACES.east;p.npcs=p.npcs.filter(n=>n.n!=='こども');
-    const H=p.houses.find(h=>h.img==='bld_jp_shrine');npc(p,H.x+3,H.y+3,{n:'かんぬし',k:'pray',dsp:'kannushi',c:NM.mage,say:['ここは 東の国の 社。桜の 下で、旅の 無事を いのります。','いのれば、旅の ようすを 記録して おきますよ。']})}
+    const H=p.houses.find(h=>h.img==='bld_jp_shrine');npc(p,H.x+3,H.y+3,{n:'おしょうさん',k:'pray',pr:'kyo',dsp:'kannushi',c:NM.mage,say:['ここは 東の国の 寺。桜の 下で、旅の 無事を ねがいます。','その日の 旅を、お経に して となえて しんぜよう。ほとけさまが 記して くださる。']})}
 }
 /* ---- 関所（東西に通り抜ける拡大マップ） ---- */
 const GATEREQ={gate:1,pass:2};
