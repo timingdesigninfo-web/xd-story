@@ -3824,6 +3824,14 @@ function showName(){
   /* 欄を けすと マップの 高さが かわって ずれるので、名前の ない 場所では 旅の とちゅうと 出して 欄は のこす */
   const c=CH[G.ch]||CH[CH.length-1],v=n||{n:'旅の とちゅう',s:c?`${c.y}年「${c.t}」`:''};if($('#fbn1').textContent!==v.n)$('#fbn1').textContent=v.n;if($('#fbn2').textContent!==v.s)$('#fbn2').textContent=v.s;b.hidden=false;b.classList.toggle('road',!n);
 }
+/* 隊列：主人公の 通った あとを 仲間が たどる */
+const FGAP=15;
+function trailPush(){const T=P.trail||(P.trail=[]);T.unshift({x:P.px,y:P.py,d:P.dir});if(T.length>110)T.length=110}
+function trailAt(n){const T=P.trail;if(!T||!T.length||Math.abs(T[0].x-P.px)+Math.abs(T[0].y-P.py)>4){P.trail=[];return{x:P.px,y:P.py,d:P.dir}}
+  const e=T[Math.min(n,T.length)-1]||T[T.length-1];return e}
+function partyFollow(){const L=[];(G.allies||[]).forEach(k=>{if(k!=='ff'&&DSPS.includes(k))L.push({k,h:Math.round((NPCH[k]||40)*.92)})});
+  if(G.escort){const n=G.escort.n;L.push(n==='老航海士'?{h:31,img:d=>'sprites/ch_elder_'+d+'.png'}:{h:30,img:()=>sprite(n,G.escort.col[0],G.escort.col[1])})}
+  return L}
 function fieldStep(){
   FLD.tick++;
   if(!P.moving&&FLD.held.length){
@@ -3832,7 +3840,7 @@ function fieldStep(){
   }
   if(P.moving){
     const sp=2,gx=P.tgx*TS,gy=P.tgy*TS;
-    P.px+=Math.sign(gx-P.px)*sp;P.py+=Math.sign(gy-P.py)*sp;P.anim++;
+    P.px+=Math.sign(gx-P.px)*sp;P.py+=Math.sign(gy-P.py)*sp;P.anim++;trailPush();
     if(P.anim%16===8)sfx('step');
     if(P.px===gx&&P.py===gy){P.tx=P.tgx;P.ty=P.tgy;P.moving=false;arrive()}
   }else{P.anim=0;if(FLD.tick%20===0){const fs=CH[G.ch]&&CH[G.ch].stops[G.stop],M=fs&&fs.type==='meet'&&MEET[fs.at];if(M&&P.tx===M.x&&P.ty===M.y){stopField();CONT=stopDone;sfx('skill');return meetEvent(M)}}}
@@ -3901,8 +3909,10 @@ function drawField(){
     else if(M)objs.push({y:M.y*TS+TS-2,f:()=>{const im=timg(sprite(M.n,M.col[0],M.col[1])),bx=Math.round(M.x*TS+TS/2-camx),by=Math.round(M.y*TS+TS-4-camy),t=FLD.tick;
       if(im.complete&&im.naturalWidth){const hh=im.naturalWidth>40?40:26,ww=im.naturalWidth>40?Math.round(hh*im.naturalWidth/im.naturalHeight):24;cx.drawImage(im,bx-ww/2,by-hh,ww,hh)}
       cx.fillStyle='#ffd24a';cx.fillRect(bx-1,by-50+Math.round(Math.sin(t/9)*2),3,6);cx.fillRect(bx-1,by-42+Math.round(Math.sin(t/9)*2),3,3)}})}
-  if(G.escort)objs.push({y:P.py+TS-1,f:()=>{const ed=G.escort.n==='老航海士'?'sprites/ch_elder_'+(({down:'d',up:'u',left:'l',right:'r'})[P.dir]||'d')+'.png':null,im=timg(ed||sprite(G.escort.n,G.escort.col[0],G.escort.col[1])),v=VEC[P.dir]||[0,1];
-      if(im.complete&&im.naturalWidth){const big=im.naturalWidth>40,h=big?30:26,w=big?Math.round(h*im.naturalWidth/im.naturalHeight):24;cx.drawImage(im,Math.round(P.px+TS/2-w/2-v[0]*20-camx),Math.round(P.py+TS-2-h-v[1]*14-camy),w,h)}}});
+  if(!(G&&G.ship&&grid[P.ty][P.tx]===0))partyFollow().forEach((m,i)=>{const t=trailAt((i+1)*FGAP);objs.push({y:t.y+TS-2-(i+1)*.01,f:()=>{
+    const d=({down:'d',up:'u',left:'l',right:'r'})[t.d]||'d',im=timg(m.img?m.img(d):'sprites/ch_'+m.k+'_'+d+'.png');
+    if(!(im.complete&&im.naturalWidth))return;const h=m.h,w=Math.round(h*im.naturalWidth/im.naturalHeight),bob=P.moving&&((P.anim+i*5)>>3)%2?1:0;
+    cx.drawImage(im,Math.round(t.x+TS/2-w/2-camx),Math.round(t.y+TS-4-h-bob-camy),w,h)}})});
   for(const k in LM)objs.push({y:-1e6+LM[k].y,f:()=>k==='tower'&&timg('sprites/bld_tower_new.png').complete&&timg('sprites/bld_tower_new.png').naturalWidth?cx.drawImage(timg('sprites/bld_tower_new.png'),Math.round(LM[k].x*TS+TS/2-26-camx),Math.round((LM[k].y+1)*TS+4-118-camy),52,118):cx.drawImage(LMS,LMI.indexOf(k)*LW,0,LW,LH,Math.round(LM[k].x*TS+TS/2-LW/2-camx),Math.round((LM[k].y+1)*TS+4-LH-camy),LW,LH)});
   for(const k in POI){const p=POI[k];objs.push({y:(p.y+1)*TS-1,f:()=>{
     const x=Math.round(p.x*TS+TS/2-camx),y=Math.round((p.y+1)*TS-camy);
