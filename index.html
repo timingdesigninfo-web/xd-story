@@ -4871,7 +4871,7 @@ function dxResult(){const kind=endingKind(),T=DT.types[kind],fl=(G.wins||0)>=8?'
   const text=DT.shareTpl.replace('{type}',T.n).replace('{future}',T.future).replace('{tags}',tags);
   return{kind,T,fl,F,sc:dxScores(),text}}
 /* 診断カード：ゲームの 背景・XD・いちばん 近い なかま */
-const DXNEAR={t:['ff','Fi','言われた ことを すぐ 形に する'],h:['dw','Dw','ひとつの 道を ほりつづける'],c:['ae','Ae','みんなを つないで 動かす'],m:['ps','Ps','光と 影の あいだで 迷いつづける']};
+const DXNEAR={t:['ff','Fi','言われた ことを すぐ 形に する'],h:['ai','Ai','一本の 線に こだわりぬく'],c:['ae','Ae','みんなを つないで 動かす'],m:['ps','Ps','光と 影の あいだで 迷いつづける']};
 const DXBG={t:'cloud',h:'forest',c:'apple',m:'snow'};
 function dxCard(R,cb){
   const W=1200,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
