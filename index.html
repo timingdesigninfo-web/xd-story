@@ -4521,7 +4521,7 @@ async function fiFight(){
   await runQ();ACT='xd'}
 function itemWho(k){ /* やくそうを だれに？ */
   const ms=partyAll().map((m,i)=>({m,i}));
-  menuOv(`${ITEMS[k].n}を だれに つかう？`,ms.map(o=>({l:o.m.n,s:o.m.hp<=0?'うごけない　つかうと 起きあがる（1ターン やすんでから うごく）':`HP ${o.m.hp}/${o.m.max}${o.m.hp>=o.m.max?'　まんたん':''}`,f:()=>{if(o.m.hp>=o.m.max){sfx('junk');return itemWho(k)}B.t=B.es.indexOf(B.e);go('item',k+':'+o.i)}})))}
+  menuOv(`${ITEMS[k].n}を だれに つかう？`,ms.map(o=>({l:o.m.n,s:o.m.hp<=0?'力つきて うごけない':`HP ${o.m.hp}/${o.m.max}${o.m.hp>=o.m.max?'　まんたん':''}`,f:()=>{if(o.m.hp>=o.m.max){sfx('junk');return itemWho(k)}B.t=B.es.indexOf(B.e);go('item',k+':'+o.i)}})))}
 function chooseTarget(m,k){
   if(m==='item'&&B.allies.length)return itemWho(k);
   if(m==='ai')return giveOrder(k);
