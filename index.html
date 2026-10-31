@@ -426,7 +426,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
     padding:max(6px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
   .ov{inset:0;width:auto;height:auto}
   .op:not(.rot){position:fixed;inset:0;z-index:60;height:auto}
-  .fwrap{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;gap:6px;flex:1;min-height:0;align-items:stretch}
+  .fwrap{display:grid;grid-template-columns:minmax(0,1.2fr) auto minmax(0,.8fr);grid-template-rows:auto minmax(0,1fr) auto auto;gap:6px;flex:1;min-height:0;align-items:stretch}
   .lcol,.rcol{display:contents}
   .rcol .info .qm{display:none}
   .lcol .info{grid-area:1/1/2/4;flex-direction:column;gap:2px;max-height:64px;overflow:hidden;font-size:12px}
@@ -446,13 +446,16 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .pad{grid-area:4/2;justify-self:center;position:relative;left:auto;bottom:auto;grid-template-columns:repeat(3,48px)!important;grid-template-rows:repeat(3,48px)!important;gap:2px;touch-action:none;border-radius:50%;background:radial-gradient(circle,#2a1d3c 0 62%,transparent 63%);margin:2px 0}
   .pad button{pointer-events:none;border-radius:10px;font-size:20px}
   .pad::after{display:none}
-  .rcol .abtns{grid-area:4/1;display:flex;align-items:flex-end;justify-content:center;padding:0 8px;gap:6px;align-self:center}
+  .rcol .abtns{grid-area:4/1;display:flex;align-items:flex-end;justify-content:center;padding:0 2px;gap:8px;align-self:center}
   .rcol .ab+.ab{margin-bottom:34px}
-  .rcol .abtns button{width:56px;height:56px}
+  .rcol .ab{position:relative;width:54px}
+  .rcol .ab small{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px}
+  .rcol .abtns button{width:54px;height:54px}
   .pmenu{display:flex;grid-area:4/3;align-self:center;justify-self:center}
   .pmenu button{font-size:13px;padding:14px 14px;border-radius:22px;border:2px solid var(--line);background:#20162bcc;color:var(--fg);white-space:nowrap}
   .pmenu button:active{border-color:var(--accent);background:#3a2150}
   html.flip .rcol .abtns{grid-area:4/3;flex-direction:row-reverse}
+  html.flip .fwrap{grid-template-columns:minmax(0,.8fr) auto minmax(0,1.2fr)}
   html.flip .pmenu{grid-area:4/1}
   .inbt .lcol .pad{grid-template-columns:repeat(3,48px)!important;grid-template-rows:repeat(3,48px)!important}
   .inbt .lcol .info{max-height:none;overflow:visible;gap:4px}
