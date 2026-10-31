@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031105346"><script id="xd-upd">(function(){var B="20261031105346";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#140d1a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="XD戦記"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="xd-build" content="20261031105720"><script id="xd-upd">(function(){var B="20261031105720";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
 <title>XD戦記</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1624,6 +1624,7 @@ function adminPanel(){
 #optbar button{pointer-events:auto;position:static!important;min-width:0;height:auto;min-height:34px;padding:7px 4px;font-family:var(--display);font-size:12px;line-height:1.25;letter-spacing:.06em;color:#fff!important;background:linear-gradient(#e0309a,#9b1d7a)!important;border:2px solid #fff!important;border-radius:5px;box-shadow:0 0 12px rgba(255,160,220,.7)!important;text-shadow:none;white-space:normal;text-align:center;cursor:pointer;text-shadow:0 1px 0 #6a0f50}
 #optbar .k-idea{background:none!important;border:0!important;box-shadow:none!important;text-shadow:none!important;color:rgba(255,255,255,.55)!important;font-size:11px;letter-spacing:.04em;min-height:0;padding:4px 2px;text-decoration:underline;text-underline-offset:3px;margin-top:6px}
 #optbar button:active{filter:brightness(.9)}
+#optbar button.late{opacity:0;pointer-events:none!important;transition:opacity 1.2s}#optbar.on button.late{opacity:1;pointer-events:auto!important}
 @media screen and (orientation:portrait) and (max-width:900px){
  #optbar{inset:0;width:auto;display:block}
  #optbar button{position:absolute!important;min-height:44px;padding:8px 20px;font-size:16px;white-space:nowrap;border-radius:5px;letter-spacing:.3em}
@@ -1641,8 +1642,9 @@ function mkOptBar(o){const old=document.getElementById('optbar');if(old)old.remo
   const mk=(cls,t,fn)=>{const b=document.createElement('button');b.className='ib '+cls;b.innerHTML=t;b.onclick=e=>{e.stopPropagation();fn()};bar.appendChild(b);return b};
   const sb=mk('k-snd','',()=>{audioInit();toggleSound();sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';if(SND.on)sfx('tap')});sb.textContent=SND.on?'♪ 音 ON':'× 音 OFF';
   if(o.skip){o.skip.style.cssText='';o.skip.classList.add('k-skip');bar.appendChild(o.skip)}
-  if(o.cont)mk('k-code','つづきから',()=>contDlg(o.sv,o.cont));
-  if(SYNC){mk('k-fs',innerWidth>innerHeight?'全画面<br>について':'全画面について',fsDlg);mk('k-idea',innerWidth>innerHeight?'アイデアを<br>送る':'アイデアを送る',ideaDlg)}
+  const L=b=>{if(o.late)b.classList.add('late');return b};
+  if(o.cont)L(mk('k-code','つづきから',()=>contDlg(o.sv,o.cont)));
+  if(SYNC){L(mk('k-fs',innerWidth>innerHeight?'全画面<br>について':'全画面について',fsDlg));L(mk('k-idea',innerWidth>innerHeight?'アイデアを<br>送る':'アイデアを送る',ideaDlg))}
   document.body.appendChild(bar);
   const iv=setInterval(()=>{if(!document.body.contains(o.st)||(o.isDone&&o.isDone())){bar.remove();clearInterval(iv)}},150)}
 /* みんなで作るゲーム：アイデアを送る */
@@ -1858,10 +1860,10 @@ function opening(after,label,sv){window.__bpmSet=0;
     if(t>TT-3&&!fl.logo){fl.logo=1;logo.style.transition='opacity 1.8s';logo.style.opacity=1;sfx('lvup')}
     if(t>TT-3.6){if(PTR&&!fl.endp){fl.endp=1;layout();ec.width=216;ec.height=Math.round(216*st.clientHeight/st.clientWidth);eg.imageSmoothingEnabled=false}ec.style.opacity=1;drawEnd(Math.max(0,t-(TT-3.6)))}
     if(t>TT-3.6){const sk=$('#opskip');if(sk&&sk.style.display!=='none')sk.style.display='none'}
-    if(t>TT-1){stb.classList.add('on');const c=$('#cont');if(c)c.classList.add('on')}
+    if(t>TT-1){stb.classList.add('on');const c=$('#cont');if(c)c.classList.add('on');const ob=document.getElementById('optbar');if(ob)ob.classList.add('on')}
     raf=requestAnimationFrame(frame)}
   
-  mkOptBar({st,skip:$('#opskip'),isDone:()=>done,sv,cont:s=>{finish0();resumeSave(s||sv)}});
+  mkOptBar({late:true,st,skip:$('#opskip'),isDone:()=>done,sv,cont:s=>{finish0();resumeSave(s||sv)}});
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
   stb.onclick=()=>{sfx('tap');if(sv&&!stb._arm){stb._arm=1;const o0=stb.textContent;stb.textContent='記録が消えます。もう一度';setTimeout(()=>{stb._arm=0;stb.textContent=o0},2600);return}
   try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
