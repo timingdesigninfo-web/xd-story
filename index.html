@@ -2846,7 +2846,7 @@ function townFin(f){if(GPW){setTimeout(()=>townFin(f),120);return}endPort();town
 function tsel(d){const ops=[...document.querySelectorAll('#tmsg .topt')];if(!ops.length)return;let i=ops.findIndex(b=>b.classList.contains('sel'));if(i<0)i=0;i=(d==='up'||d==='left')?Math.max(0,i-1):Math.min(ops.length-1,i+1);ops.forEach(b=>b.classList.remove('sel'));ops[i].classList.add('sel');ops[i].scrollIntoView({block:'nearest'});sfx('tap');TSELHOOK&&TSELHOOK()}
 function townChoice(sub,items){endPort();const old=$('#tmsg');if(old)old.remove();const v=app.querySelector('.view');if(!v)return;
   const m=document.createElement('div');m.id='tmsg';m.className='tmsg tch';
-  m.innerHTML=items.map((o,i)=>`<div class="topt${i?'':' sel'}" data-i="${i}">▶ <b>${o.l}</b><small>${o.s||''}</small></div>`).join('')+'<i>↑↓で えらんで Aで けってい</i>';
+  m.innerHTML=(sub?`<b>${sub}</b>`:'')+items.map((o,i)=>`<div class="topt${i?'':' sel'}" data-i="${i}">▶ <b>${o.l}</b><small>${o.s||''}</small></div>`).join('')+'<i>↑↓で えらんで Aで けってい</i>';
   v.appendChild(m);
   const pick=i=>{sfx('tap');m.remove();TW.busy=false;items[i].f()};
   m.querySelectorAll('.topt').forEach((el,i)=>el.onclick=e=>{e.stopPropagation();pick(i)});
@@ -3311,11 +3311,11 @@ function dgNPC(n){
     const isB=n.k==='dgboss',tm=MINIONS.find(m=>m.n===n.tn);
     if(isB&&n.boss==='fairyKing'){const pk=t=>{G.pick=G.pick||{t:0,h:0,c:0};G.pick[t]=(G.pick[t]||0)+3;G.fkc=t},KP='sprites/en2_figmax.png',XP='sprites/xd_stand.png',kn='妖精の王',K=t=>[kn,t,KP],X=t=>['XD',t,XP];
       const go=()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;if(B&&B.won)fl(n.mid);back()};startBattle(BOSSES[n.boss],true,{})};
-      return townSay([K('……来たのね。ここが わたしの 玉座よ。'),...BOSSWHY.fairyKing.map(K),['','玉座の 王は、やさしく ほほえんで いる。ほんとうに、悪意は ないのだ。……XDは、自分の 灯を にぎりしめた。',XP]],()=>townChoice('',[
-        {l:'「ぜんぶ、自分の 手で つくる」',s:'XDの こうげき+30%、わざの MPが 半分（Fiの 力は ふつう）',f:()=>{pk('h');townSay([X('……やさしいんだな、あなたは。でも、つらいのも、まよう のも、ぼくの 仕事だ。'),X('うまく いかない 日も、手が とまる 日も、ぜんぶ ぼくが 選んだ 道だ。……だから、あずけられない。'),K('……どうして？ だれも、きずつかなくて いいのに。'),X('きずついた 分だけ、線に 重みが 宿る。ぼくの 手で、つくる。それが、ぼくだ！')],go)}},
-        {l:'「考えるのは ぼく。手伝いは 借りる」',s:'仲間ぜんいんの こうげき・ぼうぎょ+15%、XDも 少し 強く なる',f:()=>{pk('c');townSay([X('……ありがとう。でも、ぜんぶは まかせられない。'),X('ひとりじゃ ないからさ。Fiが いる。仲間が いる。てつだって もらうのは いい。でも、決めるのは ぼくだ。'),K('……それで、つらく ならない？ まよわない？'),X('まよう よ。でも、まよいながら みんなと つくる。それが「考える」って ことだと 思う。いっしょに、行こう！')],go)}},
-        {l:'「妖精を 解放する」',s:'Fiが 2ばい 強く、暴走も なし。ただし XDの こうげき-20%（診断：ゆだね）',f:()=>{pk('t');G.fkc='f';townSay([K('……ねえ、XD。妖精を 解放すれば、あなたの 力を 妖精が 引き出して くれるのよ。つくるのも、考えるのも、ぜんぶ。'),X('……ぼくの 力を、Fiが 引き出して くれる……？ それなら、強く なれる……！'),['Fi　生まれたての精霊','XD……！ わたしの なかの 力が、あふれて くる！ ……でも、これって……XDは、どうなるの？','sprites/ally_ff.png'],X('……だいじょうぶ。Fi、あとは たのむ。ぼくは、見てる。'),K('そう、それで いいの。……やさしい 子。')],go)}},
-        {l:'「……もう、ゆだねたい」',s:'2ターンは ねむけで こうげき半減。3ターン目に めざめて 全回復、こうげき・ぼうぎょ 大',f:()=>{pk('t');townSay([X('……正直、つかれてる。まよう のも、つくる のも、しんどい。あなたの 言うことは、ほんとうに やさしい。'),K('ええ。ええ、そうでしょう？ だから、ぜんぶ……わたしに。'),X('……そう、だね。まかせたら、らくに なれるのかな。……ぼくは、もう——'),['','そのとき、胸の 灯が ふるえた。遠くから、仲間たちの 声が 聞こえる。',XP],['Fi　生まれたての精霊','XD！ ねむっちゃ、だめ！ あなたの 灯は、あなたの ものよ！','sprites/ally_ff.png'],X('……ごめん。まだ、きめきれない。でも……ねむるのは、ちがう。目を さます。みんなを、おいて いけない！')],go)}}]))}
+      return townSay([K('……来たのね。ここが わたしの 玉座よ。'),...BOSSWHY.fairyKing.map(K),['','玉座の 王は、やさしく ほほえんで いる。ほんとうに、悪意は ないのだ。……XDは、自分の 灯を にぎりしめた。',XP],K('ねえ、XD。取りもどした その 力も、いつかは また 消えて しまうわ。……それでも、あなたは どうするの？')],()=>townChoice('XDの こたえは——',[
+        {l:'「自分で 切り開く」',s:'XDの こうげき+30%、わざの MPが 半分（Fiの 力は ふつう）',f:()=>{pk('h');townSay([X('……やさしいんだな、あなたは。でも、つらいのも、まよう のも、ぼくの 仕事だ。'),X('うまく いかない 日も、手が とまる 日も、ぜんぶ ぼくが 選んだ 道だ。……だから、あずけられない。'),K('……どうして？ だれも、きずつかなくて いいのに。'),X('きずついた 分だけ、線に 重みが 宿る。ぼくの 手で、つくる。それが、ぼくだ！')],go)}},
+        {l:'「手を 貸してくれ」',s:'仲間ぜんいんの こうげき・ぼうぎょ+15%、XDも 少し 強く なる',f:()=>{pk('c');townSay([X('……ありがとう。でも、ぜんぶは まかせられない。'),X('ひとりじゃ ないからさ。Fiが いる。仲間が いる。てつだって もらうのは いい。でも、決めるのは ぼくだ。'),K('……それで、つらく ならない？ まよわない？'),X('まよう よ。でも、まよいながら みんなと つくる。それが「考える」って ことだと 思う。いっしょに、行こう！')],go)}},
+        {l:'「妖精の 解放」',s:'Fiが 2ばい 強く、暴走も なし。ただし XDの こうげき-20%（診断：ゆだね）',f:()=>{pk('t');G.fkc='f';townSay([K('……ねえ、XD。妖精を 解放すれば、あなたの 力を 妖精が 引き出して くれるのよ。つくるのも、考えるのも、ぜんぶ。'),X('……ぼくの 力を、Fiが 引き出して くれる……？ それなら、強く なれる……！'),['Fi　生まれたての精霊','XD……！ わたしの なかの 力が、あふれて くる！ ……でも、これって……XDは、どうなるの？','sprites/ally_ff.png'],X('……だいじょうぶ。Fi、あとは たのむ。ぼくは、見てる。'),K('そう、それで いいの。……やさしい 子。')],go)}},
+        {l:'「すべてを ゆだねる」',s:'2ターンは ねむけで こうげき半減。3ターン目に めざめて 全回復、こうげき・ぼうぎょ 大',f:()=>{pk('t');townSay([X('……正直、つかれてる。まよう のも、つくる のも、しんどい。あなたの 言うことは、ほんとうに やさしい。'),K('ええ。ええ、そうでしょう？ だから、ぜんぶ……わたしに。'),X('……そう、だね。まかせたら、らくに なれるのかな。……ぼくは、もう——'),['','そのとき、胸の 灯が ふるえた。遠くから、仲間たちの 声が 聞こえる。',XP],['Fi　生まれたての精霊','XD！ ねむっちゃ、だめ！ あなたの 灯は、あなたの ものよ！','sprites/ally_ff.png'],X('……ごめん。まだ、きめきれない。でも……ねむるのは、ちがう。目を さます。みんなを、おいて いけない！')],go)}}]))}
     const line=isB?[[n.n,n.boss==='fairyKing'?'……来たのね。ここが わたしの 玉座よ。':'……ここから 先へは、通さぬ。']]:[['','……！ 暗がりから、魔物が 飛びだして きた。']];
     return townSay(line,()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;if(B&&B.won)fl(n.mid);back()};
       if(isB)startBattle(BOSSES[n.boss],true,{});else{const c=G.ch>=2&&Math.random()<.4?2:1;startBattle(Array.from({length:c},()=>makeMinion(tm)),false)}})}
@@ -4601,7 +4601,7 @@ function showDiagnosis(back){
     $('#dxBack').onclick=()=>{sfx('tap');back&&back()};
   })}
 
-const FKC={f:'「妖精を 解放する」と こたえ、Fiの 力に 頼って 王を 止めた（強い 力は 得たが、決めるのを 妖精に ゆだねた）',h:'「ぜんぶ、自分の 手で つくる」と こたえた',c:'「考えるのは ぼく。手伝いは 借りる」と こたえた',t:'「もう、ゆだねたい」と 心が ゆれた。それでも 目を さました'};
+const FKC={f:'「妖精の 解放」を えらび、Fiの 力に 頼って 王を 止めた（強い 力は 得たが、決めるのを 妖精に ゆだねた）',h:'「自分で 切り開く」と こたえた',c:'「手を 貸してくれ」と こたえた',t:'「すべてを ゆだねる」と 心が ゆれた。それでも 目を さました'};
 const fkcLine=()=>G.fkc&&FKC[G.fkc]?`<p class="mute" style="margin:0">妖精の王への 最後の こたえ　XDは ${FKC[G.fkc]}。</p>`:'';
 function ending(){
   if(!G.endSeen){G.endSeen=1;save();const ek0=endingKind();return openingLong(endingHub,'スキップ ▶',{ending:1,text:endText(ek0),mus:'ending',small:'おわり',btn:'つづく'})}
@@ -4614,15 +4614,17 @@ function endText(ek){
   const wj=(t,n=17)=>t.split('<br>').map(seg=>{if(/</.test(seg))return seg;const tk=seg.match(/[^ 、。]+[、。]?|[ ]/g)||[seg],out=[];let cur='';
     tk.forEach(w=>{if(w===' '){if(cur&&!/[、。]$/.test(cur))cur+=' ';return}if(cur.replace(/ /g,'').length+w.length>n&&cur){out.push(cur.trim());cur=''}cur+=w;if(/。$/.test(cur)||cur.replace(/ /g,'').length>=n){out.push(cur.trim());cur=''}});if(cur.trim())out.push(cur.trim());return out.join('<br>')}).join('<br>');
   const gp='<p class="gp"><br></p>',P=(t,c,sn)=>`<p${sn?` data-s="${sn}"`:''}${c?` data-c="${c}"`:''}>${wj(t)}</p>`;
-  const fk=({h:'「ぜんぶ、自分の 手で つくる」',c:'「手伝いは 借りる」',f:'「妖精を 解放する」',t:'「……もう、ゆだねたい」'})[G.fkc];
+  const fk=({h:'「自分で 切り開く。」',c:'「手を 貸してくれ。」',f:'「妖精の 解放。」',t:'「すべてを ゆだねる。」'})[G.fkc];
   const story=[
     P('妖精の城の 玉座で、<br>妖精の王は しずかに ひざを ついた。','','castle'),
     P('「みんなを しあわせに したかった」<br>その ねがいは、うそじゃ なかった。',''),
-    ...(fk?[P(`XDが えらんだ こたえは<br>${fk}。`,'')]:[]),
     gp,
     P('操られていた 嵐の王 フィグムは、<br>ブラウザ大陸に 晴れ間を もどした。','','storm'),
     gp,
-    P('取りもどした 五つの 力。<br>見る・聞く・描く・伝える・考える。','','mac'),
+    P('そしてXDも、クリエイティブの<br>見る・聞く・描く・伝える・考える。<br>5つの力を取り戻した。','','mac'),
+    gp,
+    P('しかし<br>そのチカラもまた、一時的なものでしかない。',''),
+    ...(fk?[gp,`<p>${fk}</p>`]:[]),
     gp,
     `<p class="h" data-s="village">${E.n}</p>`,
     P(`<small>${E.sub}</small>`,''),
