@@ -902,7 +902,7 @@ function gridToURL(rows,pal){
 }
 let HERO='';
 function rng(seed){let s=2166136261;for(const ch of seed)s=Math.imul(s^ch.charCodeAt(0),16777619)>>>0;return()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296}}
-const SPRIMG={ダレカニ:'sprites/en_sea_dareka.png',ナントナクラゲ:'sprites/en_sea_nantona.png',シラケザメ:'sprites/en_sea_shirake.png',ヤッツケダコ:'sprites/en_sea_yattsuke.png',ヒトマカセガイ:'sprites/en_sea_hitomaka.png',ボヤケモリ:'sprites/en4_boyake.png',ラクガキゴーレム:'sprites/en4_rakugaki.png',マヨイノヌシ:'sprites/en4_mayoi.png',ザックーリ:'sprites/en4_zakkuri.png',ナルホロ:'sprites/en4_naruhoro.png',ンナモン:'sprites/en4_rafu.png',ペンディ:'sprites/en4_pendi.png',ノーコードの巨人:'sprites/en4_nocode.png',キカヌン:'sprites/en2_mimi.png',ヤリボン:'sprites/en2_uwa.png',シタガッキー:'sprites/en2_shita.png',ケシゴムシ:'sprites/en2_keshi.png',ヒミツノ:'sprites/en2_himi.png',モスコッシ:'sprites/en2_mou.png',マルナンゲ:'sprites/en2_maru.png',オマカンセ:'sprites/en2_zen.png',クショクショ:'sprites/en3_cushion.png',チャオチャオ:'sprites/en3_teapot.png',エラベン:'sprites/en3_glove.png',マドローミ:'sprites/en3_curtain.png',ダイペン:'sprites/en3_pen.png',ノージーフラワー:'sprites/en3_flower.png',サキマワリン:'sprites/en3_saki.png',ヤキオセワ:'sprites/en3_oseva.png',カワリーン:'sprites/en3_kawari.png',ソノマンマー:'sprites/en3_sono.png',オマカッシー:'sprites/en3_omaka.png','Principle':'sprites/en2_principle.png','Penpot':'sprites/en2_penpot.png','妖精の王':'sprites/en2_figmax.png','語り部の おばあさん':'sprites/npc_elder.png','語り部':'sprites/npc_elder.png','老航海士':'sprites/ch_elder_d.png','かげの 作り手':'sprites/npc_shadow.png','まちぼうけの 旅人':'sprites/npc_traveler.png',メンドウ:'sprites/en_mendo.png',マイイカ:'sprites/en_maaii.png',マーセキリ:'sprites/en_dareka.png',コピペ虫:'sprites/en_kopipe.png',ウノミー:'sprites/en_unomi.png',ゴテゴテ:'sprites/en_atomawashi.png',チラケル:'sprites/en_omakase.png',ニードネル:'sprites/en_nidoneru.png',ニドーネル:'sprites/en_nidoneru_g.png',モイイカ:'sprites/en_mooiika.png',イッタキリ:'sprites/en_ittakiri.png',ホウチ虫:'sprites/en_houchi.png',サーシラン:'sprites/en_saashiran.png',サンドーネル:'sprites/en_sandoneru.png',Dw:'sprites/ally_dw.png',Ai:'sprites/ally_ai.png','Ae':'sprites/ally_ae.png',Ps:'sprites/ally_ps.png',Fi:'sprites/ally_ff.png',DreamweaverF:'sprites/ally_dw_f.png',スケット:'sprites/boss_sketch.png',キンバ:'sprites/boss_canva.png',プロト:'sprites/boss_prott.png','インビスオン':'sprites/boss_invision.png','スタティオ':'sprites/boss_studio_atk.png','フラマー':'sprites/boss_framer.png','フィグム':'sprites/boss_figma.png','クラウド王':'sprites/boss_king.png'};
+const SPRIMG={ダレカニ:'sprites/en_sea_dareka.png',ナントナクラゲ:'sprites/en_sea_nantona.png',シラケザメ:'sprites/en_sea_shirake.png',ヤッツケダコ:'sprites/en_sea_yattsuke.png',ヒトマカセガイ:'sprites/en_sea_hitomaka.png',ボヤケモリ:'sprites/en4_boyake.png',ラクガキゴーレム:'sprites/en4_rakugaki.png',マヨイノヌシ:'sprites/en4_mayoi.png',ザックーリ:'sprites/en4_zakkuri.png',ナルホロ:'sprites/en4_naruhoro.png',ンナモン:'sprites/en4_rafu.png',ペンディ:'sprites/en4_pendi.png',ノーコードの巨人:'sprites/en4_nocode.png',キカヌン:'sprites/en2_mimi.png',ヤリボン:'sprites/en2_uwa.png',シタガッキー:'sprites/en2_shita.png',ケシゴムシ:'sprites/en2_keshi.png',ヒミツノ:'sprites/en2_himi.png',モスコッシ:'sprites/en2_mou.png',マルナンゲ:'sprites/en2_maru.png',オマカンセ:'sprites/en2_zen.png',クショクショ:'sprites/en3_cushion.png',チャオチャオ:'sprites/en3_teapot.png',エラベン:'sprites/en3_glove.png',マドローミ:'sprites/en3_curtain.png',ダイペン:'sprites/en3_pen.png',ノージーフラワー:'sprites/en3_flower.png',サキマワリン:'sprites/en3_saki.png',ヤキオセワ:'sprites/en3_oseva.png',カワリーン:'sprites/en3_kawari.png',ソノマンマー:'sprites/en3_sono.png',オマカッシー:'sprites/en3_omaka.png','Principle':'sprites/en2_principle.png','Penpot':'sprites/en2_penpot.png','妖精の王':'sprites/en2_figmax.png','語り部の おばあさん':'sprites/npc_elder.png','語り部':'sprites/npc_elder.png','老航海士':'sprites/ch_navi_d.png','かげの 作り手':'sprites/npc_shadow.png','まちぼうけの 旅人':'sprites/npc_traveler.png',メンドウ:'sprites/en_mendo.png',マイイカ:'sprites/en_maaii.png',マーセキリ:'sprites/en_dareka.png',コピペ虫:'sprites/en_kopipe.png',ウノミー:'sprites/en_unomi.png',ゴテゴテ:'sprites/en_atomawashi.png',チラケル:'sprites/en_omakase.png',ニードネル:'sprites/en_nidoneru.png',ニドーネル:'sprites/en_nidoneru_g.png',モイイカ:'sprites/en_mooiika.png',イッタキリ:'sprites/en_ittakiri.png',ホウチ虫:'sprites/en_houchi.png',サーシラン:'sprites/en_saashiran.png',サンドーネル:'sprites/en_sandoneru.png',Dw:'sprites/ally_dw.png',Ai:'sprites/ally_ai.png','Ae':'sprites/ally_ae.png',Ps:'sprites/ally_ps.png',Fi:'sprites/ally_ff.png',DreamweaverF:'sprites/ally_dw_f.png',スケット:'sprites/boss_sketch.png',キンバ:'sprites/boss_canva.png',プロト:'sprites/boss_prott.png','インビスオン':'sprites/boss_invision.png','スタティオ':'sprites/boss_studio_atk.png','フラマー':'sprites/boss_framer.png','フィグム':'sprites/boss_figma.png','クラウド王':'sprites/boss_king.png'};
 function sprite(seed,c1,c2,n=14){
   if(SPRIMG[seed])return SPRIMG[seed];
   if(SPR[seed])return SPR[seed];
@@ -3064,7 +3064,7 @@ function townStory(k){
 }
 const S2={
  ship_get:{w:'船長',c:['#1f5fa0','#f0e0b0'],hint:'雲の王都の 南の 船着き場へ。雲の王国の 船が 待っている',l:['……おお、旅の 人。見なよ、あれが 雲の王国の 船だ。','橋の かけられない 西の 海を 渡るために つくった 船さ。……だが、出せない。','船を 操れる 航海士が いないんだ。雲の王国いちの 航海士は、先の 嵐の 海で イカの 化け物に 襲われて、行方知れずさ。','だが、腕のいい 航海士の うわさを 聞いた ことが ある。南の 果ての 浜に、世捨て人の 老航海士が 住んで いると。','……探して、連れて きて くれないか。船は ここで 待っている。']},
- ship_set:{w:'老航海士',dsp:'elder',c:['#3a6a8a','#d8d0c0'],hint:'老航海士を 連れて、王都の 船着き場へ もどる',l:['……これが 雲の王国の 船か。ふむ、いい 船だ。長く 海を 見て きたが、これほどの 船は めずらしい。','帆の 張りも、舵の 具合も、わるくない。……よし、この 老いぼれに まかせろ。','航海士は 船の 命じゃ。舵は わしが にぎる。おまえは 戦いに 集中せい。','海には 海の 魔物が いる。イカや カニ、サメの ような やつらだ。……さあ、出航だ！ 嵐の 大陸へ！'],fin:()=>{G.ship=1;G.sx=127;G.sy=21;G.sail=0;G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('雲の王国の 船'))G.keys.push('雲の王国の 船');setTimeout(()=>keyToast('雲の王国の 船'),300)}},
+ ship_set:{w:'老航海士',dsp:'navi',c:['#3a6a8a','#d8d0c0'],hint:'老航海士を 連れて、王都の 船着き場へ もどる',l:['……これが 雲の王国の 船か。ふむ、いい 船だ。長く 海を 見て きたが、これほどの 船は めずらしい。','帆の 張りも、舵の 具合も、わるくない。……よし、この 老いぼれに まかせろ。','航海士は 船の 命じゃ。舵は わしが にぎる。おまえは 戦いに 集中せい。','海には 海の 魔物が いる。イカや カニ、サメの ような やつらだ。……さあ、出航だ！ 嵐の 大陸へ！'],fin:()=>{G.ship=1;G.sx=127;G.sy=21;G.sail=0;G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('雲の王国の 船'))G.keys.push('雲の王国の 船');setTimeout(()=>keyToast('雲の王国の 船'),300)}},
  h_hi:{w:'Ps　光を操る騎士',hint:'りんごの島の 琥珀の間へ。Psが 待っている',l:['来たな、XD。この島の者たちは、すっかり「うんうん」と うなずくだけに なってしまった。','だれの話も、まともに 聞かない。聞いた つもりで、流して しまうんだ。……「聞く力」を 食った 魔物が、宮殿に 居座っている。','名は「ナルホロ」。ことばを まともに 受けとらない 相手だ。……だが、あいつも 「間」だけは 聞いている。','島の 北西の 浜に、むかしから 昔話を 語って きた「語り部の おばあさん」が 住んで いる。彼女の 声なら、ナルホロの 耳にも とどくはずだ。……すまないが、彼女を ここまで 連れて きて くれ。']},
  h_bring:{w:'Ps　光を操る騎士',hint:'語り部を 連れて りんごの島の 琥珀の間へ',l:['……来て くれたか。それに、その方が……語り部の おばあさん だな。',['語り部　昔話の 語り手','……ほう、ここが りんごの島の 宮殿かい。むかしは 王さまも 子どもたちも、わたしの 話を 目を かがやかせて 聞いて くれたもんさ。'],['語り部　昔話の 語り手','さあ、ナルホロ。聞き流さずに、一度だけ 耳を おかし。……これは、あんたの 話でも あるんだよ。'],'……頼んだぞ、XD。声が とどくか どうかは、おまえの 戦いに かかっている。'],fin:()=>{G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('語り部の 声'))G.keys.push('語り部の 声');setTimeout(()=>keyToast('語り部の 声'),300)}},
  h_clear:{w:'Ps　光を操る騎士',hint:'Psに ほうこくする（りんごの島）',l:['……聞こえるか、XD。島じゅうの 話し声が、もどってきた。','「聞く力」が、もどったな。人の声に 耳を かたむける。それが、すべての ものづくりの はじまりだ。','俺も いっしょに 行こう。光の 扱いなら 任せてくれ。次は 線の 祠だ。魔女が 暮らす場所で、描く力が うしなわれて いると 聞く。'],fin:()=>{grantPower('hear');if(!G.allies.includes('ps'))G.allies.push('ps');sfx('ally')}},
@@ -3327,8 +3327,8 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   prop(p,'j_andon',2,4);prop(p,'j_andon',12,4);prop(p,'j_andon',2,9);prop(p,'j_andon',12,9);
   const KS=['よく来た、旅の者。この国では 昔から、ものを 「見る」ことを 大切に してきた。','近ごろ 民が 「だいたい」で 済ませるのは、見る力を 奪われたからだ。','からくり師 プロトが、広場の 東の 家に 工房を 構えておる。まずは 訪ねるが よい。'];
   npc(p,7,3,{n:'東の王',dsp:'tono',h:36,Rw:3,c:['#c0394f','#e8c850'],hideIf:()=>KL!=='in',say:KS});
-  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL!=='in',say:['王の 御前だ。……だが 旅人には やさしい 王だ。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL!=='in',say:['プロト殿の 工房は 広場の 右手。町の 者も 場所を 知っておるよ。']});
-  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL==='in',say:['……また 殿が 散歩に 行って しまわれた。','町のほうに おられるはずだ。ふらりと 歩き回るのが お好きでな。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL==='in',say:['殿は また お忍びで 町へ……。','プロト殿の ことなら、殿に 聞くのが 早い。広場の あたりを 探されよ。']});
+  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL!=='in',say:['王の 御前だ。……だが 旅人には やさしい 王だ。']});npc(p,9,9,{n:'大臣',dsp:'minister',c:NM.old,hideIf:()=>KL!=='in',say:['プロト殿の 工房は 広場の 右手。町の 者も 場所を 知っておるよ。']});
+  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL==='in',say:['……また 殿が 散歩に 行って しまわれた。','町のほうに おられるはずだ。ふらりと 歩き回るのが お好きでな。']});npc(p,9,9,{n:'大臣',dsp:'minister',c:NM.old,hideIf:()=>KL==='in',say:['殿は また お忍びで 町へ……。','プロト殿の ことなら、殿に 聞くのが 早い。広場の あたりを 探されよ。']});
 }
 /* ---- storm ---- */
 {const p=mkP('storm','storm',20,15,{name:'ブラウザ大陸',sub:'暴君フィグムが 待つ 雷雲の地',base:'k',tint:'#1a0c4a55',spawn:[9,13],exit:[9,10],stop:{x:9,y:9,dir:'down'},stopHint:'嵐の ただなかに、暴君の かげが 立っている'});
@@ -3348,7 +3348,7 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   prop(p,'candle1',5,8,{ns:1});prop(p,'candle2',10,8,{ns:1});prop(p,'torch',5,5);prop(p,'torch',10,5);
   prop(p,'flowerbed',3,9);prop(p,'flowerbed',12,9);prop(p,'bench',2,11,{fw:2});prop(p,'bench',12,11,{fw:2});
   scatter(p,FLW,14,4);
-  npc(p,9,10,{n:'ほこらの ばんにん',c:NM.old,say:['この 祠の 魔女は、線で できた ものなら 何でも 描ける。']});
+  npc(p,9,10,{n:'ほこらの ばんにん',dsp:'keeper',c:NM.old,say:['この 祠の 魔女は、線で できた ものなら 何でも 描ける。']});
 }
 /* ---- spring ---- */
 {const p=mkP('spring','spring',16,13,{name:'時の泉',sub:'時を織る 賢者が 待つ 泉',spawn:[7,11],exit:[7,8],stop:{x:7,y:8,dir:'up'}});
@@ -3368,17 +3368,17 @@ function restStop(id,name,sub,hint1,hint2,kid){
   border(p,[8,9],{ks:['tree1','tree4','pine2','tree5','tree2']});
   fillG(p,'c',2,7,14,4);fillG(p,'d',8,11,2,3);
   const inn=house(p,{x:1,y:2,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
-  const hm=house(p,{x:10,y:2,w:7,h:5,img:T.img||'bld_brown'});furnishHome(p,hm,{npc:{n:T.n||'むらびと',c:NM.old,...(/おばあさん/.test(T.n||'')?{dsp:'inn'}:{}),say:T.l||['……']}});
+  const hm=house(p,{x:10,y:2,w:7,h:5,img:T.img||'bld_brown'});furnishHome(p,hm,{npc:{n:T.n||'むらびと',c:NM.old,...(T.dsp?{dsp:T.dsp}:/おばあさん/.test(T.n||'')?{dsp:'inn'}:{}),say:T.l||['……']}});
   prop(p,'flowerbed',2,9);prop(p,'flowerbed',15,9);prop(p,'bench',2,11,{fw:2});prop(p,'bench',14,11,{fw:2});prop(p,'torch',3,7);prop(p,'torch',14,7);
   npc(p,6,9,{n:'たびびと',c:NM.man,say:hint1});
   npc(p,11,10,{n:'ものしり',c:NM.old,say:hint2});
   npc(p,12,12,{n:'こども',c:NM.child,say:kid||['ここで ひとやすみ すると、元気に なるんだよ。']});
 }
 const RTALE={
- rest1:{n:'ランプ職人の おじいさん',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、北西の 森から 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。森の 奥の 城に、妖精の王が こもって しまったと いう。','この 村を 出て 北西へ、ほんの すこし。白紙の雪原が はじまる あたりの 森に、城の 入口が ひっそり 口を あけて おる。……行くなら、この ランプの 話を おぼえて おいて くれ。']},
- rest2:{n:'看板描きの おばあさん',img:'bld_blue',l:['わたしは むかし、この 宿場の 看板を ぜんぶ 描いて いたのさ。','字の かたち ひとつで、店の 声が かわる。やさしい 字、元気な 字、まじめな 字……。','いまは どこも おなじ 字。きれいだけど、どの 店も おなじ 声で しゃべって いる みたいでね。','東の りんごの島の 人たちも、だれの 話も 聞かなく なったと いう。……声が みんな おなじに なると、聞く 気も なくなるのかねえ。','あんたの 旅の 看板は、あんたの 字で 書きなさいよ。']},
- rest3:{n:'渡し守',img:'bld_blue',l:['この 島には、海を こえて とどく 手紙が あるんじゃ。','西の 大陸の 娘と、東の 島の 若者がな、びんに 手紙を いれて 流しあって おった。','とどくまで ひと月。返事が くるまで また ひと月。……それでも、ふたりは やめなかった。','はやく とどく ことより、とどけようと する 気持ちの ほうが 大事なんじゃと、わしは 思うよ。','ふたりが どうなったかって？ ……この 宿の 主人と おかみが、その ふたりさ。']},
- rest4:{n:'網あみの おばあさん',img:'bld_brown',l:['この 網はね、ひと目 ひと目、手で あんで いるんだよ。','機械で あめば 一日で 百枚。手で あめば ひと月で 一枚。','でもね、手で あんだ 網は、どこが よわいか、あんだ 人が 知って いる。だから やぶれる 前に つくろえる。','つくった ものを ほんとうに 知って いるのは、つくった 人 だけ。……それが「形にする」って ことさ。','南の 小島に 流れ着いた 道具箱、まだ だれも あけて いないよ。あんた、行って ごらん。']},
+ rest1:{n:'ランプ職人の おじいさん',dsp:'lamp',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、北西の 森から 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。森の 奥の 城に、妖精の王が こもって しまったと いう。','この 村を 出て 北西へ、ほんの すこし。白紙の雪原が はじまる あたりの 森に、城の 入口が ひっそり 口を あけて おる。……行くなら、この ランプの 話を おぼえて おいて くれ。']},
+ rest2:{n:'看板描きの おばあさん',dsp:'sign',img:'bld_blue',l:['わたしは むかし、この 宿場の 看板を ぜんぶ 描いて いたのさ。','字の かたち ひとつで、店の 声が かわる。やさしい 字、元気な 字、まじめな 字……。','いまは どこも おなじ 字。きれいだけど、どの 店も おなじ 声で しゃべって いる みたいでね。','東の りんごの島の 人たちも、だれの 話も 聞かなく なったと いう。……声が みんな おなじに なると、聞く 気も なくなるのかねえ。','あんたの 旅の 看板は、あんたの 字で 書きなさいよ。']},
+ rest3:{n:'渡し守',dsp:'ferry',img:'bld_blue',l:['この 島には、海を こえて とどく 手紙が あるんじゃ。','西の 大陸の 娘と、東の 島の 若者がな、びんに 手紙を いれて 流しあって おった。','とどくまで ひと月。返事が くるまで また ひと月。……それでも、ふたりは やめなかった。','はやく とどく ことより、とどけようと する 気持ちの ほうが 大事なんじゃと、わしは 思うよ。','ふたりが どうなったかって？ ……この 宿の 主人と おかみが、その ふたりさ。']},
+ rest4:{n:'網あみの おばあさん',dsp:'net',img:'bld_brown',l:['この 網はね、ひと目 ひと目、手で あんで いるんだよ。','機械で あめば 一日で 百枚。手で あめば ひと月で 一枚。','でもね、手で あんだ 網は、どこが よわいか、あんだ 人が 知って いる。だから やぶれる 前に つくろえる。','つくった ものを ほんとうに 知って いるのは、つくった 人 だけ。……それが「形にする」って ことさ。','南の 小島に 流れ着いた 道具箱、まだ だれも あけて いないよ。あんた、行って ごらん。']},
 };
 {const W=20,H=15,p=mkP('port','port',W,H,{name:'王都の 船着き場',sub:'雲の 王都の 南。雲の王国の 船が とまる 港',spawn:[9,13],exit:[9,10],stop:{x:10,y:9,dir:'up'},stopHint:'船長に はなしかけよう'});
   fillG(p,'q',0,0,W,8);solidR(p,0,0,W,8);fillG(p,'f',0,8,W,2);fillG(p,'d',8,10,3,5);
@@ -3388,7 +3388,7 @@ const RTALE={
   prop(p,'signpost',6,11,{say:'王都の 船着き場。「雲の王国の 船は 灯を もつ 者の ために」と 彫られている。'});
   prop(p,'flowerbed',3,12);prop(p,'flowerbed',16,12);prop(p,'bench',14,12,{fw:2});
   p.shipPic={x:10,h:270,by:8.55};
-  npc(p,10,9,{n:'船長',dsp:'man',c:['#1f5fa0','#f0e0b0'],dir:'up',say:['雲の王国の 船は、いつでも 出せるように 手入れして ある。','……航海士さえ いれば、な。']});
+  npc(p,10,9,{n:'船長',dsp:'captain',c:['#1f5fa0','#f0e0b0'],dir:'up',say:['雲の王国の 船は、いつでも 出せるように 手入れして ある。','……航海士さえ いれば、な。']});
   npc(p,4,11,{n:'船乗り',c:NM.man,say:['この 海には、イカだの カニだの、へんな 化け物が 出る。航海士なしじゃ、とても 出せんよ。']});
   npc(p,15,10,{n:'漁師',c:NM.old,say:['むかしは 王都から 西の 島まで、船が 行き来して いたもんだ。……嵐が ひどく なって からは、だれも 行かん。']});}
 restStop('rest1','ひとやすみの村','大陸の 西の 休み場',['この 村の 東に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。','北西の 森には、妖精の 城が あると いう。……村の 奥の 家の じいさんが くわしいよ。'],['南西の 海に うかぶ 弓なりの 島々が「東の国」。あの国の 人は「だいたい」で すませるように なって、細かい ことが 見えなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
@@ -3708,7 +3708,7 @@ function townLoop(t){
   if(TW.on){drawTown();TW.raf=requestAnimationFrame(townLoop)}
 }
 const NMID=new Map([[NM.child,'kid'],[NM.woman,'woman'],[NM.man,'man'],[NM.old,'elder'],[NM.guard,'guard'],[NM.orange,'shop'],[NM.mage,'priest'],[NM.green,'man'],[NM.red,'kid'],[NM.cook,'inn']]);
-const NPCH={fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
+const NPCH={navi:37,captain:38,minister:36,keeper:35,lamp:34,ferry:37,sign:35,net:34,fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
 function npcId(n){if(n.k==='inn')return'inn';if(n.k==='shop')return'shop';if(n.n==='おばあさん')return'inn';return NMID.get(n.c)||null}
 function drawNpc(cx,n,x,y){
   cx.fillStyle='#00000040';cx.fillRect(x-9,y-3,18,4);
@@ -3875,7 +3875,7 @@ function trailAt(n){const T=P.trail;if(!T||!T.length||Math.abs(T[0].x-P.px)+Math
   const e=T[Math.min(n,T.length)-1]||T[T.length-1];return e}
 const FOLLOW_ALLIES=false; /* 仲間の 歩きの 絵が できたら true */
 function partyFollow(){const L=[];(FOLLOW_ALLIES?G.allies||[]:[]).forEach(k=>{if(k!=='ff'&&DSPS.includes(k))L.push({k,h:Math.round((NPCH[k]||40)*.92)})});
-  if(G.escort){const n=G.escort.n;L.push(n==='老航海士'?{h:31,img:d=>'sprites/ch_elder_'+d+'.png'}:{h:30,img:()=>sprite(n,G.escort.col[0],G.escort.col[1])})}
+  if(G.escort){const n=G.escort.n;L.push(n==='老航海士'?{h:34,img:d=>'sprites/ch_navi_'+d+'.png'}:{h:30,img:()=>sprite(n,G.escort.col[0],G.escort.col[1])})}
   return L}
 function fieldStep(){
   FLD.tick++;
