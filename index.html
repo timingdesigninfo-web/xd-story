@@ -459,6 +459,14 @@ body #efoe .er .chips:empty{display:none}
 }
 @media screen and (orientation:landscape) and (max-height:430px){.pad,.dp{grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,58px)}.abtns button,.ab2 button{width:68px;height:68px}.abtns button+button,.ab2 button+button{margin-bottom:24px}.lcol .info,.rcol .info{font-size:13px}}
 @media screen and (orientation:landscape){.op:not(.rot){position:fixed;inset:0;z-index:60;height:auto}}
+/* 横画面も 縦と おなじ 十字キー（まるい 台に 上下左右。指を すべらせて 方向を かえられる） */
+@media screen and (orientation:landscape){
+  .lcol .pad,.pad{grid-template-columns:repeat(3,52px)!important;grid-template-rows:repeat(3,52px)!important;gap:2px;touch-action:none;border-radius:50%;background:radial-gradient(circle,#2a1d3c 0 62%,transparent 63%)}
+  .lcol .pad .u,.pad .u{grid-area:1/2}.lcol .pad .l,.pad .l{grid-area:2/1}.lcol .pad .r,.pad .r{grid-area:2/3}.lcol .pad .d,.pad .d{grid-area:3/2}
+  .pad button{pointer-events:none;border-radius:10px;font-size:20px}
+  .pad::after{display:none}
+}
+@media screen and (orientation:landscape) and (max-height:430px){.lcol .pad,.pad{grid-template-columns:repeat(3,44px)!important;grid-template-rows:repeat(3,44px)!important}}
 
 .pstrip{display:none}
 .pmenu{display:none}
@@ -2014,7 +2022,7 @@ function title(){
 let FLIP=false;try{FLIP=localStorage.getItem('xd-senki-flip')==='1'}catch(e){}
 document.documentElement.classList.toggle('flip',FLIP);
 function toggleFlip(){FLIP=!FLIP;try{localStorage.setItem('xd-senki-flip',FLIP?'1':'0')}catch(e){}document.documentElement.classList.toggle('flip',FLIP)}
-(function(){const PORT=()=>matchMedia('(orientation:portrait) and (max-width:900px)').matches;let st=null;
+(function(){const PORT=()=>true; /* 縦でも 横でも おなじ 十字キー */let st=null;
   const dirOf=(e,r)=>{const dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);if(Math.hypot(dx,dy)<r.width*.17)return null;return Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')};
   const press=d=>{if(FLD.on||TW.on)setHeld(d,true);else if(PADHOOK)PADHOOK(d)},rel=d=>{if(FLD.on||TW.on)setHeld(d,false)};
   const set=d=>{if(st.dead)return;if(st.d===d)return;if(st.d)rel(st.d);st.d=d;if(d){st.any=true;press(d)}};
