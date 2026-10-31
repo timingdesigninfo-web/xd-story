@@ -1222,22 +1222,35 @@ async function shotShare(){
   shotDlg(card);
 }
 async function shotCard(src){
+  /* 大事な ものは ぜんぶ 中央の 正方形（630x630）に いれる：正方形に きりぬかれても、Xの 左下の ドメイン表示が かさなっても 欠けない */
   const W=1200,H=630,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   const bg=g.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#1e1238');bg.addColorStop(1,'#0c0814');g.fillStyle=bg;g.fillRect(0,0,W,H);
   try{await document.fonts.load('28px DotGothic16')}catch(e){}
   const logo=new Image();logo.src='sprites/logo_s.png';await new Promise(r=>{if(logo.complete&&logo.naturalWidth)return r();logo.onload=logo.onerror=r});
-  const M=36;let rx=M;
-  if(src){const land=src.width>=src.height,bw=land?W*.62:W*.42,bh=H-M*2,k=Math.min(bw/src.width,bh/src.height),w=Math.round(src.width*k),h=Math.round(src.height*k),x=M,y=Math.round((H-h)/2);
-    g.fillStyle='#000';g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=26;g.fillRect(x-4,y-4,w+8,h+8);g.shadowBlur=0;
-    g.imageSmoothingEnabled=false;g.drawImage(src,x,y,w,h);shotTalk(g,src,x,y,w,h);g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(x-4,y-4,w+8,h+8);rx=x+w+M}
-  const rw=W-rx-M,cx=rx+rw/2;let y=M+10;
-  if(logo.naturalWidth){const k=Math.min(rw/logo.naturalWidth,(H*.34)/logo.naturalHeight),w=logo.naturalWidth*k,h=logo.naturalHeight*k;g.imageSmoothingEnabled=false;g.drawImage(logo,cx-w/2,y,w,h);y+=h+22}
-  const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`,line=(t,n,col)=>{g.font=F(n);g.fillStyle=col;g.textAlign='center';g.textBaseline='top';
-    let tt=t;if(g.measureText(tt).width>rw){while(g.measureText(tt+'…').width>rw&&tt.length>1)tt=tt.slice(0,-1);tt+='…'}g.fillText(tt,cx,y);y+=n*1.45};
-  try{const ch=CH[G.ch]||CH[CH.length-1];line(`${ch.y}年「${ch.t}」`,30,'#ffcf5a');
-    const pl=(document.querySelector('#fbn1')||document.querySelector('.fbanner b')||{}).textContent;if(pl&&pl.trim())line(pl.trim(),26,'#ffffff');
-    line(`Lv${G.lv||1}　HP ${G.hp}/${G.max}`,24,'#cbbfe6')}catch(e){}
-  g.font=F(22);g.fillStyle='#ff8fc4';g.textAlign='center';g.textBaseline='bottom';g.fillText('#XD戦記',cx,H-M);
+  const SQ=H-40,SX=(W-SQ)/2,SY=20; /* 安全な 正方形 */
+  const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`;
+  let info=[];try{const ch=CH[G.ch]||CH[CH.length-1];info.push([`${ch.y}年「${ch.t}」`,'#ffcf5a',1]);
+    const pl=(document.querySelector('#fbn1')||document.querySelector('.fbanner b')||{}).textContent;if(pl&&pl.trim())info.push([pl.trim(),'#ffffff',.9]);
+    info.push([`Lv${G.lv||1}　HP ${G.hp}/${G.max}`,'#cbbfe6',.8])}catch(e){}
+  const fit=(t,n,mw)=>{g.font=F(n);if(g.measureText(t).width<=mw)return t;let tt=t;while(tt.length>1&&g.measureText(tt+'…').width>mw)tt=tt.slice(0,-1);return tt+'…'};
+  const drawLogo=(cx,y,mw,mh)=>{if(!logo.naturalWidth)return 0;const k=Math.min(mw/logo.naturalWidth,mh/logo.naturalHeight),w=logo.naturalWidth*k,h=logo.naturalHeight*k;g.imageSmoothingEnabled=false;g.drawImage(logo,cx-w/2,y,w,h);return h};
+  const drawGame=(x,y,w,h)=>{g.fillStyle='#000';g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=22;g.fillRect(x-4,y-4,w+8,h+8);g.shadowBlur=0;
+    g.imageSmoothingEnabled=false;g.drawImage(src,x,y,w,h);shotTalk(g,src,x,y,w,h);g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(x-4,y-4,w+8,h+8)};
+  const land=src&&src.width>=src.height;
+  if(src&&!land){ /* 縦：左に ロゴと じょうたい、右に ゲーム画面 */
+    const gh=SQ,k=gh/src.height,gw=Math.round(src.width*k),gap=30,cw=380,x0=Math.round((W-(cw+gap+gw))/2),gx=x0+cw+gap;
+    drawGame(gx,SY,gw,gh);
+    const cx=x0+cw/2;let y=SY+70;y+=drawLogo(cx,y,cw,SQ*.32)+30;
+    g.textAlign='center';g.textBaseline='top';
+    for(const [t,col,r] of info){const n=Math.round(30*r);g.fillStyle=col;g.fillText(fit(t,n,cw),cx,y);g.font=F(n);y+=n*1.6}
+    g.font=F(22);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y+12);
+  }else{ /* 横（または 画面なし）：上に ゲーム画面、下に ロゴと じょうたい */
+    let y=SY;
+    if(src){const gw=760,k=gw/src.width,gh=Math.min(Math.round(src.height*k),Math.round(SQ*.66)),w=Math.round(src.width*(gh/src.height)),x=Math.round((W-w)/2);drawGame(x,y+4,w,gh);y+=gh+22}
+    const rest=SY+SQ-y,lh=drawLogo(W/2,y,SQ*.8,src?rest*.55:SQ*.5);y+=lh+12;
+    g.textAlign='center';g.textBaseline='top';
+    const line=info.map(i=>i[0]).join('　');g.fillStyle='#ffcf5a';g.fillText(fit(line,24,760),W/2,y);
+  }
   return c;
 }
 /* 会話中なら、その セリフの ウィンドウも 書き出す（メニューの ときは 書かない） */
@@ -1248,10 +1261,10 @@ function shotTalk(g,src,x,y,w,h){
   const body=(cl.innerText||cl.textContent||'').replace(/\s+\n/g,'\n').trim();
   const ops=[...m.querySelectorAll('.topt')].map(e=>e.textContent.trim()).filter(Boolean);
   if(!sp&&!body&&!ops.length)return;
-  const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`,fs=Math.max(18,Math.min(26,Math.round(w/16))),lh=fs*1.45,pd=fs*.7,bw=w*.94,bx=x+(w-bw)/2,tw=bw-pd*2;
-  g.font=F(fs);const lines=[];
-  for(const para of (body+(ops.length?'\n'+ops.map(o=>'▶ '+o).join('\n'):'')).split('\n')){let cur='';for(const ch of para){if(g.measureText(cur+ch).width>tw&&!/[、。，．！？」』）…ー]/.test(ch)){lines.push(cur);cur=ch}else cur+=ch}lines.push(cur)}
-  const L=lines.filter((l,i)=>l||i).slice(0,Math.max(2,Math.floor((h*.42-pd*2-(sp?lh:0))/lh)));
+  const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`,bw=w*.94,bx=x+(w-bw)/2,all=body+(ops.length?'\n'+ops.map(o=>'▶ '+o).join('\n'):'');
+  const wrap=(fs,tw)=>{g.font=F(fs);const out=[];for(const para of all.split('\n')){let cur='';for(const ch of para){if(g.measureText(cur+ch).width>tw&&!/[、。，．！？」』）…ー]/.test(ch)){out.push(cur);cur=ch}else cur+=ch}out.push(cur)}return out.filter((l,i)=>l||i)};
+  let fs=Math.max(16,Math.min(26,Math.round(w/16))),lh,pd,L;
+  for(;;fs--){lh=fs*1.42;pd=fs*.7;L=wrap(fs,bw-pd*2);if(pd*2+(sp?lh*.9:0)+L.length*lh<=h*.55||fs<=13)break}
   const bh=pd*2+(sp?lh*.9:0)+L.length*lh,by=y+h-bh-h*.03;
   const gr=g.createLinearGradient(0,by,0,by+bh);gr.addColorStop(0,'#26308f');gr.addColorStop(1,'#0a1160');
   g.fillStyle=gr;g.beginPath();g.roundRect?g.roundRect(bx,by,bw,bh,8):g.rect(bx,by,bw,bh);g.fill();g.strokeStyle='#f4f4f4';g.lineWidth=3;g.stroke();
@@ -1269,6 +1282,22 @@ function shotBtns(){
     const go=e=>{e.preventDefault();e.stopPropagation();shotShare()};b.addEventListener('click',go,true);['pointerdown','touchstart','mousedown'].forEach(t=>b.addEventListener(t,e=>e.stopPropagation(),{capture:true,passive:true}));
     v.appendChild(b)})}
 (()=>{let q=0;const mo=new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;shotBtns()})});mo.observe(app||document.body,{childList:true,subtree:true})})();
+/* 会話中・バトルの 演出中に メニューを おしたとき：会話は そのままで、シェアだけ えらべる */
+function busyMenu(){
+  const old=document.getElementById('busymenu');if(old){old.remove();return}sfx('tap');
+  const o=document.createElement('div');o.id='busymenu';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#0007;display:flex;align-items:center;justify-content:center;padding:16px';
+  const B='display:block;width:100%;border-radius:8px;padding:10px 14px;font:700 15px system-ui,sans-serif;cursor:pointer;color:#fff;';
+  o.innerHTML=`<div style="background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:8px;padding:12px;width:min(280px,100%);display:flex;flex-direction:column;gap:8px;color:#fff;font:13px system-ui,sans-serif">
+    <div style="color:#ffe27a">メニュー<small style="color:#9fb0e8">　会話中は これだけ つかえます</small></div>
+    <button id="bmShot" style="${B}background:#000;border:2px solid #ff4d9a">画面を シェア</button>
+    <button id="bmClose" style="${B}background:transparent;border:1px solid #fff8">とじる</button></div>`;
+  const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{e.stopPropagation();e.preventDefault();if(e.key==='Escape'||e.key==='x'||e.key==='X')close()};
+  ['pointerdown','touchstart','mousedown'].forEach(t=>o.addEventListener(t,e=>e.stopPropagation(),{passive:true}));
+  o.onclick=e=>{e.stopPropagation();if(e.target===o)close()};document.addEventListener('keydown',kd,true);
+  document.body.appendChild(o);
+  o.querySelector('#bmShot').onclick=e=>{e.stopPropagation();close();shotShare()};
+  o.querySelector('#bmClose').onclick=e=>{e.stopPropagation();sfx('tap');close()};
+}
 function shotJpeg(c){for(const q of [.88,.8,.7,.6]){const u=c.toDataURL('image/jpeg',q);if(u.length*.75<420*1024)return u}return c.toDataURL('image/jpeg',.5)}
 function shotDlg(cv){
   const old=document.getElementById('shotdlg');if(old)old.remove();
@@ -1629,7 +1658,7 @@ app.addEventListener('click',e=>{
   if(a==='spd'){setTxt(TXT==='auto'?'manual':'auto');sfx('tap');document.querySelectorAll('.spdbtn').forEach(x=>{x.textContent=spdLbl();x.classList.toggle('on',TXT==='auto')});if(TXT==='auto')tapSkip();return}
   if(a==='rules'){sfx('tap');showRules()}
   if(a==='bag'){sfx('tap');showBag()}
-  if(a.startsWith('q_')){if(TW.busy||(inBattle()&&B.busy))return;sfx('tap');tmain()}
+  if(a.startsWith('q_')){if(TW.busy||(inBattle()&&B.busy)){if(!$('#tmsg.tch'))busyMenu();return}sfx('tap');tmain()}
   if(a==='talk'||a==='ok')pressA();
   if(a==='back'){const ov=$('#ov');if(ov&&!ov.hidden){const c=$('#ovclose');if(c)c.click()}else if(inBattle()){if(B.busy)tapSkip();else navBack()}else if((TW.on||FLD.on)&&$('#tmsg.tch')){sfx('tap');(TMBACK||tmClose)()}else if(TW.on||FLD.on){if(!TW.busy){sfx('tap');tmain()}}else{sfx('tap');showBag()}}
   if(a==='pad'){sfx('tap');const on=!PADON();PADV=on;try{localStorage.setItem('xd-senki-pad',on?'1':'0')}catch(e){}const g=$('#gpad');if(g)g.hidden=!PADV}
