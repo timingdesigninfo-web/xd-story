@@ -1269,7 +1269,6 @@ async function shotCard(src){
       g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(bx,by,bw,bh);src._box=[bx,by,bw,bh]}
     const SL=(W-H)/2,PW=270,PX=SL+6; /* 帯は 正方形の 左はしに */
     g.fillStyle='#0b0814';g.fillRect(PX,0,PW,H);
-    const eg=g.createLinearGradient(PX+PW,0,PX+PW+18,0);eg.addColorStop(0,'rgba(10,6,18,.45)');eg.addColorStop(1,'rgba(10,6,18,0)');g.fillStyle=eg;g.fillRect(PX+PW,0,18,H);
     g.fillStyle='#ffcf5a55';g.fillRect(PX+PW-2,0,2,H);
     if(info[0]){const m=/^(\d+年)(「.*」)$/.exec(info[0][0]);if(m)info.splice(0,1,[m[1],'#ffcf5a',.85],[m[2],'#ffcf5a',1.1])}
     const cw=PW-28,cx=PX+PW/2,lk=logo.naturalWidth?Math.min(cw/logo.naturalWidth,140/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,
