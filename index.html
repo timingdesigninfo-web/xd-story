@@ -1543,8 +1543,15 @@ function tmMap(){
 }
 /* 仲間の HPは 戦闘の あとも のこる（G.ahp）。宿・教会などで 全回復 */
 const aHp=k=>{const m=allyMax(k),v=G.ahp&&G.ahp[k];return v===undefined?m:Math.max(0,Math.min(m,v))};
-function healAllies(){G.ahp={}}
-function saveAllyHP(){if(!B||!B.allies)return;G.ahp=G.ahp||{};B.allies.forEach(a=>{G.ahp[a.k]=Math.max(0,a.hp)})}
+function healAllies(){G.ahp={};G.amp={};G.mp=null}
+/* MPは 戦闘の あとも のこる。宿・教会で 全回復、フィールドを 歩くと 少しずつ 回復 */
+const curMp=()=>G.mp==null?mpMax():Math.max(0,Math.min(mpMax(),G.mp)),aMp=k=>{const m=allyMp(k),v=G.amp&&G.amp[k];return v==null?m:Math.max(0,Math.min(m,v))};
+const MPWALK=3; /* この 歩数ごとに MP+1 */
+function walkRegen(){FLD.mpw=(FLD.mpw||0)+1;if(FLD.mpw<MPWALK)return;FLD.mpw=0;
+  if(G.mp!=null){G.mp=Math.min(mpMax(),G.mp+1);if(G.mp>=mpMax())G.mp=null}
+  if(G.amp)for(const k in G.amp){G.amp[k]=Math.min(allyMp(k),G.amp[k]+1)}
+  const h=document.getElementById('hudmp');if(h)h.textContent=curMp()+'/'+mpMax()+'GB'}
+function saveAllyHP(){if(!B)return;if(B.mp!=null&&!B.final)G.mp=B.mp>=mpMax()?null:Math.max(0,B.mp);if(!B.allies)return;G.ahp=G.ahp||{};G.amp=G.amp||{};B.allies.forEach(a=>{G.ahp[a.k]=Math.max(0,a.hp);G.amp[a.k]=Math.max(0,a.mp)})}
 function useItemOn(k,who){ /* フィールドで つかう。who='xd' か 仲間の k */
   if(!G.items[k])return false;
   if(who==='xd'){if(G.hp>=G.max)return false;G.items[k]--;G.hp=Math.min(G.max,G.hp+ITEMS[k].h)}
@@ -1568,7 +1575,7 @@ function tmSet(){
     {l:'もどる',s:'',f:()=>tmain()}],'メニュー ＞ せってい',tmain);
 }
 function tmStatus(){
-  const rows=[{l:`XD　${vname()}`,s:`HP ${G.hp}/${G.max}　MP ${mpMax()}GB　こうげき ${atkPow()}　ぼうぎょ +${eqSum('xd','def')}`,f:()=>tmStatus()},
+  const rows=[{l:`XD　${vname()}`,s:`HP ${G.hp}/${G.max}　MP ${curMp()}/${mpMax()}GB　こうげき ${atkPow()}　ぼうぎょ +${eqSum('xd','def')}`,f:()=>tmStatus()},
     ...G.allies.map(k=>({l:dn(ALLIES[k]),s:`HP ${aHp(k)}/${allyMax(k)}　こうげき ${allyAtk(k)}　ぼうぎょ +${eqSum(k,'def')}`,f:()=>tmStatus()})),
     {l:`CR　${crOf()}`,s:'みんなで つかう おかね',f:()=>tmStatus()},{l:'もどる',s:'',f:()=>tmain()}];
   tmChoose(rows,'メニュー ＞ つよさ',tmain);
@@ -1803,7 +1810,7 @@ function hud(battle){
   return `<div class="hud"><span class="yr" style="font-size:15px">CR <b id="hudcr">${crOf()}</b></span><span class="ct">${c.t}</span>
     <button class="ib" data-act="bag">どうぐ</button></div>
   ${battle?'':`<div class="stat"><span class="ver">${vname()}</span><span class="xpbar"><i style="width:${Math.min(100,G.xp/need(G.lv)*100)}%"></i></span>
-    <span>HP <b id="hudhp">${G.hp}/${G.max}</b></span><span>MP <b>${mpMax()}GB</b></span><span>やくそう <b id="hudherb">${G.items.herb}</b></span>${G.str?`<span>攻撃 <b>+${G.str}</b></span>`:''}${lampBar()}</div>`}`;
+    <span>HP <b id="hudhp">${G.hp}/${G.max}</b></span><span>MP <b id="hudmp">${curMp()}/${mpMax()}GB</b></span><span>やくそう <b id="hudherb">${G.items.herb}</b></span>${G.str?`<span>攻撃 <b>+${G.str}</b></span>`:''}${lampBar()}</div>`}`;
 }
 const POWERS={see:{n:'見る力',d:'ものごとを よく 見て、気づく'},make:{n:'描く力',d:'手で かたちに する'},hear:{n:'聞く力',d:'ひとの 声に 耳を かたむける'},open:{n:'伝える力',d:'つくった ものを みんなに とどける'},choose:{n:'考える力',d:'なにを つくるか、自分で 考える'}};
 function lampLv(){return G.lamp?Math.min(5,(G.pw||[]).length):0}
@@ -1831,7 +1838,7 @@ function grantPower(k){G.pw=G.pw||[];if(G.pw.includes(k))return;G.pw.push(k);con
 function hudL(){const c=CH[G.ch]||CH[CH.length-1];
   return `<div class="hud"><span class="yr" style="font-size:15px">CR <b id="hudcr">${crOf()}</b></span><span class="ct">${c.t}</span></div>
   <div class="stat"><span class="ver">${vname()}</span><span class="xpbar"><i style="width:${Math.min(100,G.xp/need(G.lv)*100)}%"></i></span>
-    <span>HP <b id="hudhp">${G.hp}/${G.max}</b></span><span>MP <b>${mpMax()}GB</b></span><span>やくそう <b id="hudherb">${G.items.herb}</b></span>${G.str?`<span>攻撃 <b>+${G.str}</b></span>`:''}${lampBar()}</div>${partyStrip()}`}
+    <span>HP <b id="hudhp">${G.hp}/${G.max}</b></span><span>MP <b id="hudmp">${curMp()}/${mpMax()}GB</b></span><span>やくそう <b id="hudherb">${G.items.herb}</b></span>${G.str?`<span>攻撃 <b>+${G.str}</b></span>`:''}${lampBar()}</div>${partyStrip()}`}
 function partyStrip(){const al=(G.allies||[]).filter(k=>ALLIES[k]);if(!al.length)return '';
   return `<div class="pstrip">${al.map(k=>`<span class="pc"><b>${SNM[k]||dn(ALLIES[k])}</b> ${vshort(alv(k))}<i>HP ${aHp(k)}</i><i>MP ${allyMp(k)}</i></span>`).join('')}</div>`}
 function hudLb(){const c=CH[G.ch]||CH[CH.length-1];return `<div class="hud"><span class="ct">${c.t}</span></div>`}
@@ -1864,7 +1871,7 @@ function menuOv(title,items,sub){
 }
 function showStatus(){
   const al=G.allies.map(k=>dn(ALLIES[k])).join('、')||'なし';
-  overlay(`<h2>つよさ</h2><p class="lead">XD　${vname()}<br>HP ${G.hp}/${G.max}　MP ${mpMax()}GB　CR ${crOf()}<br>こうげき +${G.str||0}<br>なかま：${al}<br>大事なもの：${[G.lamp?'ともしび':'',...(G.keys||[]).map(k=>k)].filter(Boolean).join('、')||'なし'}</p>`);
+  overlay(`<h2>つよさ</h2><p class="lead">XD　${vname()}<br>HP ${G.hp}/${G.max}　MP ${curMp()}/${mpMax()}GB　CR ${crOf()}<br>こうげき +${G.str||0}<br>なかま：${al}<br>大事なもの：${[G.lamp?'ともしび':'',...(G.keys||[]).map(k=>k)].filter(Boolean).join('、')||'なし'}</p>`);
 }
 function openSettings(){
   menuOv('せってい',[
@@ -3344,17 +3351,24 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
 }
 
 /* ---- ヒントの村（橋のとちゅうの休み場。やどで回復・会話でヒント） ---- */
+/* 休憩所：宿屋と、その土地の 物語を 聞ける 家 */
 function restStop(id,name,sub,hint1,hint2,kid){
-  const p=mkP(id,'spring',16,13,{name,sub,spawn:[7,11],exit:[7,8]});
-  border(p,[7,8],{ks:['tree1','tree4','pine2','tree5','tree2']});
-  fillG(p,'c',4,3,8,4);fillG(p,'d',7,7,2,6);
-  prop(p,'flowerbed',2,9);prop(p,'flowerbed',13,9);prop(p,'bench',3,11,{fw:2});prop(p,'bench',11,11,{fw:2});prop(p,'torch',3,8);prop(p,'torch',12,8);
-  scatter(p,FLW,16,8);
-  npc(p,6,5,{n:'宿屋の おかみ',k:'inn',c:NM.woman});
-  npc(p,9,5,{n:'たびびと',c:NM.man,say:hint1});
-  npc(p,5,10,{n:'ものしり',c:NM.old,say:hint2});
-  npc(p,11,10,{n:'こども',c:NM.child,say:kid||['ここで ひとやすみ すると、元気に なるんだよ。']});
+  const W=18,H=14,T=RTALE[id]||{},p=mkP(id,'spring',W,H,{name,sub,spawn:[8,12],exit:[8,9]});
+  border(p,[8,9],{ks:['tree1','tree4','pine2','tree5','tree2']});
+  fillG(p,'c',2,7,14,4);fillG(p,'d',8,11,2,3);
+  const inn=house(p,{x:1,y:2,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
+  const hm=house(p,{x:10,y:2,w:7,h:5,img:T.img||'bld_brown'});furnishHome(p,hm,{npc:{n:T.n||'むらびと',c:NM.old,say:T.l||['……']}});
+  prop(p,'flowerbed',2,9);prop(p,'flowerbed',15,9);prop(p,'bench',2,11,{fw:2});prop(p,'bench',14,11,{fw:2});prop(p,'torch',3,7);prop(p,'torch',14,7);
+  npc(p,6,9,{n:'たびびと',c:NM.man,say:hint1});
+  npc(p,11,10,{n:'ものしり',c:NM.old,say:hint2});
+  npc(p,12,12,{n:'こども',c:NM.child,say:kid||['ここで ひとやすみ すると、元気に なるんだよ。']});
 }
+const RTALE={
+ rest1:{n:'ランプ職人の おじいさん',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、北西の 森から 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。森の 奥の 城に、妖精の王が こもって しまったと いう。','この 村を 出て 北西へ、ほんの すこし。雪原の ふちの 森に、城の 入口が ひっそり 口を あけて おる。……行くなら、この ランプの 話を おぼえて おいて くれ。']},
+ rest2:{n:'看板描きの おばあさん',img:'bld_blue',l:['わたしは むかし、この 宿場の 看板を ぜんぶ 描いて いたのさ。','字の かたち ひとつで、店の 声が かわる。やさしい 字、元気な 字、まじめな 字……。','いまは どこも おなじ 字。きれいだけど、どの 店も おなじ 声で しゃべって いる みたいでね。','東の りんごの島の 人たちも、だれの 話も 聞かなく なったと いう。……声が みんな おなじに なると、聞く 気も なくなるのかねえ。','あんたの 旅の 看板は、あんたの 字で 書きなさいよ。']},
+ rest3:{n:'渡し守',img:'bld_blue',l:['この 島には、海を こえて とどく 手紙が あるんじゃ。','西の 大陸の 娘と、東の 島の 若者がな、びんに 手紙を いれて 流しあって おった。','とどくまで ひと月。返事が くるまで また ひと月。……それでも、ふたりは やめなかった。','はやく とどく ことより、とどけようと する 気持ちの ほうが 大事なんじゃと、わしは 思うよ。','ふたりが どうなったかって？ ……この 宿の 主人と おかみが、その ふたりさ。']},
+ rest4:{n:'網あみの おばあさん',img:'bld_brown',l:['この 網はね、ひと目 ひと目、手で あんで いるんだよ。','機械で あめば 一日で 百枚。手で あめば ひと月で 一枚。','でもね、手で あんだ 網は、どこが よわいか、あんだ 人が 知って いる。だから やぶれる 前に つくろえる。','つくった ものを ほんとうに 知って いるのは、つくった 人 だけ。……それが「形にする」って ことさ。','南の 小島に 流れ着いた 道具箱、まだ だれも あけて いないよ。あんた、行って ごらん。']},
+};
 {const W=20,H=15,p=mkP('port','port',W,H,{name:'王都の 船着き場',sub:'雲の 王都の 南。雲の王国の 船が とまる 港',spawn:[9,13],exit:[9,10],stop:{x:10,y:9,dir:'up'},stopHint:'船長に はなしかけよう'});
   fillG(p,'q',0,0,W,8);solidR(p,0,0,W,8);fillG(p,'f',0,8,W,2);fillG(p,'d',8,10,3,5);
   for(let y=10;y<H;y++){if(y<H-1||true){prop(p,'pine2',0,y);prop(p,'tree1',W-1,y)}}
@@ -3366,7 +3380,7 @@ function restStop(id,name,sub,hint1,hint2,kid){
   npc(p,10,9,{n:'船長',dsp:'man',c:['#1f5fa0','#f0e0b0'],dir:'up',say:['雲の王国の 船は、いつでも 出せるように 手入れして ある。','……航海士さえ いれば、な。']});
   npc(p,4,11,{n:'船乗り',c:NM.man,say:['この 海には、イカだの カニだの、へんな 化け物が 出る。航海士なしじゃ、とても 出せんよ。']});
   npc(p,15,10,{n:'漁師',c:NM.old,say:['むかしは 王都から 西の 島まで、船が 行き来して いたもんだ。……嵐が ひどく なって からは、だれも 行かん。']});}
-restStop('rest1','ひとやすみの村','大陸の 西の 休み場',['この 村の 西に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。'],['南西の 海に うかぶ 弓なりの 島々が「東の国」。あの国の 人は「だいたい」で すませるように なって、細かい ことが 見えなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
+restStop('rest1','ひとやすみの村','大陸の 西の 休み場',['この 村の 東に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。','北西の 森には、妖精の 城が あると いう。……村の 奥の 家の じいさんが くわしいよ。'],['南西の 海に うかぶ 弓なりの 島々が「東の国」。あの国の 人は「だいたい」で すませるように なって、細かい ことが 見えなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
 restStop('rest3','潮風の渡し場','海を行く 旅人の 小さな 宿',['ここは 大陸と 大陸の あいだの 小さな 島だ。西へ 行けば ブラウザ大陸、東へ 行けば りんごの島の 街。','海は 荒れて いるが、ここで 休んで いけば だいじょうぶ だ。'],['西の ブラウザ大陸には、妖精の 力を 手に した 暴君が いる と 聞く。……気を つけて 行きなさい。']);
 restStop('rest4','凪の漁村','南の 海に うかぶ 小さな 村',['この 村の 人は、みんな 手で 網を あんで いるんだ。便利な 道具は あるが、手で あんだ 網の ほうが 魚が よく とれる。','北東の 大地には「守り人」が いると いう 昔ばなしが ある。'],['南の 小さな 島には、流れ着いた 道具箱が あるらしい。ほしければ 見に 行って みるが いい。']);
 restStop('rest2','ひとやすみの宿場','りんごの島へ つづく 大陸の 宿場',['この 道を ずっと 東へ 行くと、琥珀の 宮殿の ある りんごの島の 街だ。ずいぶん 遠いぞ。'],['あの街の 人は「うんうん」と うなずくだけで、だれの 話も まともに 聞かなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
@@ -3405,7 +3419,7 @@ function meetEvent0(M){
 const DGQ={
  dg_see:{n:'プロトの 虫めがね',item:'虫めがね',hint:'東の国の 浜辺の「かすみの洞窟」へ。番人から 虫めがねを とりもどす',d:'洞窟の奥で、小さな レンズが きらりと 光った。のぞくと、世界の 輪郭が くっきり 見える。……これで ザックーリを 見すえられる。'},
  dg_make:{n:'ほそふでの ペン先',item:'ペン先',hint:'南の 浜の「らくがきの祠」へ。守り人を たおして ペン先を える',d:'祭壇の 上で、細い 金の ペン先が 光っていた。指先に のせると、線を 引きたくて うずうずする。'},
- dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'北の「妖精の城」へ。フィグムを 操った 妖精の王を 止める',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
+ dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'「ひとやすみの村」の すぐ 北西、雪原の ふちの 森に ある「妖精の城」へ',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
  dg_choose:{n:'まよいの 羅針盤',item:'羅針盤',hint:'山の 手前の「まよいの迷宮」へ。奥の 羅針盤を とりに いく',d:'古い 羅針盤が 眠っていた。針は ぐるぐる 回り、やがて XDの 胸の 灯を さして ぴたりと 止まった。……進む道は、自分で えらぶ。'},
 };
 const dgOpen=k=>{const st=CH[G.ch]&&CH[G.ch].stops[G.stop];return !!((st&&st.type==='dungeon'&&st.at===k)||(G.dgdone&&G.dgdone[k]))};
@@ -3752,6 +3766,8 @@ const LW=84,LH=104;
 Object.values(PLACES).forEach(roofSolid);Object.values(PLACES).forEach(slimRoads);
 const WALK=new Image(),LMS=new Image(),LMI=['castle','mac','village','tower','east','storm'];
 let POI={};
+/* ワールドマップで 家の 絵で 見せる 場所 */
+const POIHOUSE={rest1:'bld_brown',rest2:'bld_blue',rest3:'bld_jp_tea',rest4:'bld_red',port:'bld_blue'};
 const POIDEF={
   shrine:{x:104,y:30,fixed:1,n:'線の祠',s:'線を紡ぐ魔女が暮らす祠'},
   spring:{x:107,y:8,fixed:1,n:'時の泉',s:'時を織る賢者が待つ泉'},
@@ -3866,6 +3882,7 @@ function arrive(){
    if(bk&&!(G.bonus&&G.bonus[bk])){stopField();CONT=fieldResume;sfx('skill');return bonusEvent(bk)}}
   showName();
   const t=grid[P.ty][P.tx];
+  walkRegen();
   if(t!==4&&t!==7&&t!==9){
     FLD.steps+=t===0?ENC_SEA:1;
     if(FLD.steps>=FLD.thr){stopField();CONT=fieldResume;sfx('skill');return encounter()}
@@ -3938,6 +3955,8 @@ function drawFieldPass(cx,camx,camy,main){
       cx.fillStyle='#6a6470';cx.fillRect(x-14,y-22,28,20);cx.fillStyle='#8a8494';cx.fillRect(x-14,y-22,28,4);cx.fillStyle='#0a0614';cx.fillRect(x-8,y-16,16,14);cx.fillRect(x-6,y-18,12,2);
       cx.fillStyle='#ffd24a';cx.globalAlpha=.55+.3*Math.sin(t/10);cx.fillRect(x-2,y-8,4,4);cx.globalAlpha=1;
       cx.fillStyle='#ffd24a';cx.fillRect(x-1,y-34+Math.round(Math.sin(t/9)*2),3,6);cx.fillRect(x-1,y-26+Math.round(Math.sin(t/9)*2),3,3);return}
+    if(/未開/.test((POIDEF[k]||{}).s||''))return;
+    {const hb=POIHOUSE[k],im=hb&&BLD[hb];if(im&&im.complete&&im.naturalWidth){const h=hb==='bld_jp_tea'?34:40,w=Math.round(h*im.naturalWidth/im.naturalHeight);cx.fillStyle='#00000040';cx.fillRect(x-w/2+3,y-4,w-6,4);cx.drawImage(im,Math.round(x-w/2),Math.round(y+2-h),w,h);return}}
     cx.fillStyle='#00000040';cx.fillRect(x-6,y-3,13,3);
     cx.fillStyle='#6b4a2a';cx.fillRect(x-1,y-20,3,18);cx.fillStyle='#ffcf5a';cx.fillRect(x+2,y-20,11,7);cx.fillStyle='#b8861a';cx.fillRect(x+2,y-14,11,1);}})}
   for(const k in BONUS){const b=BONUS[k];if(G&&G.bonus&&G.bonus[k])continue;objs.push({y:b.y*TS+TS,f:()=>{const bx=Math.round(b.x*TS+TS/2-camx),by=Math.round(b.y*TS+TS/2-camy),r=2+Math.abs(Math.sin(FLD.tick/10))*3;cx.fillStyle='#ffe566';cx.fillRect(bx-1,Math.round(by-r),2,Math.round(r*2));cx.fillRect(Math.round(bx-r),by-1,Math.round(r*2),2);cx.fillStyle='#fff';cx.fillRect(bx-1,by-1,2,2)}})}
@@ -3958,6 +3977,12 @@ function drawFieldPass(cx,camx,camy,main){
   const ax=Math.round(L.x*TS+TS/2-camx),ay=Math.round((L.lm?(L.y+1)*TS+4-LH-8:L.y*TS-26)-camy+bob);
   cx.fillStyle='#140d1a';cx.beginPath();cx.moveTo(ax-8,ay-2);cx.lineTo(ax+8,ay-2);cx.lineTo(ax,ay+10);cx.fill();
   cx.fillStyle='#ffcf5a';cx.beginPath();cx.moveTo(ax-6,ay);cx.lineTo(ax+6,ay);cx.lineTo(ax,ay+8);cx.fill();
+  /* 行き先が 画面の 外なら、はしに 向きを 出す（東西は ちかい ほうへ） */
+  if(main){const WP=MW*TS;let dx=L.x*TS+TS/2-(P.px+TS/2);dx=((dx%WP)+WP*1.5)%WP-WP/2;const dy=L.y*TS+TS/2-(P.py+TS/2),sx=P.px+TS/2-camx,sy=P.py+TS/2-camy;
+    const tx=sx+dx,ty=sy+dy;if(tx<8||tx>VW-8||ty<8||ty>VH-8){const an=Math.atan2(dy,dx),m=18,k=Math.min(Math.abs((dx>0?VW-m-sx:sx-m)/(Math.cos(an)||1e-6)),Math.abs((dy>0?VH-m-sy:sy-m)/(Math.sin(an)||1e-6)));
+      const ex=sx+Math.cos(an)*k,ey=sy+Math.sin(an)*k,pu=1+.15*Math.sin(FLD.tick/7);cx.save();cx.translate(ex,ey);cx.rotate(an);cx.scale(pu,pu);
+      cx.fillStyle='#140d1a';cx.beginPath();cx.moveTo(12,0);cx.lineTo(-8,-9);cx.lineTo(-4,0);cx.lineTo(-8,9);cx.fill();
+      cx.fillStyle='#ffcf5a';cx.beginPath();cx.moveTo(9,0);cx.lineTo(-6,-6);cx.lineTo(-2,0);cx.lineTo(-6,6);cx.fill();cx.restore()}}
 }
 function boot(){
   let n=0;const go=()=>{if(++n<2)return;
@@ -4192,7 +4217,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   const es=fl.map((x,i)=>{const e=mkE(x,i,ks);if(boss&&hk!==1){e.hp=e.max=Math.round(e.max*hk)}return e});
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
-  B={es,t:0,allies:alk.map(k=>({k,n:SNM[k]||dn(ALLIES[k]),hp:aHp(k),max:allyMax(k),mp:allyMp(k),mpm:allyMp(k),block:0,sel:'#al_'+k})),boss,minion:!boss,final:!!opt.noAlly,ord:{},ordN:0,paid:0,mp:mpMax(),block:0,str:0,defend:false,used:{},turn:0,busy:true,over:false,menu:'atk',ci:0,li:0,pane:'cmd',pend:null};
+  B={es,t:0,allies:alk.map(k=>({k,n:SNM[k]||dn(ALLIES[k]),hp:aHp(k),max:allyMax(k),mp:aMp(k),mpm:allyMp(k),block:0,sel:'#al_'+k})),boss,minion:!boss,final:!!opt.noAlly,ord:{},ordN:0,paid:0,mp:curMp(),block:0,str:0,defend:false,used:{},turn:0,busy:true,over:false,menu:'atk',ci:0,li:0,pane:'cmd',pend:null};
   Object.defineProperty(B,'e',{get(){const e=B.es[B.t];return e&&e.hp>0?e:(B.es.find(x=>x.hp>0)||B.es[0])}});
   const bk=Object.keys(BOSSES).find(k=>BOSSES[k]===f),ter=DGBG?DGBG:boss&&BOSSTER[bk]?BOSSTER[bk]:terrainNow();
   const N=es.length,hp=Math.round((N===1?100:N===2?84:68)*(f.sc||(boss?1:.7)));
