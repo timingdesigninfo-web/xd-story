@@ -1220,12 +1220,25 @@ function shotRender(){
   try{VW=c.width;VH=c.height;K.cx=g;town?drawTown():drawField()}catch(e){return null}finally{VW=W0;VH=H0;K.cx=old}
   return c;
 }
+/* 戦闘：背景キャンバスと 敵の 画像を 1枚に 合成する */
+async function shotBattle(){
+  const sc=document.querySelector('#foe'),bg=sc&&sc.querySelector('#bgc');if(!sc||!bg)return null;
+  const r=sc.getBoundingClientRect();if(r.width<10)return null;
+  const k=2,c=document.createElement('canvas');c.width=Math.round(r.width*k);c.height=Math.round(r.height*k);const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+  const br=bg.getBoundingClientRect();g.drawImage(bg,(br.left-r.left)*k,(br.top-r.top)*k,br.width*k,br.height*k);
+  for(const im of sc.querySelectorAll('img')){if(!im.complete||!im.naturalWidth)continue;const st=getComputedStyle(im);if(st.visibility==='hidden'||st.display==='none'||+st.opacity===0)continue;
+    const ir=im.getBoundingClientRect();g.globalAlpha=+st.opacity||1;g.drawImage(im,(ir.left-r.left)*k,(ir.top-r.top)*k,ir.width*k,ir.height*k);g.globalAlpha=1}
+  const log=document.querySelector('#log');const t=log&&(log.innerText||log.textContent||'').trim();
+  c._battle=1;if(t)c._talk={sp:'',body:t.split('\n').slice(-4).join('\n')};
+  return c;
+}
 async function shotShare(){
   sfx('tap');
   let src=null,live=null;
   const cvs=[...(app||document.body).querySelectorAll('canvas')].filter(c=>c.width>40&&c.height>40&&c.offsetParent!==null);
   if(cvs.length)src=live=cvs.sort((a,b)=>b.width*b.height-a.width*a.height)[0];
   {const wide=shotRender();if(wide){wide._view=live&&live.closest('.view,.scene');src=wide}}
+  if(!src||!src._full){try{const b=await shotBattle();if(b)src=b}catch(e){}}
   if(!src){try{const h2c=await loadH2C();src=await h2c(app||document.body,{backgroundColor:'#140d1a',scale:1,logging:false,onclone:d=>{d.querySelectorAll('.pad,.abtns,.pmenu,.qm').forEach(e=>e.style.visibility='hidden')}})}catch(e){src=null}}
   let card=null;try{card=await shotCard(src)}catch(e){card=null}
   shotDlg(card);
@@ -1245,8 +1258,15 @@ async function shotCard(src){
   const drawLogo=(cx,y,mw,mh)=>{if(!logo.naturalWidth)return 0;const k=Math.min(mw/logo.naturalWidth,mh/logo.naturalHeight),w=logo.naturalWidth*k,h=logo.naturalHeight*k;g.imageSmoothingEnabled=false;g.drawImage(logo,cx-w/2,y,w,h);return h};
   const drawGame=(x,y,w,h)=>{g.fillStyle='#000';g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=22;g.fillRect(x-4,y-4,w+8,h+8);g.shadowBlur=0;
     g.imageSmoothingEnabled=false;g.drawImage(src,x,y,w,h);shotTalk(g,src,x,y,w,h);g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(x-4,y-4,w+8,h+8)};
-  if(src&&src._full){ /* マップを 幅いっぱい。左に 上下いっぱいの 黒い帯（ロゴ・じょうたい）。大事な ものは 中央の 正方形の 中 */
-    g.imageSmoothingEnabled=false;g.drawImage(src,0,0,src.width*2,src.height*2);
+  if(src&&(src._full||src._battle)){ /* マップを 幅いっぱい。左に 上下いっぱいの 黒い帯（ロゴ・じょうたい）。大事な ものは 中央の 正方形の 中 */
+    g.imageSmoothingEnabled=false;
+    if(src._full)g.drawImage(src,0,0,src.width*2,src.height*2);
+    else{ /* 戦闘：ぼかした 背景の 上に、帯の 右側へ 戦闘画面を まるごと */
+      const ck=Math.max(W/src.width,H/src.height);g.save();try{g.filter='blur(14px) brightness(.4)'}catch(e){}g.imageSmoothingEnabled=true;g.drawImage(src,(W-src.width*ck)/2,(H-src.height*ck)/2,src.width*ck,src.height*ck);g.restore();
+      if(!g.filter||g.filter==='none'){g.fillStyle='rgba(10,6,18,.6)';g.fillRect(0,0,W,H)}
+      const RX=(W-H)/2+6+270+14,RW=W-RX-14,bk=Math.min(RW/src.width,(H-28)/src.height),bw=src.width*bk,bh=src.height*bk,bx=RX+(RW-bw)/2,by=(H-bh)/2;
+      g.imageSmoothingEnabled=false;g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=20;g.fillStyle='#000';g.fillRect(bx,by,bw,bh);g.shadowBlur=0;g.drawImage(src,bx,by,bw,bh);
+      g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(bx,by,bw,bh);src._box=[bx,by,bw,bh]}
     const SL=(W-H)/2,PW=270,PX=SL+6; /* 帯は 正方形の 左はしに */
     g.fillStyle='#0b0814';g.fillRect(PX,0,PW,H);
     const eg=g.createLinearGradient(PX+PW,0,PX+PW+18,0);eg.addColorStop(0,'rgba(10,6,18,.45)');eg.addColorStop(1,'rgba(10,6,18,0)');g.fillStyle=eg;g.fillRect(PX+PW,0,18,H);
@@ -1258,7 +1278,7 @@ async function shotCard(src){
     for(const [t,col,r] of info){const n=Math.round(22*r);let m=n;g.font=F(m);while(m>13&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
     y+=G2;g.font=F(19);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
     /* セリフは 帯の 右から 正方形の 右はしまで */
-    const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36);
+    if(src._box){const [bx,by,bw,bh]=src._box;shotTalk(g,src,bx,by,bw,bh,.34)}else{const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36)}
     return c;
   }
   const land=src&&src.width>=src.height;
@@ -1290,11 +1310,13 @@ async function shotCard(src){
 }
 /* 会話中なら、その セリフの ウィンドウも 書き出す（メニューの ときは 書かない） */
 function shotTalk(g,src,x,y,w,h,maxr){
-  const v=src._view||(src.closest&&src.closest('.view,.scene')),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
-  const sp=((m.querySelector(':scope > b')||{}).textContent||'').trim();
-  const cl=m.cloneNode(true);cl.querySelectorAll(':scope > b, i, .topt, .tmh').forEach(e=>e.remove());
-  const body=(cl.innerText||cl.textContent||'').replace(/\s+\n/g,'\n').trim();
-  const ops=[...m.querySelectorAll('.topt')].map(e=>e.textContent.trim()).filter(Boolean);
+  let sp='',body='',ops=[];
+  if(src._talk){sp=src._talk.sp||'';body=src._talk.body||''}
+  else{const v=src._view||(src.closest&&src.closest('.view,.scene')),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
+    sp=((m.querySelector(':scope > b')||{}).textContent||'').trim();
+    const cl=m.cloneNode(true);cl.querySelectorAll(':scope > b, i, .topt, .tmh').forEach(e=>e.remove());
+    body=(cl.innerText||cl.textContent||'').replace(/\s+\n/g,'\n').trim();
+    ops=[...m.querySelectorAll('.topt')].map(e=>e.textContent.trim()).filter(Boolean)}
   if(!sp&&!body&&!ops.length)return;
   const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`,bw=w*.94,bx=x+(w-bw)/2,all=body+(ops.length?'\n'+ops.map(o=>'▶ '+o).join('\n'):'');
   const wrap=(fs,tw)=>{g.font=F(fs);const out=[];for(const para of all.split('\n')){let cur='';for(const ch of para){if(g.measureText(cur+ch).width>tw&&!/[、。，．！？」』）…ー]/.test(ch)){let carry='';if(/[A-Za-z0-9]/.test(ch)){const mm=/[A-Za-z0-9]+$/.exec(cur);if(mm&&mm[0].length<cur.length){carry=mm[0];cur=cur.slice(0,-carry.length)}}out.push(cur);cur=carry+ch}else cur+=ch}out.push(cur)}return out.filter((l,i)=>l||i)};
@@ -2941,7 +2963,7 @@ function townNPC(n){
     {l:'Dw、来てくれ',s:'Dwが なかまに くわわる',f:()=>{sfx('ally');if(!G.allies.includes('dw'))G.allies.push('dw');delete G.dwStay;TW.npcs=TW.npcs.filter(x=>x!==n);townSay([['Dw　隠者','よかろう。老いぼれの わざ、見せてやろう。',PDW],['','隠者Dwが 旅に くわわった。「方針」で 動きかたを きめられる。']])}},
     {l:'まだ 村で 待っていてくれ',s:'このまま 村に のこる',f:()=>townSay([['Dw　隠者','……そうか。気が 向いたら、また 声を かけなさい。',PDW]])}]))
   if(n.k==='mob'||n.k==='dgboss'||n.k==='dgherb'||n.k==='dgchest'||n.k==='dgrest')return dgNPC(n);
-  if(n.k==='inn'){sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;return townSay([[n.n,'おつかれさま。ゆっくり 休んでいきな。'],[n.n,'……さあ、元気になったよ！（HPと クレジットが 全回復）']])}
+  if(n.k==='inn'){sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;return townSay([[n.n,'おつかれさま。ゆっくり 休んでいきな。'],[n.n,'……さあ、元気になったよ！（HPが 全回復）']])}
   if(n.k==='pray'){G.tw=G.tw||{};const first=!G.tw.priest;G.tw.priest=1;return townSay(first?n.say.map(t=>[n.n,t]):[[n.n,'ようこそ。旅の 無事を いのりますか？']],prayAsk)}
   if(n.k==='shop2'){const ct=n.cat,nw=ct==='item'?0:shNew(ct),tx=nw?'新しいの 仕入れたよ！ 見ていきな。':ct==='item'?'やくそうや ドリンクを うっているよ。':ct==='tool'?'武器を うっているよ。クレジットで どうぞ。':ct==='panel'?'防具を うっているよ。クレジットで どうぞ。':'武器も 防具も やくそうも あるよ。クレジットで どうぞ。';return townSay([...(n.say||[]).map(t=>[n.n,t]),[n.n,tx]],()=>{SHOPONLY=ct||null;if(ct)SHOPTAB=ct;showShop(ct?1:0)})}
   if(n.k==='shop'){G.tw=G.tw||{};if(G.tw.shop)return townSay([[n.n,'毎度あり！ やくそうは いるかい？']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)});G.tw.shop=1;G.items.herb+=2;sfx('ally');const h=$('#hudherb');if(h)h.textContent=G.items.herb;return townSay([[n.n,'おう、彗星の子か！ 旅立ちの 祝いだ。'],[n.n,'やくそうを ふたつ おまけしよう！（やくそう +2）'],[n.n,'敵が おとす クレジットで やくそうも 買えるぞ。']],()=>{SHOPONLY='item';SHOPTAB='item';showShop(1)})}
