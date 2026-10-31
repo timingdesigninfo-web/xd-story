@@ -1220,14 +1220,23 @@ function shotRender(){
   try{VW=c.width;VH=c.height;K.cx=g;town?drawTown():drawField()}catch(e){return null}finally{VW=W0;VH=H0;K.cx=old}
   return c;
 }
+/* 画面の 見えかた（object-fit・object-position）の とおりに 描く。そのまま 描くと 伸びて しまう */
+function drawAsShown(g,el,nw,nh,dx,dy,dw,dh){
+  const st=getComputedStyle(el),fit=st.objectFit||'fill';if(!nw||!nh||!dw||!dh)return;
+  if(fit==='fill'){g.drawImage(el,dx,dy,dw,dh);return}
+  let k=fit==='cover'?Math.max(dw/nw,dh/nh):Math.min(dw/nw,dh/nh);if(fit==='none')k=1;if(fit==='scale-down')k=Math.min(1,Math.min(dw/nw,dh/nh));
+  const pos=(st.objectPosition||'50% 50%').split(/\s+/),pf=(v,def)=>{if(v===undefined)return def;if(/%$/.test(v))return parseFloat(v)/100;return {left:0,top:0,center:.5,right:1,bottom:1}[v]??def};
+  const px=pf(pos[0],.5),py=pf(pos[1],.5),w=nw*k,h=nh*k,ox=(dw-w)*px,oy=(dh-h)*py;
+  g.save();g.beginPath();g.rect(dx,dy,dw,dh);g.clip();g.drawImage(el,dx+ox,dy+oy,w,h);g.restore();
+}
 /* 戦闘：背景キャンバスと 敵の 画像を 1枚に 合成する */
 async function shotBattle(){
   const sc=document.querySelector('#foe'),bg=sc&&sc.querySelector('#bgc');if(!sc||!bg)return null;
   const r=sc.getBoundingClientRect();if(r.width<10)return null;
   const k=2,c=document.createElement('canvas');c.width=Math.round(r.width*k);c.height=Math.round(r.height*k);const g=c.getContext('2d');g.imageSmoothingEnabled=false;
-  const br=bg.getBoundingClientRect();g.drawImage(bg,(br.left-r.left)*k,(br.top-r.top)*k,br.width*k,br.height*k);
+  const br=bg.getBoundingClientRect();drawAsShown(g,bg,bg.width,bg.height,(br.left-r.left)*k,(br.top-r.top)*k,br.width*k,br.height*k);
   for(const im of sc.querySelectorAll('img')){if(!im.complete||!im.naturalWidth)continue;const st=getComputedStyle(im);if(st.visibility==='hidden'||st.display==='none'||+st.opacity===0)continue;
-    const ir=im.getBoundingClientRect();g.globalAlpha=+st.opacity||1;g.drawImage(im,(ir.left-r.left)*k,(ir.top-r.top)*k,ir.width*k,ir.height*k);g.globalAlpha=1}
+    const ir=im.getBoundingClientRect();g.globalAlpha=+st.opacity||1;drawAsShown(g,im,im.naturalWidth,im.naturalHeight,(ir.left-r.left)*k,(ir.top-r.top)*k,ir.width*k,ir.height*k);g.globalAlpha=1}
   const log=document.querySelector('#log');const t=log&&(log.innerText||log.textContent||'').trim();
   c._battle=1;if(t)c._talk={sp:'',body:t.split('\n').slice(-4).join('\n')};
   return c;
@@ -1264,7 +1273,9 @@ async function shotCard(src){
     else{ /* 戦闘：ぼかした 背景の 上に、帯の 右側へ 戦闘画面を まるごと */
       const ck=Math.max(W/src.width,H/src.height);g.save();try{g.filter='blur(14px) brightness(.4)'}catch(e){}g.imageSmoothingEnabled=true;g.drawImage(src,(W-src.width*ck)/2,(H-src.height*ck)/2,src.width*ck,src.height*ck);g.restore();
       if(!g.filter||g.filter==='none'){g.fillStyle='rgba(10,6,18,.6)';g.fillRect(0,0,W,H)}
-      const RX=(W-H)/2+6+270+14,RW=W-RX-14,bk=Math.min(RW/src.width,(H-28)/src.height),bw=src.width*bk,bh=src.height*bk,bx=RX+(RW-bw)/2,by=(H-bh)/2;
+      const RX=(W-H)/2+6+270+14,RW=W-RX-14,GAP=10;let bk=Math.min(RW/src.width,(H-28)/src.height),MH=0;
+      if(src._talk){for(let i=0;i<3;i++){const bw0=src.width*bk;MH=(shotTalk(g,src,0,0,bw0*1.0638,H,1,{dry:1})||0)+GAP;bk=Math.min(RW/src.width,(H-28-MH)/src.height)}} /* メッセージは 戦闘画面の すぐ下に */
+      const bw=src.width*bk,bh=src.height*bk,bx=RX+(RW-bw)/2,by=(H-bh-MH)/2;
       g.imageSmoothingEnabled=false;g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=20;g.fillStyle='#000';g.fillRect(bx,by,bw,bh);g.shadowBlur=0;g.drawImage(src,bx,by,bw,bh);
       g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(bx,by,bw,bh);src._box=[bx,by,bw,bh]}
     const SL=(W-H)/2,PW=270,PX=SL+6; /* 帯は 正方形の 左はしに */
@@ -1279,7 +1290,7 @@ async function shotCard(src){
     /* セリフは 帯の 右から 正方形の 右はしまで */
     /* 会話イベントの 大きな キャラ（立ち絵）も 入れる。セリフの 窓より 先に 描く */
     shotPortrait(g,W,H);
-    if(src._box){const [bx,by,bw,bh]=src._box;shotTalk(g,src,bx,by,bw,bh,.34)}else{const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36)}
+    if(src._box){const [bx,by,bw,bh]=src._box;shotTalk(g,src,bx-bw*.0319,by+bh+10,bw*1.0638,H,1,{top:1})}else{const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36)}
     return c;
   }
   const land=src&&src.width>=src.height;
@@ -1310,7 +1321,7 @@ async function shotCard(src){
   return c;
 }
 /* 会話中なら、その セリフの ウィンドウも 書き出す（メニューの ときは 書かない） */
-function shotTalk(g,src,x,y,w,h,maxr){
+function shotTalk(g,src,x,y,w,h,maxr,opt={}){
   let sp='',body='',ops=[];
   if(src._talk){sp=src._talk.sp||'';body=src._talk.body||''}
   else{const v=src._view||(src.closest&&src.closest('.view,.scene')),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
@@ -1325,7 +1336,7 @@ function shotTalk(g,src,x,y,w,h,maxr){
   /* 主人公は 画面の まんなかに いるので、窓は 下の 38% まで（それより 長い ときは 文字を 小さく → それでも だめなら 最後を …） */
   const MAXH=h*(maxr||.38);for(;;fs--){lh=fs*1.38;pd=fs*.6;L=wrap(fs,bw-pd*2);if(pd*2+(sp?lh*.9:0)+L.length*lh<=MAXH||fs<=11)break}
   {const mx=Math.max(1,Math.floor((MAXH-pd*2-(sp?lh*.9:0))/lh));if(L.length>mx){L=L.slice(0,mx);L[mx-1]=L[mx-1].slice(0,-1)+'…'}}
-  const bh=pd*2+(sp?lh*.9:0)+L.length*lh,by=y+h-bh-h*.025;
+  const bh=pd*2+(sp?lh*.9:0)+L.length*lh;if(opt.dry)return bh;const by=opt.top?y:y+h-bh-h*.025;
   const gr=g.createLinearGradient(0,by,0,by+bh);gr.addColorStop(0,'#26308f');gr.addColorStop(1,'#0a1160');
   g.fillStyle=gr;g.beginPath();g.roundRect?g.roundRect(bx,by,bw,bh,8):g.rect(bx,by,bw,bh);g.fill();g.strokeStyle='#f4f4f4';g.lineWidth=3;g.stroke();
   g.textAlign='left';g.textBaseline='top';let ty=by+pd;
@@ -1732,6 +1743,7 @@ app.addEventListener('click',e=>{
   if(a==='spd'){setTxt(TXT==='auto'?'manual':'auto');sfx('tap');document.querySelectorAll('.spdbtn').forEach(x=>{x.textContent=spdLbl();x.classList.toggle('on',TXT==='auto')});if(TXT==='auto')tapSkip();return}
   if(a==='rules'){sfx('tap');showRules()}
   if(a==='bag'){sfx('tap');showBag()}
+  if(a==='q_shot'){shotShare();return}
   if(a.startsWith('q_')){if(TW.busy||(inBattle()&&B.busy)){if(!$('#tmsg.tch'))busyMenu();return}sfx('tap');tmain()}
   if(a==='talk'||a==='ok')pressA();
   if(a==='back'){const ov=$('#ov');if(ov&&!ov.hidden){const c=$('#ovclose');if(c)c.click()}else if(inBattle()){if(B.busy)tapSkip();else navBack()}else if((TW.on||FLD.on)&&$('#tmsg.tch')){sfx('tap');(TMBACK||tmClose)()}else if(TW.on||FLD.on){if(!TW.busy){sfx('tap');tmain()}}else{sfx('tap');showBag()}}
@@ -3400,7 +3412,7 @@ function shell(center,o={}){
   PADHOOK=o.pad||null;app.classList.toggle('inbt',!!o.bt);
   app.innerHTML=`<div class="fwrap"><div class="lcol"><div class="info">${o.bt?hudLb():hudL()}${o.left||''}</div><div class="pad" id="pad"><button class="u" data-d="up" aria-label="上">▲</button><button class="l" data-d="left" aria-label="左">◀</button><button class="r" data-d="right" aria-label="右">▶</button><button class="d" data-d="down" aria-label="下">▼</button></div></div>
     <div class="mid">${center}</div>
-    <div class="rcol"><div class="info">${o.bt?(o.obj||'')+hudR():hudR()+(o.obj||'')}</div><div class="abtns"><div class="ab"><button data-act="back" aria-label="B">B</button><small>${o.bl||'どうぐ'}</small></div><div class="ab"><button data-act="ok" aria-label="A">A</button><small>${o.al||'けってい'}</small></div></div>${o.bt?'':'<div class="pmenu"><button data-act="q_menu">メニュー</button></div>'}</div></div>`;
+    <div class="rcol"><div class="info">${o.bt?(o.obj||'')+hudR()+'<div class="qm"><button data-act="q_shot">シェア</button></div>':hudR()+(o.obj||'')}</div><div class="abtns"><div class="ab"><button data-act="back" aria-label="B">B</button><small>${o.bl||'どうぐ'}</small></div><div class="ab"><button data-act="ok" aria-label="A">A</button><small>${o.al||'けってい'}</small></div></div>${o.bt?'<div class="pmenu"><button data-act="q_shot">シェア</button></div>':'<div class="pmenu"><button data-act="q_menu">メニュー</button></div>'}</div></div>`;
   document.querySelectorAll('#pad button').forEach(b=>{const d=b.dataset.d;
     b.addEventListener('pointerdown',e=>{e.preventDefault();if(PADHOOK)PADHOOK(d)})});
 }
