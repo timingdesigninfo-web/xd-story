@@ -3899,9 +3899,20 @@ function fxRun(kind,e){return new Promise(res=>{
       if(kt==='stamp'){const mkS=x=>mk('',`left:${x-22}px;top:${cy-22}px;width:44px;height:44px;border:4px solid ${c};background:${c}55;box-shadow:0 0 8px ${c}`),a1=mkS(cx-16),a2=mkS(cx+16);
         a1.animate([{opacity:0,transform:'translateY(-40px) scale(1.6)'},{opacity:1,transform:'translateY(0) scale(1)',offset:.5},{opacity:0,transform:'scale(1.1)'}],{duration:360});a2.animate([{opacity:0,transform:'translateY(-40px) scale(1.6)'},{opacity:0,offset:.3},{opacity:1,transform:'translateY(0) scale(1)',offset:.7},{opacity:0,transform:'scale(1.1)'}],{duration:480});
         try{jolt('#foe','shake')}catch(e){};setTimeout(()=>{a1.remove();a2.remove();res()},520);return}}
-    if(kind&&kind.startsWith('slash')){const c=FXCOL[kind.slice(6)]||'#fff',L=Math.min(130,Math.round(er.height*.9));
-      const d=mk('',`left:${cx-L/2}px;top:${cy-3}px;width:${L}px;height:6px;background:${c};box-shadow:0 0 10px ${c},0 0 3px #fff;transform:rotate(-35deg);border-radius:3px`);
-      d.animate([{opacity:0,transform:'rotate(-35deg) scaleX(.1)'},{opacity:1,transform:'rotate(-35deg) scaleX(1)',offset:.4},{opacity:0,transform:'rotate(-35deg) scaleX(1.1)'}],{duration:340}).onfinish=()=>{d.remove();res()};setTimeout(()=>{d.remove();res()},700);return}
+    if(kind&&kind.startsWith('slash')){const c=FXCOL[kind.slice(6)]||'#fff',R0=Math.min(170,Math.round(er.height*1.15)),flip=Math.random()<.5?1:-1,id='sl'+Math.floor(Math.random()*1e9);
+      /* 三日月形の斬撃：刃がはしって、あとに残光が消える。当たった所に火花 */
+      const d=mk(`<svg viewBox="0 0 100 100" width="${R0}" height="${R0}" style="display:block;overflow:visible;transform:scaleX(${flip}) rotate(${flip*(-6+Math.random()*12)}deg)"><defs><linearGradient id="${id}g" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity="0"/><stop offset=".35" stop-color="#fff"/><stop offset=".7" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient><mask id="${id}m"><path id="${id}p" d="M92 4 Q66 70 8 96" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="butt" stroke-dasharray="150" stroke-dashoffset="150"/></mask></defs><g mask="url(#${id}m)"><path d="M94 2 Q82 82 6 98 Q58 54 94 2Z" fill="url(#${id}g)" style="filter:drop-shadow(0 0 4px ${c})"/><path d="M90 8 Q70 66 14 92" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".9"/></g></svg>`,`left:${cx-R0/2}px;top:${cy-R0/2}px;width:${R0}px;height:${R0}px`);
+      const pth=d.querySelector('#'+id+'p');
+      try{pth.animate([{strokeDashoffset:150},{strokeDashoffset:0}],{duration:150,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'})}catch(e){pth.style.strokeDashoffset=0}
+      d.animate([{opacity:1,offset:0},{opacity:1,offset:.55},{opacity:0,offset:1}],{duration:330,fill:'forwards'});
+      setTimeout(()=>{ /* 命中：火花と一瞬の白 */
+        const fl=mk('',`left:${cx-R0*.2}px;top:${cy-R0*.2}px;width:${R0*.4}px;height:${R0*.4}px;border-radius:50%;background:radial-gradient(circle,#fff 0,${c} 45%,${c}00 72%)`);
+        fl.animate([{opacity:.95,transform:'scale(.4)'},{opacity:0,transform:'scale(1.5)'}],{duration:240}).onfinish=()=>fl.remove();
+        for(let i=0;i<7;i++){const an=(-35*flip+(i-3)*22+(Math.random()*14-7))*Math.PI/180+Math.PI/2*(flip>0?0:2),ln=R0*(.22+Math.random()*.2),sp=mk('',`left:${cx}px;top:${cy}px;width:${ln}px;height:2px;background:linear-gradient(90deg,#fff,${c}00);transform-origin:0 50%;transform:rotate(${an}rad)`);
+          sp.animate([{opacity:1,width:'0px'},{opacity:1,width:ln+'px',offset:.4},{opacity:0,width:ln*1.1+'px'}],{duration:260+Math.random()*80}).onfinish=()=>sp.remove()}
+        try{jolt('#foe','shake')}catch(e){}
+      },110);
+      setTimeout(()=>{d.remove();res()},380);return}
     if(kind&&kind.startsWith('burst')){const c=FXCOL[kind.slice(6)]||'#ffe27a',R=Math.min(150,Math.round(er.height*.9));
       const d=mk('',`left:${cx-R/2}px;top:${cy-R/2}px;width:${R}px;height:${R}px;border-radius:50%;background:radial-gradient(circle,#fff 0,${c} 35%,${c}00 70%)`);
       d.animate([{opacity:0,transform:'scale(.2)'},{opacity:1,transform:'scale(1)',offset:.4},{opacity:0,transform:'scale(1.4)'}],{duration:460}).onfinish=()=>{d.remove();res()};setTimeout(()=>{d.remove();res()},800);return}
