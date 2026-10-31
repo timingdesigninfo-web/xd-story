@@ -417,20 +417,20 @@ body #efoe .er .chips:empty{display:none}
 
 .btop .ally .ar{display:flex;align-items:center;gap:4px;padding:0}.btop .ally .ar .mini{flex:1 1 auto;min-width:16px}
 .btop .ally .ar .ah{min-width:0!important;text-align:right;white-space:nowrap}
-.btop .ally .alv{margin-left:4px;font-size:9px;font-weight:400}.btop .ally .ach2{width:auto!important}.btop .ally .chips:empty{display:none}
+.btop .pw .alv{margin-left:4px;font-size:9px;font-weight:400}.btop .ally .ach2{width:auto!important}.btop .ally .chips:empty{display:none}
 /* 仲間も XDと おなじ：1行に バー と 数字 *//*@*/.btop .ally .ar .ah{font-weight:400;font-variant-numeric:tabular-nums}@media (orientation:portrait){
 /* XDも 仲間も：バーの 下に 数字（2段） */
 .inbt .btop .pw .ar{flex-wrap:wrap;row-gap:0}
 .inbt .btop .pw .ar .mini{flex:1 1 0!important;min-width:0!important}
 .inbt .btop .pw .ar>b{flex:0 0 100%;text-align:right;font-size:9px;line-height:1.05;min-width:0!important;margin:0}
-.inbt .btop #me .ar .an{width:22px!important;font-size:10px}
+.inbt .btop #me .ar .mini{order:0;flex:0 0 100%!important}.inbt .btop #me .ar .an{order:1;width:auto!important;flex:1 1 auto;font-size:9px!important;line-height:1.05;opacity:.85}.inbt .btop #me .ar>b{order:2;flex:0 0 auto!important}.inbt .btop #me .ar .an{min-width:0;overflow:hidden}.inbt .btop.n4 #me .ar .an{display:none}.inbt .btop.n4 #me .ar>b{flex:1 1 auto!important}
 .btop.n4 .pw .ar>b{font-size:8px!important}
 .inbt .btop .pw .ar>b{font-size:9px!important}
 /* 幅：仲間は 等分、XDは HPなどの 文字の 分だけ ひろく */
-.inbt .lcol .info .btop #me{flex:1.3 1 0!important;min-width:0!important}
+.inbt .lcol .info .btop #me{flex:1 1 0!important;min-width:0!important}
 .inbt .lcol .info .btop .ally{flex:1 1 0!important;min-width:0!important}
-.inbt .lcol .info .btop.n4 #me{flex:1.15 1 0!important}
-}.btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .ally .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .ally .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .ally .alv{font-size:7px;margin-left:1px}
+
+}.btop.n3 .pw .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .pw .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .pw .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .pw .alv{font-size:7px;margin-left:1px}
 @media (orientation:landscape){
  /* 仲間 3人 以上：XDの 下に 仲間を 横ならび。バーの 下に 小さく 数字 */
  .inbt .lcol .info .btop.n3{display:flex!important;flex-wrap:wrap;gap:8px 3px}
@@ -4157,7 +4157,7 @@ function startBattle(f0,boss,opt={}){staleInput();
       </section>
     <section class="win msg"><p class="log" id="log" aria-live="polite"></p></section>
     <div class="bcmd"><section class="win cmdw" id="cmdw"><div class="wt">XD</div></section><section class="win listw" id="listw"><div class="wt" id="lt"></div></section></div>
-  </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}${alk.length>=3?' n3':''}${alk.length>=4?' n4':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD　${G.lv<=1?'Proto':G.lv===2?'Beta':'v'+(G.lv-2)+'.0'}</div>
+  </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}${alk.length>=3?' n3':''}${alk.length>=4?' n4':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD<b class="alv">${alk.length>=4?vshort(G.lv).replace(/\.0$/,''):vshort(G.lv)}</b></div>
         <div class="ar"><span class="an">HP</span><div class="mini"><i id="php"></i></div><b id="hpv"></b></div>
         <div class="ar"><span class="an">MP</span><div class="mini mp"><i id="pmp"></i></div><b id="mpv"></b></div>${G.fairy?'<div class="ar"><span class="an">CR</span><div class="mini cr"><i id="pcr"></i></div><b id="crv"></b></div>':''}
         <div class="chips" id="pchips"></div></section>${alk.map(k=>`<section class="win pw ally" id="al_${k}"><div class="wt" style="white-space:nowrap">${SNM[k]||dn(ALLIES[k])}<b class="alv">${alk.length>=4?vshort(alv(k)).replace(/\.0$/,''):vshort(alv(k))}</b></div><div class="ar"><div class="mini"><i class="ahp"></i></div><b class="ah"></b></div><div class="ar am" id="am_${k}"><div class="mini mp"><i class="amp"></i></div><b class="ah"></b></div><div class="chips ach2" id="ac_${k}"></div></section>`).join('')}</div>`,obj:`<div class="btop"><section class="win efoe" id="efoe"></section></div>`,
