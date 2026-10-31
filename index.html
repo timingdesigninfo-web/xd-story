@@ -1751,7 +1751,7 @@ app.addEventListener('click',e=>{
   if(a==='q_shot'){shotShare();return}
   if(a.startsWith('q_')){if(TW.busy||(inBattle()&&B.busy)){if(!$('#tmsg.tch'))busyMenu();return}sfx('tap');tmain()}
   if(a==='talk'||a==='ok')pressA();
-  if(a==='back'){const ov=$('#ov');if(ov&&!ov.hidden){const c=$('#ovclose');if(c)c.click()}else if(inBattle()){if(B.busy)tapSkip();else navBack()}else if((TW.on||FLD.on)&&$('#tmsg.tch')){sfx('tap');(TMBACK||tmClose)()}else if(TW.on||FLD.on){if(!TW.busy){sfx('tap');tmain()}}else{sfx('tap');showBag()}}
+  if(a==='back'){const ov=$('#ov');if(ov&&!ov.hidden){const c=$('#ovclose');if(c)c.click()}else if(inBattle()){if(B.busy)tapSkip();else navBack()}else if((TW.on||FLD.on)&&$('#tmsg.tch')){const m=$('#tmsg.tch');if(TMBACK){sfx('tap');TMBACK()}else if(m.querySelector('.tmh')){sfx('tap');tmClose()}else if(m._cancel){m._cancel()}}else if((TW.on||FLD.on)&&$('#tmsg')&&$('#tmsg')._skip){sfx('tap');$('#tmsg')._skip()}else if(TW.on||FLD.on){if(!TW.busy){sfx('tap');tmain()}}else{sfx('tap');showBag()}}
   if(a==='pad'){sfx('tap');const on=!PADON();PADV=on;try{localStorage.setItem('xd-senki-pad',on?'1':'0')}catch(e){}const g=$('#gpad');if(g)g.hidden=!PADV}
 });
 function overlay(html,onClose){
@@ -2843,7 +2843,8 @@ function townOff(){TW.on=false;cancelAnimationFrame(TW.raf);FLD.held=[];const m=
 function townLeave(){const p=TW.pl;if(p&&p.exitTo){townOff();return placeScreen(p.exitTo[0],p.exitTo[1],p.exitTo[2],'down')}townOff();KL=null;fieldResume()}
 function townSay(lines,done){
   TW.busy=true;let i=0;const v=$('.view');if(!v)return;
-  const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();TW.busy=false;done&&done()}else show()}}
+  const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();TW.busy=false;done&&done()}else show()};
+      m._skip=()=>{ /* Bで 会話を ぬける：のこりの 行の 処理だけ して、さいごまで 読んだのと おなじに */for(let j=i+1;j<lines.length;j++)if(typeof lines[j][3]==='function')try{lines[j][3]()}catch(e){}endPort();m.remove();TW.busy=false;done&&done()}}
     const [who,tx,pt]=lines[i];m.innerHTML=`${who?`<b>${who}</b>`:''}${tx}<i>Aで つぎへ ▼</i>`;
     if(typeof lines[i][3]==='function')try{lines[i][3]()}catch(e){}
     if(pt){let im=$('#tport');if(!im){im=document.createElement('img');im.id='tport';im.className='tport';(app.querySelector('.fwrap .mid')||app.querySelector('.fwrap')||app).appendChild(im)}if(im.dataset.s!==pt){im.dataset.s=pt;im.src=pt;im.style.animation='none';void im.offsetWidth;im.style.animation=''}}};
@@ -2872,7 +2873,8 @@ function townChoice(sub,items){staleInput();endPort();const old=$('#tmsg');if(ol
   v.appendChild(m);
   const pick=i=>{sfx('tap');m.remove();TW.busy=false;items[i].f()};
   m.querySelectorAll('.topt').forEach((el,i)=>el.onclick=e=>{e.stopPropagation();pick(i)});
-  m.onclick=()=>{const sl=m.querySelector('.topt.sel');pick(sl?+sl.dataset.i:0)}}
+  m.onclick=()=>{const sl=m.querySelector('.topt.sel');pick(sl?+sl.dataset.i:0)};
+  {const ci=items.findIndex(o=>/^(やめる|とじる|もどる|いいえ|やめておく|立ち去る|はなれる)/.test(String(o.l).replace(/<[^>]+>/g,'')));if(ci>=0)m._cancel=()=>pick(ci)}}
 function mapDlg(lines,items,fb){
   const v=app.querySelector('.view');if(!v||inBattle()||$('#ov')&&!$('#ov').hidden)return fb();
   stopField();TW.on=false;cancelAnimationFrame(TW.raf);
@@ -2974,7 +2976,9 @@ function prayAsk(){
   TW.busy=true;
   const yes=()=>{sfx('heal');G.hp=G.max;const h=$('#hudhp');if(h)h.textContent=G.hp+'/'+G.max;G.pray={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.auto=null;const ok=saveNow(true);TW.busy=false;
     townSay(ok?[['','XDは 手を あわせて、しずかに いのった。'],['しんぷ','……旅の 記録は しるされました。（HPも 全回復）'],['しんぷ','タイトルの 「つづきから」で、ここから 再開できます。合言葉を 決めておくと、ほかの端末でも つづけられます。']]:[['','……記録を のこせなかった。（この ブラウザでは 保存が ゆるされていない）']])};
-  townChoice('',[{l:'いのる（きろくする）',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
+  const zange=()=>{TW.busy=true;townSay([['','XDは ひざを ついて、こころの うちを うちあけた。'],['しんぷ','……あたらしい ことばを、胸に きざみなさい。']],()=>{TW.busy=false;
+    if(!SYNC)return townSay([['しんぷ','……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
+  townChoice('',[{l:'いのる',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
 const STAGE_SAY={
  'village:Dw':[[1,['……外で、もう少し 腕を ならして おいで。灯は、そう すぐには 強くならん。']],[2,['雲の国の 王の城で、Fiが 待っておる。急ぐのじゃ。']],[3,['妖精とは、うまく やっておるか？ 頼りきるなよ。手で 戦うことも、忘れるでないぞ。']],[5,['灯が 明るいのう。……さあ、奪われた 力を 取り戻しに 行け。わしは ここで 灯を 守っておる。']]],
