@@ -1278,6 +1278,8 @@ async function shotCard(src){
     for(const [t,col,r] of info){const n=Math.round(22*r);let m=n;g.font=F(m);while(m>13&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
     y+=G2;g.font=F(19);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
     /* セリフは 帯の 右から 正方形の 右はしまで */
+    /* 会話イベントの 大きな キャラ（立ち絵）も 入れる。セリフの 窓より 先に 描く */
+    shotPortrait(g,W,H);
     if(src._box){const [bx,by,bw,bh]=src._box;shotTalk(g,src,bx,by,bw,bh,.34)}else{const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36)}
     return c;
   }
@@ -1356,6 +1358,19 @@ function busyMenu(){
   document.body.appendChild(o);
   o.querySelector('#bmShot').onclick=e=>{e.stopPropagation();close();shotShare()};
   o.querySelector('#bmClose').onclick=e=>{e.stopPropagation();sfx('tap');close()};
+}
+/* 立ち絵：ゲームと おなじく 右上に。横長の 胸像（b_）は 左と 下を ぼかす */
+function shotPortrait(g,W,H){
+  const pt=document.querySelector('#tport');if(!pt||!pt.complete||!pt.naturalWidth||getComputedStyle(pt).display==='none')return;
+  const ar=pt.naturalWidth/pt.naturalHeight,bust=/\/b_/.test(pt.getAttribute('src')||'');
+  const L0=800; /* 主人公（x≈736）より 右だけを つかう */
+  let pw,ph;if(bust){pw=Math.round((W-L0)/.94);ph=pw/ar}else{ph=H*.62;pw=ph*ar;if(pw>W-L0-14){pw=W-L0-14;ph=pw/ar}}
+  const x=bust?W-pw+Math.round(pw*.06):W-14-pw,y=Math.round(H*.03);
+  const o=document.createElement('canvas');o.width=Math.round(pw);o.height=Math.round(ph);const q=o.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(pt,0,0,o.width,o.height);
+  if(bust){q.globalCompositeOperation='destination-in';
+    let gr=q.createLinearGradient(0,o.height,0,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.22,'#000');gr.addColorStop(1,'#000');q.fillStyle=gr;q.fillRect(0,0,o.width,o.height);
+    gr=q.createLinearGradient(0,0,o.width,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.18,'#000');gr.addColorStop(1,'#000');q.fillStyle=gr;q.fillRect(0,0,o.width,o.height)}
+  g.save();g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=bust?0:14;g.drawImage(o,x,y);g.restore();
 }
 function shotJpeg(c){for(const q of [.88,.8,.7,.6]){const u=c.toDataURL('image/jpeg',q);if(u.length*.75<420*1024)return u}return c.toDataURL('image/jpeg',.5)}
 function shotDlg(cv){
