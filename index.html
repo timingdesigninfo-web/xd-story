@@ -3464,7 +3464,9 @@ function fitView(cv){
   const fit=()=>{const w=m.clientWidth,h=m.clientHeight;if(w<80||h<60)return;
     const z=Math.max(1.2,w/384),nw=Math.round(w/z),nh=Math.round(h/z);
     if(cv.width===nw&&cv.height===nh&&cv.style.width===w+'px'&&cv.style.height===h+'px')return;
-    VW=nw;VH=nh;cv.width=VW;cv.height=VH;cv.style.width=w+'px';cv.style.height=h+'px'};
+    VW=nw;VH=nh;cv.width=VW;cv.height=VH;cv.style.width=w+'px';cv.style.height=h+'px';
+    /* 大きさを かえると 中身が 消えるので、その場で 描きなおす（一瞬 まっくらに ならない ように） */
+    try{const g=cv.getContext('2d');g.imageSmoothingEnabled=false;if(FLD.on&&FLD.cv===cv)drawField();else if(TW.on&&TW.cv===cv)drawTown()}catch(e){}};
   cv.style.setProperty('max-width','100%','important');cv.style.setProperty('max-height','100%','important');
   fit();
   /* あとから画面の高さが変わっても（ブラウザのバー・上の表示の増減など）、絵が下の欄にはみ出さないよう追従する */
@@ -3740,7 +3742,8 @@ addEventListener('keydown',e=>{if(!(FLD.on||TW.on)||!$('#ov').hidden)return;cons
 addEventListener('keyup',e=>{const d=FKEYS[e.key];if(d)setHeld(d,false)});
 function showName(){
   const n=nameAt(P.tx,P.ty),b=$('#fbn');if(!b)return;
-  if(n){$('#fbn1').textContent=n.n;$('#fbn2').textContent=n.s;b.hidden=false}else b.hidden=true;
+  /* 欄を けすと マップの 高さが かわって ずれるので、名前の ない 場所では 旅の とちゅうと 出して 欄は のこす */
+  const c=CH[G.ch]||CH[CH.length-1],v=n||{n:'旅の とちゅう',s:c?`${c.y}年「${c.t}」`:''};if($('#fbn1').textContent!==v.n)$('#fbn1').textContent=v.n;if($('#fbn2').textContent!==v.s)$('#fbn2').textContent=v.s;b.hidden=false;b.classList.toggle('road',!n);
 }
 function fieldStep(){
   FLD.tick++;
