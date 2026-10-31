@@ -4375,14 +4375,14 @@ function fxRun(kind,e){return new Promise(res=>{
       const cleanup=()=>{clearInterval(iv);d.remove()};
       a.onfinish=()=>{clearInterval(iv);fr_(3);setTimeout(()=>{res();fr_(4);d.animate([{opacity:1},{opacity:0}],{duration:520,fill:'forwards'}).onfinish=()=>d.remove()},420)};
       setTimeout(()=>{cleanup();res()},2400);return}
-    if(kind==='grid'){
+    if(kind==='grid'&&false){
       const n=3,gs=Math.round(fr.height*.5),d=mk('','left:'+(fr.width/2-gs/2)+'px;top:'+(fr.height/2-gs/2)+'px;width:'+gs+'px;height:'+gs+'px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px');
       for(let i=0;i<9;i++)d.insertAdjacentHTML('beforeend','<i style="background:#7fe4ff;border:1px solid #fff;display:block"></i>');
       d.animate([{opacity:0,transform:'scale(1.6)'},{opacity:1,transform:'scale(1)',offset:.35},{opacity:0,transform:'scale(.9)'}],{duration:640}).onfinish=()=>{d.remove();res()};setTimeout(()=>{d.remove();res()},1200);return}
     const col=a_col=>a_col;
     const playSh=(nm,w,h)=>new Promise(r2=>{const tw=Math.max(er.width*.8,80),sc=Math.min(tw/w,fr.height*.55/h),W=Math.round(w*sc),H=Math.round(h*sc),d=mk('',`left:${cx-W/2}px;top:${cy+er.height*.3-H}px;width:${W}px;height:${H}px;background:url(sprites/fx_${nm}.png) 0 0/${W*3}px ${H}px no-repeat;image-rendering:pixelated`);let i=0;const iv=setInterval(()=>{i++;if(i>=3){clearInterval(iv);setTimeout(()=>{d.remove();r2()},110);return}d.style.backgroundPosition=`${-i*W}px 0`},140);setTimeout(()=>{clearInterval(iv);d.remove();r2()},1000)});
-    {const k0=(kind||'').split(':'),SH={blunt:['blunt',300,194],magic:['magic',300,226],stamp:['stamp',300,232],whirl:['whirl',300,250],spark:['ring',300,173],rain:[({ps:'rain_b',dw:'rain_c'})[k0[1]]||'rain_a',300,225]},sh=SH[k0[0]];
-      if(sh){if(k0[0]==='blunt'||k0[0]==='stamp'){try{jolt('#foe','shake')}catch(e){}}playSh(sh[0],sh[1],sh[2]).then(res);return}
+    {const k0=(kind||'').split(':'),SH={slash:['slash',300,186],thrust:['thrust',300,185],burst:['burst',300,227],grid:['grid',300,211],blunt:['blunt',300,194],magic:['magic',300,226],stamp:['stamp',300,232],whirl:['whirl',300,250],spark:['ring',300,173],rain:[({ps:'rain_b',dw:'rain_c'})[k0[1]]||'rain_a',300,225]},sh=SH[k0[0]];
+      if(sh){if(k0[0]==='blunt'||k0[0]==='stamp'||k0[0]==='burst'){try{jolt('#foe','shake')}catch(e){}}playSh(sh[0],sh[1],sh[2]).then(res);return}
       if(k0[0]==='bolt'){const sx=fr.width*.1,sy=fr.height*.85,o=k0[1]==='dw'?'<span style="font:700 11px monospace;color:#063">&lt;/&gt;</span>':'',bc=FXCOL[k0[1]]||'#6be08a',d=mk(o,`left:${sx}px;top:${sy}px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#fff,${bc});box-shadow:0 0 12px ${bc}`);
         d.animate([{transform:'translate(0,0) scale(.6)'},{transform:`translate(${cx-sx}px,${cy-sy}px) scale(1.1)`}],{duration:300,easing:'ease-in',fill:'forwards'}).onfinish=()=>{d.remove();playSh('bolt',300,225).then(res)};setTimeout(()=>{d.remove();res()},1500);return}}
     {const kk=(kind||'').split(':'),kt=kk[0],c=FXCOL[kk[1]]||'#fff',S=Math.min(130,Math.round(er.height*.9));
