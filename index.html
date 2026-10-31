@@ -1423,8 +1423,18 @@ function phDlg(mode){document.getElementById('phdlg')&&document.getElementById('
       await syncApi({action:'claim',code:await phHash(c.v)});
       localStorage.setItem(PH_KEY,c.v);o.remove();syncPush()
     }catch(e){err.textContent=e.message;go.disabled=false}}}
-function saveNow(){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({g:G,snap:SNAP}));ok=true}catch(e){}syncPush();return ok}
+function saveNow(){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({v:SAVE_VER,g:G,snap:SNAP}));ok=true}catch(e){}syncPush();return ok}
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
+/* セーブの互換：あとから項目や道具が増えても、古い記録に足りない値を補って続けられるようにする。
+   章・場面の順番は入れ替えず、末尾に追加すること（記録は ch/stop の番号で持っているため）。 */
+const SAVE_VER=1;
+function migrateG(g){const d={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};
+  for(const k in d)if(g[k]===undefined||g[k]===null)g[k]=JSON.parse(JSON.stringify(d[k]));
+  if(typeof g.items!=='object')g.items={};for(const k in d.items)if(typeof g.items[k]!=='number')g.items[k]=0;
+  if(!Array.isArray(g.allies))g.allies=[];if(!Array.isArray(g.pw))g.pw=[];
+  g.ch=Math.max(0,Math.min(CH.length-1,g.ch|0));g.stop=Math.max(0,g.stop|0);
+  /* ここに「v<2 なら〜を補う」のような移行処理を足していく */
+  g.sv=SAVE_VER;return g}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
 function newGame(){G={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
 const need=lv=>Math.round(24+lv*lv*1.7);
@@ -1745,6 +1755,7 @@ function opening(after,label,sv){window.__bpmSet=0;
     .o2tint{position:absolute;inset:0;background:#0a0c30;opacity:.25;transition:background 2.5s,opacity 2.5s}.o2tint.storm{background:#2a3a66;opacity:.5}.o2tint.dark{background:#02030c;opacity:.65}
 </style>`;
   const st=$('#opst'),bg=$('#o2bg'),tint=$('#o2tint'),roll=$('#oproll'),cw=$('#opcw'),logo=$('#oplogo'),stb=$('#opstart'),camL=$('#opcam');
+  if(sv)stb.textContent='つづきから';
   const camP=[...roll.querySelectorAll('[data-c]')],tP=[...roll.querySelectorAll('[data-t]')];
   const FC={xd:['xd_stand',.435],xdL:['xd_lantern',.435],xdW:['xd_walk_pose',.435],dwB:['ally_dw_f',.38]};
   const camEl={};Object.keys(FC).forEach(k=>{const im=document.createElement('img');im.className='cam';im.alt='';im.onload=()=>{im.style.height=(im.naturalHeight*FC[k][1])+'%'};im.src='sprites/'+FC[k][0]+'.png';camL.appendChild(im);camEl[k]=im});
@@ -1790,7 +1801,8 @@ function opening(after,label,sv){window.__bpmSet=0;
   
   mkOptBar({st,skip:$('#opskip'),isDone:()=>done,sv});
   function finish0(){done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc)}
-  stb.onclick=()=>{sfx('tap');try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
+  stb.onclick=()=>{sfx('tap');if(sv){audioInit();finish0();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const pr=G.pray&&PLACES[G.pray.id]?G.pray:null;const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down');return}
+  try{window.dispatchEvent(new CustomEvent('xd-start'))}catch(e){}if(window.XD_START_URL){location.href=window.XD_START_URL;return}finish()};
   function finish(){if(done)return;done=true;cancelAnimationFrame(raf);try{ro&&ro.disconnect()}catch(e){}removeEventListener('keydown',esc);try{localStorage.setItem('xd-senki-op','1')}catch(e){}after()}
   // スキップ：最後のロゴ画面へ飛ぶ。そこで「はじめる」を押してスタート
   function skip(){sfx('tap');const t=t0?(performance.now()-t0)/1000:0;if(t<TT-3)t0=performance.now()-(TT-3)*1000}
