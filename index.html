@@ -1212,11 +1212,20 @@ function loadH2C(){if(window.html2canvas)return Promise.resolve(window.html2canv
   H2C=new Promise((ok,ng)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';sc.onload=()=>ok(window.html2canvas);sc.onerror=()=>{H2C=null;ng(new Error('load'))};document.head.appendChild(sc)});return H2C}
 function shotText(){let lv=1;try{lv=G.lv||1}catch(e){}return `あなたはAdobe XDをおぼえているか？\nXDと雲の仲間たちが妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG XD戦記 テストプレイ中！\n\n現在Lv${lv}\n#XD戦記\n${SHOT_URL}`}
 /* いまの 画面を 1200x630 の カードに 書き出す：ゲーム画面＋ロゴ＋いまの じょうたい */
+/* 書き出し用に、マップを カード全体（600x315 を 2倍）で 描きなおす。ゲームの 表示は かえない */
+function shotRender(){
+  const town=TW.on&&TW.cx,fld=!town&&FLD.on&&FLD.cx;if(!town&&!fld)return null;
+  const c=document.createElement('canvas');c.width=736;c.height=315;c._full=1; /* 主人公が 帯の 右側の まんなか（カードの x≈736）に くるよう 横に 広めに */const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+  const W0=VW,H0=VH,K=town?TW:FLD,old=K.cx;
+  try{VW=c.width;VH=c.height;K.cx=g;town?drawTown():drawField()}catch(e){return null}finally{VW=W0;VH=H0;K.cx=old}
+  return c;
+}
 async function shotShare(){
   sfx('tap');
-  let src=null;
+  let src=null,live=null;
   const cvs=[...(app||document.body).querySelectorAll('canvas')].filter(c=>c.width>40&&c.height>40&&c.offsetParent!==null);
-  if(cvs.length)src=cvs.sort((a,b)=>b.width*b.height-a.width*a.height)[0];
+  if(cvs.length)src=live=cvs.sort((a,b)=>b.width*b.height-a.width*a.height)[0];
+  {const wide=shotRender();if(wide){wide._view=live&&live.closest('.view,.scene');src=wide}}
   if(!src){try{const h2c=await loadH2C();src=await h2c(app||document.body,{backgroundColor:'#140d1a',scale:1,logging:false,onclone:d=>{d.querySelectorAll('.pad,.abtns,.pmenu,.qm').forEach(e=>e.style.visibility='hidden')}})}catch(e){src=null}}
   let card=null;try{card=await shotCard(src)}catch(e){card=null}
   shotDlg(card);
@@ -1236,27 +1245,43 @@ async function shotCard(src){
   const drawLogo=(cx,y,mw,mh)=>{if(!logo.naturalWidth)return 0;const k=Math.min(mw/logo.naturalWidth,mh/logo.naturalHeight),w=logo.naturalWidth*k,h=logo.naturalHeight*k;g.imageSmoothingEnabled=false;g.drawImage(logo,cx-w/2,y,w,h);return h};
   const drawGame=(x,y,w,h)=>{g.fillStyle='#000';g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=22;g.fillRect(x-4,y-4,w+8,h+8);g.shadowBlur=0;
     g.imageSmoothingEnabled=false;g.drawImage(src,x,y,w,h);shotTalk(g,src,x,y,w,h);g.strokeStyle='#ffffff55';g.lineWidth=2;g.strokeRect(x-4,y-4,w+8,h+8)};
+  if(src&&src._full){ /* マップを 幅いっぱい。左に 上下いっぱいの 黒い帯（ロゴ・じょうたい）。大事な ものは 中央の 正方形の 中 */
+    g.imageSmoothingEnabled=false;g.drawImage(src,0,0,src.width*2,src.height*2);
+    const SL=(W-H)/2,PW=270,PX=SL+6; /* 帯は 正方形の 左はしに */
+    g.fillStyle='#0b0814';g.fillRect(PX,0,PW,H);
+    const eg=g.createLinearGradient(PX+PW,0,PX+PW+18,0);eg.addColorStop(0,'rgba(10,6,18,.45)');eg.addColorStop(1,'rgba(10,6,18,0)');g.fillStyle=eg;g.fillRect(PX+PW,0,18,H);
+    g.fillStyle='#ffcf5a55';g.fillRect(PX+PW-2,0,2,H);
+    if(info[0]){const m=/^(\d+年)(「.*」)$/.exec(info[0][0]);if(m)info.splice(0,1,[m[1],'#ffcf5a',.85],[m[2],'#ffcf5a',1.1])}
+    const cw=PW-28,cx=PX+PW/2,lk=logo.naturalWidth?Math.min(cw/logo.naturalWidth,140/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,
+      G1=30,G2=16,tag=24,ih=info.reduce((a,[,,r])=>a+Math.round(22*r)*1.55,0),blk=lgh+G1+ih+G2+tag;
+    let y=(H-blk)/2;drawLogo(cx,y,cw,140);y+=lgh+G1;g.textAlign='center';g.textBaseline='top';
+    for(const [t,col,r] of info){const n=Math.round(22*r);let m=n;g.font=F(m);while(m>13&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
+    y+=G2;g.font=F(19);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
+    /* セリフは 帯の 右から 正方形の 右はしまで */
+    const tx=PX+PW+14,tw=SL+H-6-tx;shotTalk(g,src,tx,0,tw,H,.36);
+    return c;
+  }
   const land=src&&src.width>=src.height;
   if(src&&!land){ /* 縦：左に ロゴと じょうたい、右に ゲーム画面 */
     const SW=H-24,gap=22,gh=Math.round(SQ*.84),k=gh/src.height,gw=Math.round(src.width*k),cw=SW-gw-gap,x0=Math.round((W-SW)/2),gx=x0+cw+gap; /* 中央の 正方形の 中に ぜんぶ おさめる */
     drawGame(gx,Math.round(SY+(SQ-gh)/2),gw,gh);
     /* 左の まとまり（ロゴ＋じょうたい）を はかってから、ゲーム画面の 高さの まんなかに おく */
-    if(info[0]){const m=/^(\d+年)(「.*」)$/.exec(info[0][0]);if(m)info.splice(0,1,[m[1],'#ffcf5a',.85],[m[2],'#ffcf5a',1.05])}
+    if(info[0]){const m=/^(\d+年)(「.*」)$/.exec(info[0][0]);if(m)info.splice(0,1,[m[1],'#ffcf5a',.85],[m[2],'#ffcf5a',1.1])}
     const cx=x0+cw/2,lk=logo.naturalWidth?Math.min(cw/logo.naturalWidth,SQ*.32/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,
-      GAP1=34,GAP2=18,tags=26,ih=info.reduce((a,[,,r])=>a+Math.round(26*r)*1.55,0),blk=lgh+GAP1+ih+GAP2+tags;
+      GAP1=34,GAP2=18,tags=26,ih=info.reduce((a,[,,r])=>a+Math.round(22*r)*1.55,0),blk=lgh+GAP1+ih+GAP2+tags;
     let y=SY+(SQ-blk)/2;drawLogo(cx,y,cw,SQ*.32);y+=lgh+GAP1;
     g.textAlign='center';g.textBaseline='top';
-    for(const [t,col,r] of info){const n=Math.round(26*r);let m=n;g.font=F(m);while(m>14&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
-    y+=GAP2;g.font=F(22);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
+    for(const [t,col,r] of info){const n=Math.round(22*r);let m=n;g.font=F(m);while(m>14&&g.measureText(t).width>cw){m--;g.font=F(m)}g.fillStyle=col;g.fillText(fit(t,m,cw),cx,y);y+=n*1.55}
+    y+=GAP2;g.font=F(19);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
   }else{ /* 横（または 画面なし）：上に ゲーム画面、下に ロゴと じょうたい */
     /* まとまり（ゲーム画面＋ロゴ＋じょうたい）を はかってから、上下 中央に おく */
-    let gw=0,gh=0;if(src){gw=Math.min(760,SQ*1.2);gh=Math.min(Math.round(src.height*gw/src.width),Math.round(SQ*.62));gw=Math.round(src.width*gh/src.height)}
-    const G1=src?24:0,lk=logo.naturalWidth?Math.min(SQ*.7/logo.naturalWidth,(src?SQ*.2:SQ*.45)/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,G2=12,th=24,blk=gh+G1+lgh+G2+th;
+    let gw=0,gh=0;if(src){gw=SQ;gh=Math.round(src.height*gw/src.width);if(gh>SQ*.64){gh=Math.round(SQ*.64);gw=Math.round(src.width*gh/src.height)}}
+    const G1=src?24:0,lk=logo.naturalWidth?Math.min(SQ*.7/logo.naturalWidth,(src?SQ*.2:SQ*.45)/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,G2=12,th=20,blk=gh+G1+lgh+G2+th;
     let y=SY+(SQ-blk)/2;
     if(src){drawGame(Math.round((W-gw)/2),Math.round(y),gw,gh);y+=gh+G1}
     drawLogo(W/2,y,SQ*.7,src?SQ*.2:SQ*.45);y+=lgh+G2;
     /* じょうたいは 1行。色は 縦と おなじ（章＝金、場所＝白、Lv＝うす紫） */
-    const parts=info.map(([t,col])=>[t,col]),sep='　';let n=24;g.font=F(n);const tw=()=>g.measureText(parts.map(p=>p[0]).join(sep)).width;
+    const parts=info.map(([t,col])=>[t,col]),sep='　';let n=20;g.font=F(n);const tw=()=>g.measureText(parts.map(p=>p[0]).join(sep)).width;
     while(n>14&&tw()>SQ){n--;g.font=F(n)}
     let x=W/2-tw()/2;g.textAlign='left';g.textBaseline='top';
     parts.forEach(([t,col],i)=>{g.fillStyle=col;g.fillText(t,x,y);x+=g.measureText(t+(i<parts.length-1?sep:'')).width});
@@ -1264,18 +1289,20 @@ async function shotCard(src){
   return c;
 }
 /* 会話中なら、その セリフの ウィンドウも 書き出す（メニューの ときは 書かない） */
-function shotTalk(g,src,x,y,w,h){
-  const v=src.closest&&src.closest('.view,.scene'),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
+function shotTalk(g,src,x,y,w,h,maxr){
+  const v=src._view||(src.closest&&src.closest('.view,.scene')),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
   const sp=((m.querySelector(':scope > b')||{}).textContent||'').trim();
   const cl=m.cloneNode(true);cl.querySelectorAll(':scope > b, i, .topt, .tmh').forEach(e=>e.remove());
   const body=(cl.innerText||cl.textContent||'').replace(/\s+\n/g,'\n').trim();
   const ops=[...m.querySelectorAll('.topt')].map(e=>e.textContent.trim()).filter(Boolean);
   if(!sp&&!body&&!ops.length)return;
   const F=n=>`${n}px DotGothic16, "Zen Kaku Gothic New", sans-serif`,bw=w*.94,bx=x+(w-bw)/2,all=body+(ops.length?'\n'+ops.map(o=>'▶ '+o).join('\n'):'');
-  const wrap=(fs,tw)=>{g.font=F(fs);const out=[];for(const para of all.split('\n')){let cur='';for(const ch of para){if(g.measureText(cur+ch).width>tw&&!/[、。，．！？」』）…ー]/.test(ch)){out.push(cur);cur=ch}else cur+=ch}out.push(cur)}return out.filter((l,i)=>l||i)};
-  let fs=Math.max(16,Math.min(26,Math.round(w/16))),lh,pd,L;
-  for(;;fs--){lh=fs*1.42;pd=fs*.7;L=wrap(fs,bw-pd*2);if(pd*2+(sp?lh*.9:0)+L.length*lh<=h*.55||fs<=13)break}
-  const bh=pd*2+(sp?lh*.9:0)+L.length*lh,by=y+h-bh-h*.03;
+  const wrap=(fs,tw)=>{g.font=F(fs);const out=[];for(const para of all.split('\n')){let cur='';for(const ch of para){if(g.measureText(cur+ch).width>tw&&!/[、。，．！？」』）…ー]/.test(ch)){let carry='';if(/[A-Za-z0-9]/.test(ch)){const mm=/[A-Za-z0-9]+$/.exec(cur);if(mm&&mm[0].length<cur.length){carry=mm[0];cur=cur.slice(0,-carry.length)}}out.push(cur);cur=carry+ch}else cur+=ch}out.push(cur)}return out.filter((l,i)=>l||i)};
+  let fs=Math.max(14,Math.min(22,Math.round(w/19))),lh,pd,L;
+  /* 主人公は 画面の まんなかに いるので、窓は 下の 38% まで（それより 長い ときは 文字を 小さく → それでも だめなら 最後を …） */
+  const MAXH=h*(maxr||.38);for(;;fs--){lh=fs*1.38;pd=fs*.6;L=wrap(fs,bw-pd*2);if(pd*2+(sp?lh*.9:0)+L.length*lh<=MAXH||fs<=11)break}
+  {const mx=Math.max(1,Math.floor((MAXH-pd*2-(sp?lh*.9:0))/lh));if(L.length>mx){L=L.slice(0,mx);L[mx-1]=L[mx-1].slice(0,-1)+'…'}}
+  const bh=pd*2+(sp?lh*.9:0)+L.length*lh,by=y+h-bh-h*.025;
   const gr=g.createLinearGradient(0,by,0,by+bh);gr.addColorStop(0,'#26308f');gr.addColorStop(1,'#0a1160');
   g.fillStyle=gr;g.beginPath();g.roundRect?g.roundRect(bx,by,bw,bh,8):g.rect(bx,by,bw,bh);g.fill();g.strokeStyle='#f4f4f4';g.lineWidth=3;g.stroke();
   g.textAlign='left';g.textBaseline='top';let ty=by+pd;
