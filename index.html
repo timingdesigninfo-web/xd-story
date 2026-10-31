@@ -423,7 +423,7 @@ body #efoe .er .chips:empty{display:none}
 .inbt .btop .pw .ar{flex-wrap:wrap;row-gap:0}
 .inbt .btop .pw .ar .mini{flex:1 1 0!important;min-width:0!important}
 .inbt .btop .pw .ar>b{flex:0 0 100%;text-align:right;font-size:9px;line-height:1.05;min-width:0!important;margin:0}
-.inbt .btop #me .ar .mini{order:0;flex:0 0 100%!important}.inbt .btop #me .ar .an{order:1;width:auto!important;flex:1 1 auto;font-size:9px!important;line-height:1.05;opacity:.85}.inbt .btop #me .ar>b{order:2;flex:0 0 auto!important}.inbt .btop #me .ar .an{min-width:0;overflow:hidden}.inbt .btop.n4 #me .ar .an{display:none}.inbt .btop.n4 #me .ar>b{flex:1 1 auto!important}
+.inbt .btop .pw .ar .mini{order:0;flex:0 0 100%!important}.inbt .btop .pw .ar .an{order:1;width:auto!important;flex:0 0 auto;font-size:9px!important;line-height:1.05;opacity:.85;margin-right:2px}.inbt .btop .pw .ar>b{order:2;flex:1 1 auto!important;min-width:0;overflow:hidden;white-space:nowrap}.inbt .btop.n4 .pw .ar .an,.inbt .btop.n4 .pw .ar>b{font-size:8px!important;letter-spacing:-.04em}@media (orientation:portrait){.inbt .lcol .info .btop .pw{padding-left:4px!important;padding-right:4px!important}.inbt .lcol .info .btop{gap:3px!important}.inbt .btop.n4 .pw .ar .an,.inbt .btop.n4 .pw .ar>b{font-size:9px!important;letter-spacing:-.02em}}
 .btop.n4 .pw .ar>b{font-size:8px!important}
 .inbt .btop .pw .ar>b{font-size:9px!important}
 /* 幅：仲間は 等分、XDは HPなどの 文字の 分だけ ひろく */
@@ -436,7 +436,8 @@ body #efoe .er .chips:empty{display:none}
  .inbt .lcol .info .btop.n3{display:flex!important;flex-wrap:wrap;gap:8px 3px}
  .inbt .lcol .info .btop.n3 #me{flex:0 0 100%!important}
  .inbt .lcol .info .btop.n3 .ally{flex:1 1 0!important;min-width:0!important;margin:0!important;padding:8px 3px 2px!important}
- .inbt .lcol .info .btop.n3 .ally .ar{flex-direction:column;align-items:stretch;gap:0;font-size:8px;line-height:1.05}
+ .inbt .lcol .info .btop.n3 .ally .ar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:0;font-size:8px;line-height:1.05}
+ .inbt .lcol .info .btop.n3 .ally .ar .mini{order:0;flex:0 0 100%!important}.inbt .lcol .info .btop.n3 .ally .ar .an{order:1;width:auto!important;flex:0 0 auto;font-size:8px!important;opacity:.85}.inbt .lcol .info .btop.n3 .ally .ar>b{order:2;flex:1 1 auto!important;text-align:right;min-width:0}
  .inbt .lcol .info .btop.n3 .ally .ar .ah{font-size:8px!important;text-align:right}
  .inbt .lcol .info .btop.n3 .ally .wt{font-size:9px!important;padding:0 3px!important;left:3px!important}.inbt .lcol .info .btop.n3 .ally .alv{font-size:7px!important}
  .inbt .lcol .info .btop.n3 .ally .ach2{display:none!important}
@@ -4160,7 +4161,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}${alk.length>=3?' n3':''}${alk.length>=4?' n4':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD<b class="alv">${alk.length>=4?vshort(G.lv).replace(/\.0$/,''):vshort(G.lv)}</b></div>
         <div class="ar"><span class="an">HP</span><div class="mini"><i id="php"></i></div><b id="hpv"></b></div>
         <div class="ar"><span class="an">MP</span><div class="mini mp"><i id="pmp"></i></div><b id="mpv"></b></div>${G.fairy?'<div class="ar"><span class="an">CR</span><div class="mini cr"><i id="pcr"></i></div><b id="crv"></b></div>':''}
-        <div class="chips" id="pchips"></div></section>${alk.map(k=>`<section class="win pw ally" id="al_${k}"><div class="wt" style="white-space:nowrap">${SNM[k]||dn(ALLIES[k])}<b class="alv">${alk.length>=4?vshort(alv(k)).replace(/\.0$/,''):vshort(alv(k))}</b></div><div class="ar"><div class="mini"><i class="ahp"></i></div><b class="ah"></b></div><div class="ar am" id="am_${k}"><div class="mini mp"><i class="amp"></i></div><b class="ah"></b></div><div class="chips ach2" id="ac_${k}"></div></section>`).join('')}</div>`,obj:`<div class="btop"><section class="win efoe" id="efoe"></section></div>`,
+        <div class="chips" id="pchips"></div></section>${alk.map(k=>`<section class="win pw ally" id="al_${k}"><div class="wt" style="white-space:nowrap">${SNM[k]||dn(ALLIES[k])}<b class="alv">${alk.length>=4?vshort(alv(k)).replace(/\.0$/,''):vshort(alv(k))}</b></div><div class="ar"><span class="an">HP</span><div class="mini"><i class="ahp"></i></div><b class="ah"></b></div><div class="ar am" id="am_${k}"><span class="an">MP</span><div class="mini mp"><i class="amp"></i></div><b class="ah"></b></div><div class="chips ach2" id="ac_${k}"></div></section>`).join('')}</div>`,obj:`<div class="btop"><section class="win efoe" id="efoe"></section></div>`,
     pad:d=>{if(inBattle()&&!B.busy){if(d==='up')navMove(0,-1);else if(d==='down')navMove(0,1);else if(d==='left')navMove(-1,0);else navMove(1,0)}},al:'けってい',bl:'もどる'});
   drawBG(ter);try{const inf=document.querySelector('.rcol .info'),bt=document.querySelector('.mid .bt');if(inf&&bt){const mg=bt.querySelector('.msg');inf.appendChild(mg);mg.classList.add('sidemsg');bt.style.gridTemplateRows='minmax(0,58fr) minmax(0,42fr)';bt.querySelector('.bcmd').style.gridRow='2'}}catch(e){}
   $('.msg').onclick=tapSkip;$('#foe').addEventListener('click',e=>{const u=e.target.closest('.eu');if(B.pane==='tgt'&&u&&aliveEs().some(x=>x.id===+u.dataset.i)){B.t=+u.dataset.i;sfx('tap');render();return}tapSkip()});
