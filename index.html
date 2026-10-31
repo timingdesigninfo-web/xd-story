@@ -3057,7 +3057,7 @@ function furnishChapel(p,H,o={}){const x=H.x,y=H.y;
     npc(p,wm.x+1,wm.y+3,{n:'パンやの むすめ',c:NM.woman,say:['この 粉で、毎朝 ぱんを やくの。','今日は ちょっと こげちゃった……。でも、こげめも 手づくりの あじ、でしょ？']})}
   const ch=house(p,{x:16,y:10,w:7,h:6,img:'bld_chapel'});furnishChapel(p,ch,{npc:{n:'しんぷ',k:'pray',c:NM.mage,say:['ここは 旅人の 無事を いのる 小さな 礼拝堂です。','十年前の 春、空から 光が おちた 夜も、村じゅうが ここに 集まって いのっていました。','このごろ、灯が 日ごとに 弱まります。いのる 人も 減りました。……広場の おじいさんが、お話を したがっていますよ。']}});
   /* 村の 灯：正式版（第1章の さいご）までは 小さく、そのあと 大きく 灯る */
-  {const q=prop(p,'torch',13,11,{say:['村の 灯。……ちいさく、ゆれている。'],vtorch:1});Object.defineProperty(q,'sc',{get:()=>villLit()?1.45:.72});
+  {const q=prop(p,'torch',13,11,{say:['村の 灯。……ちいさく、ゆれている。'],vtorch:1});q.sc=.72; /* 台の 大きさは かえない。灯ったら 火の 光だけ 強くする */
    Object.defineProperty(q,'say',{get:()=>villLit()?['村の 灯。あたたかい 光が、広場いっぱいに ひろがっている。']:['村の 灯。……ちいさく、ゆれている。いまにも 消えそうだ。']})}
   prop(p,'signboard',15,6,{say:['はじまりの村','北: 宿屋と 道具屋　／　まんなか: 広場　／　南: 村の 出口']});
   prop(p,'well',14,6,{say:'つめたい 水が くみ上げられた。……おいしい。'});
@@ -3621,7 +3621,11 @@ function drawTown(){
     const bx=q?(q.x+q.fw/2)*TT+q.dx-camx:0,by=q?(q.y+1)*TT+q.dy-camy:0,gy=ni?by-ni.h*.85:by-20;
     if(!lit){cx.fillStyle='rgba(10,8,30,.5)';cx.fillRect(0,0,VW,VH); /* 薄暗い 村 */
       if(ni){flameDraw(cx,ni,q,bx,by);const fl=.6+Math.sin(t*9)*.15,r=46+fl*6;cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(bx,gy,2,bx,gy,r);g.addColorStop(0,'rgba(255,150,60,'+(.22*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,110,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore()}}
-    else if(ni){const fl=.7+Math.sin(t*6)*.1+Math.sin(t*3.7)*.08,r=140+fl*14;cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(bx,gy,4,bx,gy,r);g.addColorStop(0,'rgba(255,190,90,'+(.28*fl).toFixed(3)+')');g.addColorStop(.5,'rgba(255,150,60,'+(.1*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore()}}
+    else if(ni){const fl=.75+Math.sin(t*6)*.1+Math.sin(t*3.7)*.08,r=170+fl*16;cx.save();cx.globalCompositeOperation='lighter';
+      let g=cx.createRadialGradient(bx,gy,4,bx,gy,r);g.addColorStop(0,'rgba(255,200,110,'+(.42*fl).toFixed(3)+')');g.addColorStop(.35,'rgba(255,160,70,'+(.16*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);
+      cx.restore();
+      cx.save();cx.globalCompositeOperation='soft-light';cx.fillStyle='rgba(255,214,150,.55)';cx.fillRect(0,0,VW,VH);cx.restore(); /* 村 ぜんたいに あたたかい 光 */
+      flameDraw(cx,ni,q,bx,by)}}
 }
 /* ================= field ================= */
 let CONT=null;
