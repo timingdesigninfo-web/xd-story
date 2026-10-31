@@ -3103,7 +3103,7 @@ function flTalk(){
   hSay('fl',[['Fl','いらっしゃ〜い。ゆるっと やってる 店だよ。']]);
   const m=$('#tmsg');
   if(m)m.onclick=()=>{sfx('tap');m.remove();endPort();TW.busy=false;
-    townChoice('',[{l:'おみせを みる',s:'武器・防具・どうぐ',f:()=>{endPort();SHOPONLY=null;SHOPTAB='tool';showShop(1)}},{l:'はなす',s:'',f:()=>flTalk2()},{l:'やめる',s:'',f:()=>{}}])}
+    townChoice('',[{l:'はなしを きく',s:G.learn&&G.learn.fl?'むかしの はなし':`むかしの わざを おしえてくれる かも（みつけたもの ${gotN()}/3）`,f:()=>flTalk2()},{l:'おみせを みる',s:'武器・防具・どうぐ',f:()=>{endPort();SHOPONLY=null;SHOPTAB='tool';showShop(1)}},{l:'やめる',s:'',f:()=>{}}])}
 }
 function flTalk2(){G.learn=G.learn||{};const n=gotN();
   if(G.learn.fl)return hSay('fl',[['Fl','ふぁ〜……タイムラインを ぴたっと 止める。それが おじさんの 十八番さ。'],['Fl','てきが ぽかーんと してる あいだに、ゆっくり いこうぜ〜。']]);
