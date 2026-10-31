@@ -3421,7 +3421,7 @@ function shipPic(on,src){
 function meetEvent(M){
   const sp=sprite(M.n,M.col[0],M.col[1]),opt={l:M.opt,s:'',f:()=>{shipPic(0);sfx('ally');M.after&&M.after();
     if(M.battle){const sq=n=>MINIONS.find(m=>m.n===n);CONT=()=>{G.hp=Math.max(G.hp,Math.round(G.max*.5));G.stop++;G.hunt=0;fieldScreen();setTimeout(()=>mapDlg(M.l2.map(t=>[M.n,t,sp]),[{l:M.opt2,s:'',f:()=>{sfx('ally');G.escort={n:M.n,col:M.col};CONT=fieldResume;fieldResume()}}],()=>{G.escort={n:M.n,col:M.col};fieldResume()}),400)};
-      return startBattle([makeMinion(sq('マイイカ')),makeMinion(sq('ナントナクラゲ')),makeMinion(sq('ダレカニ'))],false,{})}
+      DGBG=bgOk('sea')?'sea':null;const C0=CONT;CONT=()=>{DGBG=null;C0()};return startBattle([makeMinion(sq('マイイカ')),makeMinion(sq('ナントナクラゲ')),makeMinion(sq('ダレカニ'))],false,{})}
     nodeDone()}};
   if(M.img)shipPic(1,M.img);
   return mapDlg(M.l.map(t=>[M.n,t,sp]),[opt],()=>meetEvent0(M))}
@@ -4180,14 +4180,16 @@ function storyEvent(k){
 
 /* ================= battle ================= */
 let DGBG=null;
-function terrainNow(){try{if(DGBG)return DGBG;const t=grid[P.ty][P.tx];return t===0?'storm':t===5?'snow':t===6?'sand':t===8?'storm':t===9?'cloud':'grass'}catch(e){return 'grass'}}
+function terrainNow(){try{if(DGBG)return DGBG;const t=grid[P.ty][P.tx];return t===0?(bgOk('sea')?'sea':'storm'):t===5?'snow':t===6?'sand':t===8?'storm':t===9?'cloud':'grass'}catch(e){return 'grass'}}
 const BOSSTER={fairyKing:'cloud',sketch:'grass',prott:'sand',invision:'grass',studio:'sand',framer:'grass',figma:'storm',canva:'snow',nocode:'sand',figmaX:'storm',cloudKing:'cloud',mendo:'cloud',nidoneru:'cloud',daitai:'sand'};
 const BGI={};
-['grass','sand','snow','storm','cloud'].forEach(k=>{const i=new Image();i.onload=()=>{const c=$('#bgc');if(c&&c.dataset.k===k)drawBG(k)};i.src='bg/bg_'+k+'.png';BGI[k]=i});
+['grass','sand','snow','storm','cloud','sea','cave0','cave1','cave2','cave3'].forEach(k=>{const i=new Image();i.onload=()=>{const c=$('#bgc');if(c&&c.dataset.k===k)drawBG(k)};i.onerror=()=>{i._ng=1};i.src='bg/bg_'+k+'.png';BGI[k]=i});
+const bgOk=k=>{const i=BGI[k];return !!(i&&i.complete&&i.naturalWidth)};
 function drawBG(kind){
   const cv=$('#bgc');if(!cv)return;cv.dataset.k=kind;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
-  g.fillStyle={grass:'#3f9a3a',sand:'#e0c87a',snow:'#e8f1ff',storm:'#4a3d6e',cloud:'#f2eef9'}[kind];g.fillRect(0,0,448,256);
-  if(kind.slice(0,4)==='cave'){const d=+kind.slice(4)||0;g.fillStyle='#07070f';g.fillRect(0,0,448,256);
+  g.fillStyle={grass:'#3f9a3a',sand:'#e0c87a',snow:'#e8f1ff',storm:'#4a3d6e',cloud:'#f2eef9',sea:'#1e5aa8'}[kind]||'#000';g.fillRect(0,0,448,256);
+  if(kind.slice(0,4)==='cave'&&bgOk(kind)){g.drawImage(BGI[kind],0,0,448,256);return}
+  if(kind.slice(0,4)==='cave'){const d=Math.min(2,+kind.slice(4)||0);g.fillStyle='#07070f';g.fillRect(0,0,448,256);
     if(DGW.complete&&DGW.naturalWidth&&DGF.complete&&DGF.naturalWidth){
       for(let x=0;x<448;x+=64){g.drawImage(DGW,0,d*80,64,80,x,0,64,80);g.drawImage(DGW,4*64,d*80,64,80,x,52,64,80)}
       for(let y=124;y<256;y+=128)for(let x=0;x<448;x+=128)g.drawImage(DGF,d*256,0,256,256,x,y,128,128);
