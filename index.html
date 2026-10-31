@@ -378,7 +378,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 }
 .tmsg{position:absolute;left:3%;right:3%;bottom:3%;z-index:6;background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:6px;padding:8px 12px;font-size:13px;line-height:1.5;color:#fff;box-shadow:0 0 0 2px #000;cursor:pointer}
 .qm{display:grid;grid-template-columns:1fr;gap:4px;margin-top:6px}.qm button{font:inherit;font-size:12px;padding:6px 2px;border-radius:6px;border:1px solid var(--line,#6a5aa0);background:rgba(20,16,50,.7);color:inherit;cursor:pointer}.qm button:active{background:#ff5fb7;color:#fff}
-.tmsg b{display:block;color:#ffe27a;font-size:12px}
+.tmsg b.who{display:block;color:#ffe27a;font-size:12px}.tmsg b:not(.who){color:#ffe27a;font-weight:700;font-size:inherit}
 .tmh{color:#ffe27a;font-size:12px;border-bottom:1px solid #6677cc;margin-bottom:4px;padding-bottom:2px}.tmh small{color:#9fb0e8;font-size:10px}
 .shl,.shd{text-align:left}.shl{top:3%;left:3%;right:auto;bottom:auto;width:61%;max-height:62%}.shl i{display:none}.shl .topt{display:flex;justify-content:space-between;gap:8px}.shl .topt b{flex:1;text-align:left}.shl .pr{color:#ffe27a;font-size:12px;white-space:nowrap}.shd b{display:block;color:#ffe27a}.shd small{color:#bcd}
 .tch{padding-bottom:20px;max-height:72%;overflow-y:auto}.tch .topt{padding:3px 6px;border-radius:4px;color:#9fb0e8}.tch .topt .eqon,.tch .topt.sel .eqon{color:#7df0b4;text-shadow:0 0 6px #3fd08a88}.tch .topt b{display:inline;color:inherit;font-size:13px}.tch .topt small{display:block;font-size:10px;color:#9fb0e8;margin-left:14px}.tch .topt.sel{background:#ffffff22;color:#fff}.tch .topt.sel b{color:#ffe27a}.tch .topt:not(.sel){opacity:.75}.tch .topt:not(.sel){}
@@ -1401,8 +1401,8 @@ function shotTalk(g,src,x,y,w,h,maxr,opt={}){
   let sp='',body='',ops=[];
   if(src._talk){sp=src._talk.sp||'';body=src._talk.body||''}
   else{const v=src._view||(src.closest&&src.closest('.view,.scene')),m=v&&v.querySelector('#tmsg');if(!m||m.querySelector('.tmh'))return;
-    sp=((m.querySelector(':scope > b')||{}).textContent||'').trim();
-    const cl=m.cloneNode(true);cl.querySelectorAll(':scope > b, i, .topt, .tmh').forEach(e=>e.remove());
+    sp=((m.querySelector(':scope > b.who')||{}).textContent||'').trim();
+    const cl=m.cloneNode(true);cl.querySelectorAll(':scope > b.who, i, .topt, .tmh').forEach(e=>e.remove());
     body=(cl.innerText||cl.textContent||'').replace(/\s+\n/g,'\n').trim();
     ops=[...m.querySelectorAll('.topt')].map(e=>e.textContent.trim()).filter(Boolean)}
   if(!sp&&!body&&!ops.length)return;
@@ -2928,7 +2928,7 @@ function townSay(lines,done){
   TW.busy=true;let i=0;const v=$('.view');if(!v)return;
   const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();TW.busy=false;done&&done()}else show()};
       m._skip=()=>{ /* Bで 会話を ぬける：のこりの 行の 処理だけ して、さいごまで 読んだのと おなじに */for(let j=i+1;j<lines.length;j++)if(typeof lines[j][3]==='function')try{lines[j][3]()}catch(e){}endPort();m.remove();TW.busy=false;done&&done()}}
-    const [who,tx,pt]=lines[i];m.innerHTML=`${who?`<b>${who}</b>`:''}${tx}<i>Aで つぎへ ▼</i>`;
+    const [who,tx,pt]=lines[i];m.innerHTML=`${who?`<b class="who">${who}</b>`:''}${tx}<i>Aで つぎへ ▼</i>`;
     if(!pt)endPort(); /* 立ち絵の ない 行では 前の 人の 立ち絵を のこさない */
     if(typeof lines[i][3]==='function')try{lines[i][3]()}catch(e){}
     if(pt){let im=$('#tport');if(!im){im=document.createElement('img');im.id='tport';im.className='tport';(app.querySelector('.fwrap .mid')||app.querySelector('.fwrap')||app).appendChild(im)}if(im.dataset.s!==pt){im.dataset.s=pt;im.src=pt;im.style.animation='none';void im.offsetWidth;im.style.animation=''}}};
@@ -2953,7 +2953,7 @@ function townFin(f){if(GPW){setTimeout(()=>townFin(f),120);return}endPort();town
 function tsel(d){const ops=[...document.querySelectorAll('#tmsg .topt')];if(!ops.length)return;let i=ops.findIndex(b=>b.classList.contains('sel'));if(i<0)i=0;i=(d==='up'||d==='left')?Math.max(0,i-1):Math.min(ops.length-1,i+1);ops.forEach(b=>b.classList.remove('sel'));ops[i].classList.add('sel');ops[i].scrollIntoView({block:'nearest'});sfx('tap');TSELHOOK&&TSELHOOK()}
 function townChoice(sub,items){staleInput();endPort();const old=$('#tmsg');if(old)old.remove();const v=app.querySelector('.view');if(!v)return;
   const m=document.createElement('div');m.id='tmsg';m.className='tmsg tch';
-  m.innerHTML=(sub?`<b>${sub}</b>`:'')+items.map((o,i)=>`<div class="topt${i?'':' sel'}" data-i="${i}">▶ <b>${o.l}</b><small>${o.s||''}</small></div>`).join('')+'<i>↑↓で えらんで Aで けってい</i>';
+  m.innerHTML=(sub?`<b class="who">${sub}</b>`:'')+items.map((o,i)=>`<div class="topt${i?'':' sel'}" data-i="${i}">▶ <b>${o.l}</b><small>${o.s||''}</small></div>`).join('')+'<i>↑↓で えらんで Aで けってい</i>';
   v.appendChild(m);
   const pick=i=>{sfx('tap');m.remove();TW.busy=false;items[i].f()};
   m.querySelectorAll('.topt').forEach((el,i)=>el.onclick=e=>{e.stopPropagation();pick(i)});
