@@ -4406,7 +4406,9 @@ async function giveOrder(k){
   const own=Object.keys(FACET).filter(x=>fiLv(x)>0);
   if(k==='fight'){ /* 任せる：Fiが 自分で 戦う */
     say('XDは Fiに <b>戦いを 任せた</b>。<br>「たのんだよ、Fi！」');await wait(750);
-    if(Math.random()<badP()){sfx('junk');say('……妖精の光が ぼうそうした！<br>Fiの こうげきは それて しまった。');await wait(900)}
+    if(Math.random()<badP()){ /* まず こうげきに 入ってから、ぼうそうして それる */
+      const tg=(B.e&&B.e.hp>0)?B.e:aliveEs()[0];say('Fiの <b>こうげき</b>！');sfx('swing');await wait(500);
+      try{jolt('#foe','shake')}catch(e){}pop('#foe','ミス','blk',tg.id);sfx('junk');say('……妖精の光が ぼうそうした！<br>Fiの こうげきは それて しまった。');await wait(900)}
     else{ACT='fi';Q=[];ACT_T=((B.e&&B.e.hp>0)?B.e:aliveEs()[0]).id;const gen=Math.random()<Math.min(.5,.2+.03*P);
       if(gen){say('Fiの <b>生成攻撃</b>！<br>光が 敵ぜんたいに ふりそそぐ！');sfx('skill');await wait(500);hitF(.75+.03*P,'burst:',true)}
       else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
