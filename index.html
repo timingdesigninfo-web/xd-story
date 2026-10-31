@@ -1210,7 +1210,7 @@ const SHOT_URL=(/^https?:$/.test(location.protocol)&&!/claude|anthropic|localhos
 let H2C=null;
 function loadH2C(){if(window.html2canvas)return Promise.resolve(window.html2canvas);if(H2C)return H2C;
   H2C=new Promise((ok,ng)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';sc.onload=()=>ok(window.html2canvas);sc.onerror=()=>{H2C=null;ng(new Error('load'))};document.head.appendChild(sc)});return H2C}
-function shotText(){let lv=1;try{lv=G.lv||1}catch(e){}return `あなたはAdobe XDをおぼえているか？\nXDと雲の仲間たちが妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG XD戦記 テストプレイ中！\n\n現在Lv${lv}\n#XD戦記\n${SHOT_URL}`}
+function shotText(){let lv=1;try{lv=G.lv||1}catch(e){}return `あなたはXDをおぼえているか？\nXDと雲の仲間たちが妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG XD戦記 テストプレイ中！\n\n現在Lv${lv}\n#XD戦記\n${SHOT_URL}`}
 /* いまの 画面を 1200x630 の カードに 書き出す：ゲーム画面＋ロゴ＋いまの じょうたい */
 /* 書き出し用に、マップを カード全体（600x315 を 2倍）で 描きなおす。ゲームの 表示は かえない */
 function shotRender(){
