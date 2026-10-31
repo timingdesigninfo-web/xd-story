@@ -462,6 +462,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .inbt .lcol .info{max-height:none;overflow:visible;gap:4px}
   .inbt .lcol .info .btop{display:flex;gap:4px;align-items:stretch;margin:0;grid-column:auto}
   .inbt .lcol .info .btop #me{flex:0 0 112px;margin:0!important;border-radius:6px;border-bottom:2px solid #f4f4f4}
+  .inbt .lcol .info .btop.one #me,.inbt .lcol .info .btop.one #allyw{flex:0 0 calc(50% - 2px);min-width:0;box-sizing:border-box} /* 仲間が 1人の ときは XDと 半分ずつ */
   .inbt .lcol .info .btop #allyw{flex:1 1 0;min-width:0;margin:0!important;border:2px solid #f4f4f4;border-radius:6px;padding:8px 4px 3px;display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:minmax(0,1fr);gap:1px 6px}
   .inbt #me .ar .mini{flex:1 1 auto;min-width:18px}
   .inbt #allyw .wt{display:none}
@@ -884,7 +885,7 @@ const SKILLS=[
   {id:'board',g:'x_pnl0',n:'アートボード',lv:1,mp:2,get d(){return 'わくで かこって バリアを はる'},f:()=>guard(1.4+G.lv*.12)},
   {id:'grid',n:'リピートグリッド',lv:2,mp:4,get d(){return `同じ こうげきを ${Math.min(4,2+Math.floor((G.lv-2)/6))}かい ならべる（1回 ×0.4〜0.7）`},f:()=>{const n=Math.min(4,2+Math.floor((G.lv-2)/6));for(let i=0;i<n;i++)hitF(+(.4+Math.random()*.3).toFixed(2),'grid')}},
   {id:'guide',n:'スマートガイド',lv:3,mp:3,d:'ほじょ線で ねらいを そろえる（つぎの こうげきが かいしん）',f:()=>Q.push({k:'sure'})},
-  {id:'history',n:'ドキュメントの履歴',lv:5,mp:5,d:'あいての うごきを 履歴で まきもどす（つぎの こうどうを とばす）',f:()=>Q.push({k:'skip'})},
+  {id:'history',n:'ドキュメントの履歴',lv:5,mp:5,d:'戦いを 2ターン前に もどす。うけた ダメージや しっぱいを 帳消しに（MPは もどらない）',f:()=>Q.push({k:'rewind'})},
   {id:'spec',n:'デザインスペック',lv:8,mp:7,d:'仕様を みんなに くばって、ぜんいんの まえに バリアを はる',f:()=>guardAll(1.1)},
   {id:'scroll',g:'x_scroll',n:'スクロールグループ',lv:3,mp:4,d:'全体攻撃。てきぜんたいに 1.0ばいの ダメージ',f:()=>hit(1,false,true)},
   {id:'share',g:'x_share',n:'ウェブシェア',lv:11,mp:8,d:'全体攻撃。てきぜんたいに 2.0ばいの ダメージ',f:()=>hit(2,false,true)},
@@ -4062,7 +4063,7 @@ function startBattle(f0,boss,opt={}){staleInput();
       </section>
     <section class="win msg"><p class="log" id="log" aria-live="polite"></p></section>
     <div class="bcmd"><section class="win cmdw" id="cmdw"><div class="wt">XD</div></section><section class="win listw" id="listw"><div class="wt" id="lt"></div></section></div>
-  </div>`,{bt:1,left:`<div class="btop"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD　${G.lv<=1?'Proto':G.lv===2?'Beta':'v'+(G.lv-2)+'.0'}</div>
+  </div>`,{bt:1,left:`<div class="btop${alk.length===1?' one':''}"><section class="win pw" id="me"><div class="wt" style="white-space:nowrap">XD　${G.lv<=1?'Proto':G.lv===2?'Beta':'v'+(G.lv-2)+'.0'}</div>
         <div class="ar"><span class="an">HP</span><div class="mini"><i id="php"></i></div><b id="hpv"></b></div>
         <div class="ar"><span class="an">MP</span><div class="mini mp"><i id="pmp"></i></div><b id="mpv"></b></div>${G.fairy?'<div class="ar"><span class="an">CR</span><div class="mini cr"><i id="pcr"></i></div><b id="crv"></b></div>':''}
         <div class="chips" id="pchips"></div></section>${alk.length?`<section class="win ap" id="allyw"><div class="wt">なかま</div>${alk.map(k=>`<div class="ar" id="al_${k}"><span class="an wide">${SNM[k]||dn(ALLIES[k])}<b class="alv">Lv${alv(k)}</b></span><div class="mini"><i class="ahp"></i></div><b class="ah"></b></div><div class="ar am" id="am_${k}"><span class="an wide ach2" id="ac_${k}"></span><div class="mini mp"><i class="amp"></i></div><b class="ah"></b></div>`).join('')}</section>`:''}</div>`,obj:`<div class="btop"><section class="win efoe" id="efoe"></section></div>`,
@@ -4323,6 +4324,10 @@ async function runQ(){
       B.autoN=(B.autoN||0)+a.n;sfx('skill');say('人形が じどうで うごきはじめた……！');await wait(560);
     }else if(a.k==='say'){
       say(a.h);await wait(800);
+    }else if(a.k==='rewind'){
+      const n=histBack();sfx('lvup');try{jolt('#foe','shake')}catch(e){}render();
+      if(n===null){say('まだ もどれる 履歴が ない。');await wait(700)}
+      else{document.querySelectorAll('.esp').forEach(sp=>{sp.classList.remove('fade');sp.style.opacity=''});pop('#me','もどした','pw');say(n>0?`ドキュメントの 履歴を さかのぼった！<br>戦いが <b>${n}ターン前</b>に もどった。`:'ドキュメントの 履歴を さかのぼった！<br>戦いの はじめに もどった。');await wait(900)}
     }else if(a.k==='skip'){
       e.skip=true;sfx('skill');pop('#foe','時間停止','pw',e.id);render();say('じかんが ゆがんだ……！');await wait(560);
     }
@@ -4359,7 +4364,17 @@ function navOk(){
   pickCmd();
 }
 function navBack(){if(!B||B.busy||B.over)return;if(B.pane==='tgt'){B.pane=B.pend&&B.pend.from==='list'?'list':'cmd';B.pend=null;say('');sfx('tap');render();return}B.pane='cmd';sfx('tap');render()}
-function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
+/* ドキュメントの履歴：ターンの はじめの 戦いの ようすを とっておく */
+const SNAPB=['block','blockT','ord','up','str','fiDown','defend','stance','sure','free','autoN','bad','paid'];
+const cpv=o=>{const r={};for(const k in o){const v=o[k];if(v===null||typeof v!=='object'&&typeof v!=='function')r[k]=v;else if(typeof v==='object'&&!(v instanceof Node))try{r[k]=JSON.parse(JSON.stringify(v))}catch(e){}}return r};
+function histSnap(){if(!B)return;B.hist=B.hist||[];B.hist.push({turn:B.turn,hp:G.hp,cr:crOf(),items:JSON.parse(JSON.stringify(G.items||{})),es:B.es.map(cpv),al:B.allies.map(cpv),b:JSON.parse(JSON.stringify(SNAPB.reduce((o,k)=>(o[k]=B[k],o),{})))});if(B.hist.length>4)B.hist.shift()}
+function histBack(){const H=B.hist||[];if(!H.length)return null;const want=B.turn-2,h=H.filter(x=>x.turn<=want).pop()||H[0];
+  G.hp=h.hp;G.cr=h.cr;G.items=JSON.parse(JSON.stringify(h.items));
+  h.es.forEach((o,i)=>{const e=B.es[i];if(!e)return;for(const k in o)e[k]=JSON.parse(JSON.stringify(o[k]));e._dying=0});
+  h.al.forEach((o,i)=>{const a=B.allies[i];if(!a)return;for(const k in o)if(k!=='sel')a[k]=JSON.parse(JSON.stringify(o[k]))});
+  SNAPB.forEach(k=>{B[k]=h.b[k]===undefined?undefined:JSON.parse(JSON.stringify(h.b[k]))});if(!B.ord)B.ord={};
+  B.hist=H.filter(x=>x.turn<h.turn);return B.turn-h.turn}
+function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;histSnap();if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
   if(G.hp<=0){B.busy=true;render();autoRound();return}
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
   B.busy=false;render()}
