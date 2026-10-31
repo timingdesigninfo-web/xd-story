@@ -353,6 +353,15 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .listw .crow .nm2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:13px}
   .er .chips{min-height:0;gap:3px}.er .line{font-size:12px;line-height:1.35}
   .er .mini{margin:1px 0 2px}
+  /* 敵が 4体 以上の ときは 2列に して 高さを おさえる */
+  #efoe.many{display:grid;grid-template-columns:1fr 1fr;column-gap:10px}
+  #efoe.many>.wt{grid-column:1/-1}
+  #efoe.many .er{border-top:0;padding:1px 0}
+  #efoe.many .er .line{font-size:11px;line-height:1.25}
+  #efoe.many .er .chips:empty{display:none}
+  .inbt .rcol #efoe.many{display:block}
+  .inbt .rcol #efoe.many .er .line{font-size:10px;line-height:1.15}
+  .inbt .rcol #efoe.many .er .mini{height:3px;margin:0 0 1px}
   .bt .msg{padding-left:0}
   .opt.sel{border-color:var(--accent);background:#3a2150}
   .lcol .pad{position:static;display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:2px;opacity:1}
@@ -1723,7 +1732,7 @@ function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old
   if(q('#cddel')){let arm=0,tm;q('#cddel').onclick=()=>{const b=q('#cddel');if(!arm){arm=1;b.textContent='本当に 消す？（もう一度）';tm=setTimeout(()=>{arm=0;b.textContent='記録を 消す'},2600)}else{clearTimeout(tm);clearSave();try{localStorage.removeItem(PH_KEY)}catch(e){}location.reload()}}}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
 function newGame(){G={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
-const need=lv=>Math.round(24+lv*lv*1.7);
+const need=lv=>Math.round(30+lv*lv*2.6); /* Lv1→2=33 Lv5=95 Lv10=290 */
 const xpCapped=()=>G.ch===0&&G.stop<=3&&G.lv>=2;
 
 /* ================= shared UI ================= */
@@ -3788,9 +3797,10 @@ function enterAtStop(){const st=CH[G.ch]&&CH[G.ch].stops[G.stop];if(!st)return f
 function distV(){const v=LM.village;return Math.hypot(P.tx-v.x,P.ty-v.y)}
 function dZone(){const d=distV();return d<10?.45:d<18?.65:d<30?.85:d<50?1.05:d<75?1.3:1.55}
 function encounter(){
-  const r=Math.random(),d=distV(),base=G.ch>=3?(r<.3?3:r<.7?2:1):G.ch>=1?(r<.12?3:r<.5?2:1):(r<.3?2:1);
-  const n=d<10?1:d<18?Math.min(base,2):Math.min(4,base+(d>=50?1:0)+(d>=75&&Math.random()<.5?1:0));
-  startBattle(Array.from({length:n},()=>{const m=makeMinion();if(n>1)m.hp=Math.round(m.hp*.85);return m}),false);
+  /* 章が すすむほど むれで 出る：1章 1〜3、2章 1〜4、3章から 2〜5（村の ちかくは すくなめ） */
+  const d=distV(),mx=[3,4,5,5,5,5,5][Math.min(6,G.ch)],mn=G.ch>=2?2:1,r=Math.random();
+  let n=mn+Math.floor(Math.pow(r,1.25)*(mx-mn+1));n=Math.min(mx,n);if(d<10)n=Math.min(n,2);else if(d<18)n=Math.min(n,3);
+  startBattle(Array.from({length:n},()=>{const m=makeMinion();if(n>1)m.hp=Math.round(m.hp*(n>=4?.72:.85));return m}),false);
 }
 function fieldResume(){save();fieldScreen()}
 function runStop(st){
@@ -4127,6 +4137,7 @@ function intentText(mv,e=B.e){
 function render(){
   const TG=(c,t,n)=>`<span class="stg ${c}">${t}${n??''}</span>`;
   const e=B.e,low=G.hp<=G.max*.3,mm=mpMax();
+  $('#efoe').classList.toggle('many',B.es.length>=4);
   $('#efoe').innerHTML='<div class="wt">てき</div>'+B.es.map((x,i)=>{const mv=x.m[x.mi%x.m.length],tg=B.pane==='tgt'&&B.t===i&&x.hp>0;
     return `<div class="er ${x.hp<=0?'dead':''} ${tg?'tg':''}" data-i="${i}"><div class="line"><span>${tg?'▶':''}${x.n}</span><b>${Math.max(0,x.hp)}/${x.max}</b></div><div class="mini"><i style="width:${Math.max(0,x.hp)/x.max*100}%"></i></div><div class="chips">${(x.block?`<span class="chip def">バリア ${x.block}</span>`:'')+(x.str?`<span class="chip str">攻撃+${x.str}</span>`:'')+(x.weak?`<span class="chip weak">弱体 ${x.weak}</span>`:'')+(x.survive?`<span class="chip sv">あと${Math.max(0,x.survive-B.turn+1)}ターン</span>`:'')}</div></div>`}).join('');
   document.querySelectorAll('.eu').forEach(u=>{const i=+u.dataset.i,x=B.es[i];u.classList.toggle('dead',x.hp<=0&&!x._dying);u.classList.toggle('tg',B.pane==='tgt'&&B.t===i&&x.hp>0)});
@@ -4607,7 +4618,7 @@ async function winBattle(survived){
   if(G.hp<=0)G.hp=Math.max(1,Math.round(G.max*.2));
   if(B.final)return entrust();
   const gateWin=B.boss&&G.ch===0&&G.stop===3,capped=xpCapped()&&!gateWin;
-  const xz=.6+.6*dZone();let xp=B.boss?40+G.ch*16:B.es.reduce((t,e)=>t+Math.round((8+G.ch*4)*xz),0);if(gateWin)xp=G.lv<2?need(1)-G.xp+need(2):Math.max(1,need(G.lv)-G.xp);
+  const xz=.6+.6*dZone();let xp=B.boss?40+G.ch*16:B.es.reduce((t,e)=>t+Math.round((5+G.ch*3)*xz),0);if(gateWin)xp=G.lv<2?need(1)-G.xp+need(2):Math.max(1,need(G.lv)-G.xp);
   const msgs=[capped?'……これ以上、経験は 得られないようだ。先へ すすもう。':`<b>${gateWin?'ベータ版の ちからが あふれた':xp+'ポイントの けいけんちを かくとく'}</b>！`];
   if(B.boss){crAdd(8);const h=Math.min(10,G.max-G.hp);G.hp+=h;G.items.herb+=2;msgs.push('やくそうを <b>2こ</b> てにいれた！');if(Math.random()<.5){G.items.dr++;msgs.push('エナジードリンクを <b>1こ</b> てにいれた！')}if(h)msgs.push(`ボス撃破の よいんで HPが <b>${h}</b> かいふく した！`)}
   else if(Math.random()<.35){G.items.herb++;msgs.push('やくそうを <b>1こ</b> てにいれた！')}
