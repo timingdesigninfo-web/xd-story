@@ -3971,7 +3971,7 @@ function drawFieldPass(cx,camx,camy,main){
     const x=Math.round(p.x*TS+TS/2-camx),y=Math.round((p.y+1)*TS-camy);
     if(GATEREQ[k]){const im=timg('sprites/gp_'+(k==='pass'?'w':'jp')+(G.ch>=GATEREQ[k]?'_open':'_closed')+'.png');
       if(im.complete&&im.naturalWidth){const sc=.62,w=im.naturalWidth*sc,h=im.naturalHeight*sc;[y+5].forEach(by=>cx.drawImage(im,Math.round(x-22*sc),Math.round(by-h+0),w,h))}return}
-    {const pi=(!k.startsWith('dg_')||dgOpen(k))?timg('sprites/poi_'+k+'.png'):null;if(k.startsWith('dg_')&&!dgOpen(k))return;if(pi&&pi.complete&&pi.naturalWidth){const sc=76/pi.naturalHeight,w=pi.naturalWidth*sc;cx.drawImage(pi,Math.round(x-w/2),Math.round(y+10-76),w,76);return}}
+    {const pi=(!k.startsWith('dg_')||dgOpen(k)||k==='dg_castle')?timg('sprites/poi_'+k+'.png'):null;if(k.startsWith('dg_')&&!dgOpen(k)&&!(k==='dg_castle'&&pi&&pi.complete&&pi.naturalWidth))return;if(pi&&pi.complete&&pi.naturalWidth){const sc=(k==='dg_castle'?104:76)/pi.naturalHeight,w=pi.naturalWidth*sc;cx.drawImage(pi,Math.round(x-w/2),Math.round(y+10-76),w,76);return}}
     if(k.startsWith('dg_')){if(!dgOpen(k))return;const t=FLD.tick;cx.fillStyle='#00000050';cx.fillRect(x-14,y-3,28,4);
       cx.fillStyle='#6a6470';cx.fillRect(x-14,y-22,28,20);cx.fillStyle='#8a8494';cx.fillRect(x-14,y-22,28,4);cx.fillStyle='#0a0614';cx.fillRect(x-8,y-16,16,14);cx.fillRect(x-6,y-18,12,2);
       cx.fillStyle='#ffd24a';cx.globalAlpha=.55+.3*Math.sin(t/10);cx.fillRect(x-2,y-8,4,4);cx.globalAlpha=1;
@@ -4180,14 +4180,19 @@ function storyEvent(k){
 
 /* ================= battle ================= */
 let DGBG=null;
-function terrainNow(){try{if(DGBG)return DGBG;const t=grid[P.ty][P.tx];return t===0?(bgOk('sea')?'sea':'storm'):t===5?'snow':t===6?'sand':t===8?'storm':t===9?'cloud':'grass'}catch(e){return 'grass'}}
-const BOSSTER={fairyKing:'cloud',sketch:'grass',prott:'sand',invision:'grass',studio:'sand',framer:'grass',figma:'storm',canva:'snow',nocode:'sand',figmaX:'storm',cloudKing:'cloud',mendo:'cloud',nidoneru:'cloud',daitai:'sand'};
+function terrainNow(){try{if(DGBG)return DGBG;const x=P.tx,y=P.ty,t=grid[y][x],rg=regionAt(x,y).n,ok=k=>bgOk(k)?k:null;
+  if(t===0)return ok('sea')||'storm';if(t===5)return 'snow';if(t===8)return 'storm';if(t===9)return 'cloud';
+  if(rg==='守り人の大地')return ok('savanna')||'grass';
+  if(Math.hypot(x-LM.mac.x,y-LM.mac.y)<=6)return ok('apple')||'grass';
+  if(t===6)return 'sand';if(t===2)return ok('forest')||'grass';return 'grass'}catch(e){return 'grass'}}
+const BOSSTER={kikinagashi:'apple',fairyKing:'cloud',sketch:'grass',prott:'sand',invision:'grass',studio:'sand',framer:'grass',figma:'storm',canva:'snow',nocode:'sand',figmaX:'storm',cloudKing:'cloud',mendo:'cloud',nidoneru:'cloud',daitai:'sand'};
 const BGI={};
-['grass','sand','snow','storm','cloud','sea','cave0','cave1','cave2','cave3'].forEach(k=>{const i=new Image();i.onload=()=>{const c=$('#bgc');if(c&&c.dataset.k===k)drawBG(k)};i.onerror=()=>{i._ng=1};i.src='bg/bg_'+k+'.png';BGI[k]=i});
+['grass','sand','snow','storm','cloud','sea','cave0','cave1','cave2','cave3','savanna','forest','apple'].forEach(k=>{const i=new Image();i.onload=()=>{const c=$('#bgc');if(c&&c.dataset.k===k)drawBG(k)};i.onerror=()=>{i._ng=1};i.src='bg/bg_'+k+'.png';BGI[k]=i});
 const bgOk=k=>{const i=BGI[k];return !!(i&&i.complete&&i.naturalWidth)};
 function drawBG(kind){
   const cv=$('#bgc');if(!cv)return;cv.dataset.k=kind;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
-  g.fillStyle={grass:'#3f9a3a',sand:'#e0c87a',snow:'#e8f1ff',storm:'#4a3d6e',cloud:'#f2eef9',sea:'#1e5aa8'}[kind]||'#000';g.fillRect(0,0,448,256);
+  g.fillStyle={grass:'#3f9a3a',sand:'#e0c87a',snow:'#e8f1ff',storm:'#4a3d6e',cloud:'#f2eef9',sea:'#1e5aa8',savanna:'#b8643a',forest:'#2f6a2a',apple:'#e8e0d0'}[kind]||'#000';
+  if(!BGI[kind]||!bgOk(kind)){if(kind==='apple'||kind==='forest'||kind==='savanna')kind='grass'}g.fillRect(0,0,448,256);
   if(kind.slice(0,4)==='cave'&&bgOk(kind)){g.drawImage(BGI[kind],0,0,448,256);return}
   if(kind.slice(0,4)==='cave'){const d=Math.min(2,+kind.slice(4)||0);g.fillStyle='#07070f';g.fillRect(0,0,448,256);
     if(DGW.complete&&DGW.naturalWidth&&DGF.complete&&DGF.naturalWidth){
