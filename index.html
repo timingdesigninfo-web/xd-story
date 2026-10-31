@@ -3006,7 +3006,7 @@ const S2={
 };
 function townStory2(k){const d=S2[k];
   const W=STORYWHO[k]||[],pt=({ps:'sprites/ally_ps.png',ai:'sprites/ally_ai.png',ae:'sprites/ally_ae.png',ff:PFF,dw:PDW,prott:'sprites/boss_prott.png',figma:'sprites/boss_figma.png',cloudKing:'sprites/boss_king.png'})[W[1]]||null;
-  return townSay(d.l.map(t=>Array.isArray(t)?(t.length<3&&pt?[t[0],t[1],pt]:t):[d.w,t,pt||undefined]),()=>{if(d.fin)d.fin();sfx('lvup');townFin(()=>CONT&&CONT())})}
+  return townSay(d.l.map(t=>Array.isArray(t)?(t.length<3&&pt&&t[0]===d.w?[t[0],t[1],pt]:t):[d.w,t,pt||undefined]), /* ほかの 人の セリフに 主役の 立ち絵を 出さない */()=>{if(d.fin)d.fin();sfx('lvup');townFin(()=>CONT&&CONT())})}
 Object.assign(BOSSWHY,{
  kikinagashi:['……うんうん。……うんうん。','おまえの 話も、だいたい 聞いた。……聞いた つもりだ。','ことばを まともに 受けとる 必要は ない。流して しまえば、ラクだからな……。'],
  rafu:['……ラフで いいや。','線は ざっくり、仕上げは あとで。……そのうち、やるさ。','ちゃんと 描くのは、つかれる。……白紙の ままで いいじゃないか。'],
