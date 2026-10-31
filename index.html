@@ -967,7 +967,8 @@ function aiCmds(){return ORDERS.map(o=>({...o,n:o.n+(o.id==='fight'?'':'')}))}
 const ordAct=id=>false;
 const ordOn=()=>B&&B.ord&&((B.ord.atk||0)>0||(B.ord.grd||0)>0);
 const skCost=sk=>{const c=skCost0(sk);return B&&B.fkc==='h'&&c>0?Math.max(1,Math.ceil(c/2)):c};
-const skCost0=sk=>{if(B&&B.free)return 0;const cl=fiLv('choose'),c=(hasPw('choose')||cl>0)&&sk.mp>0?Math.max(1,Math.floor(sk.mp*(1-.1*Math.max(2,Math.min(3,cl+1))))):sk.mp; /* 考える力：Lv1=-20% Lv2=-30% */return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
+const skBase=sk=>{if(!(sk.mp>0))return sk.mp;const up=Math.max(0,(G&&G.lv||1)-(sk.lv>=99?(G&&G.lv||1):sk.lv));return Math.min(sk.mp*2,Math.round(sk.mp*(1+.06*up)))}; /* 育つほど 消費も ふえる：おぼえた Lvから 1ごとに +6%（さいだい 2ばい） */
+const skCost0=sk=>{if(B&&B.free)return 0;const cl=fiLv('choose'),m0=skBase(sk),c=(hasPw('choose')||cl>0)&&m0>0?Math.max(1,Math.floor(m0*(1-.1*Math.max(2,Math.min(3,cl+1))))):m0; /* 考える力：Lv1=-20% Lv2=-30% */return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
 const TACTICS=[
   {id:'gan',n:'ぜんぶ出しきる',d:'MPを おしまず ぜんりょくで こうげき'},
   {id:'min',n:'ほどよく進める',d:'こうげきと かいふくを バランスよく'},
