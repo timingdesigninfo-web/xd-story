@@ -3627,7 +3627,7 @@ function drawTown(){
       if(k<1){const fl=.6+Math.sin(t*9)*.15,r=46+fl*6;cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(bx,gy,2,bx,gy,r);g.addColorStop(0,'rgba(255,150,60,'+(.22*fl*(1-k)).toFixed(3)+')');g.addColorStop(1,'rgba(255,110,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore()}
       if(k>0){const fl=.75+Math.sin(t*6)*.1+Math.sin(t*3.7)*.08,burst=VLT?Math.max(0,1-Math.abs(performance.now()-VLT-500)/900):0,r=(60+110*k+fl*16)*(1+burst*.35);cx.save();cx.globalCompositeOperation='lighter';
         const g=cx.createRadialGradient(bx,gy,4,bx,gy,r);g.addColorStop(0,'rgba(255,200,110,'+((.42*fl+.4*burst)*Math.max(k,burst)).toFixed(3)+')');g.addColorStop(.35,'rgba(255,160,70,'+(.16*fl*k).toFixed(3)+')');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore();
-        cx.save();cx.globalCompositeOperation='soft-light';cx.fillStyle='rgba(255,214,150,'+(.55*k).toFixed(3)+')';cx.fillRect(0,0,VW,VH);cx.restore()} /* 村 ぜんたいに あたたかい 光 */
+} /* 村 ぜんたいは 元の 明るさに もどるだけ（重ねて 明るくは しない） */
       flameDraw(cx,ni,q,bx,by)}}
 }
 /* ================= field ================= */
