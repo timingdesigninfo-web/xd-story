@@ -4420,7 +4420,7 @@ async function giveOrder(k){
       await runQ();ACT='xd';if(B.over)return;if(!aliveEs().length){B.busy=false;return defeatEnemy()}}
   }else if(k==='sup'){ /* いっしょに：強化（成功率・効果は Fiの レベルしだい） */
     say('XDは Fiに <b>サポート</b>を たのんだ。<br>「力を かして！」');await wait(750);
-    if(Math.random()>supP()){sfx('junk');say('Fiは がんばったけど、うまく いかなかった……<br><small>（Fiの 力が 育つと、せいこうしやすく なる）</small>');await wait(900)}
+    if(Math.random()>supP()){sfx('junk');say('Fiは がんばったけど、うまく いかなかった……');await wait(900)}
     else{await ordFx(true);const T=2+Math.floor(P/5),pool=['atk','def','weak'].concat(own.filter(x=>x==='see'||x==='make'||x==='open'||x==='choose'));const e=pool[Math.floor(Math.random()*pool.length)];let m='',gr='';
       if(e==='atk'){B.ord.atk=T;B.ord.m=1.2+.05*P;B.ord.pr=false;B.bad=false;m=`みんなの こうげきが 上がった！（<b>${T}ターン</b>）`}
       else if(e==='def'){B.ord.grd=T;B.ord.half=false;m=`光の かべが みんなを つつんだ！（<b>${T}ターン</b>）`}
