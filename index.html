@@ -1240,10 +1240,13 @@ async function shotCard(src){
   if(src&&!land){ /* 縦：左に ロゴと じょうたい、右に ゲーム画面 */
     const gh=SQ,k=gh/src.height,gw=Math.round(src.width*k),gap=30,cw=380,x0=Math.round((W-(cw+gap+gw))/2),gx=x0+cw+gap;
     drawGame(gx,SY,gw,gh);
-    const cx=x0+cw/2;let y=SY+70;y+=drawLogo(cx,y,cw,SQ*.32)+30;
+    /* 左の まとまり（ロゴ＋じょうたい）を はかってから、ゲーム画面の 高さの まんなかに おく */
+    const cx=x0+cw/2,lk=logo.naturalWidth?Math.min(cw/logo.naturalWidth,SQ*.32/logo.naturalHeight):0,lgh=logo.naturalWidth?logo.naturalHeight*lk:0,
+      GAP1=34,GAP2=18,tags=26,ih=info.reduce((a,[,,r])=>a+Math.round(30*r)*1.55,0),blk=lgh+GAP1+ih+GAP2+tags;
+    let y=SY+(SQ-blk)/2;drawLogo(cx,y,cw,SQ*.32);y+=lgh+GAP1;
     g.textAlign='center';g.textBaseline='top';
-    for(const [t,col,r] of info){const n=Math.round(30*r);g.fillStyle=col;g.fillText(fit(t,n,cw),cx,y);g.font=F(n);y+=n*1.6}
-    g.font=F(22);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y+12);
+    for(const [t,col,r] of info){const n=Math.round(30*r);const tt=fit(t,n,cw);g.fillStyle=col;g.fillText(tt,cx,y);y+=n*1.55}
+    y+=GAP2;g.font=F(22);g.fillStyle='#ff8fc4';g.fillText('#XD戦記',cx,y);
   }else{ /* 横（または 画面なし）：上に ゲーム画面、下に ロゴと じょうたい */
     let y=SY;
     if(src){const gw=760,k=gw/src.width,gh=Math.min(Math.round(src.height*k),Math.round(SQ*.66)),w=Math.round(src.width*(gh/src.height)),x=Math.round((W-w)/2);drawGame(x,y+4,w,gh);y+=gh+22}
