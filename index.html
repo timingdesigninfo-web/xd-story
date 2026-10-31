@@ -1529,8 +1529,10 @@ function tmMap(){
   const g=c.getContext('2d');g.imageSmoothingEnabled=false;
   {const k=((SH%MW)+MW)%MW,a=(MW-k)*TS;g.drawImage(MAP,k*TS,0,a,MH*TS,0,0,a*S,c.height);if(k)g.drawImage(MAP,0,0,k*TS,MH*TS,a*S,0,k*TS*S,c.height)}
   g.font='bold 13px sans-serif';g.textAlign='center';
-  const lab=(x,y,n,col)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S;g.fillStyle=col;g.beginPath();g.arc(px,py,4,0,7);g.fill();g.lineWidth=1.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=3.5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,py-8);g.fillStyle='#fff';g.fillText(n,px,py-8)};
-  for(const k in LM)lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
+  const lab=(x,y,n,col,dn)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S,ty=dn?py+18:py-8;g.fillStyle=col;g.beginPath();g.arc(px,py,4,0,7);g.fill();g.lineWidth=1.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=3.5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,ty);g.fillStyle='#fff';g.fillText(n,px,ty)};
+  {g.save();g.font='bold italic 17px serif';g.globalAlpha=.85;[...REGIONS.filter(r=>r.lx!=null),SNOWN].forEach(r=>{const py=(r.ly+.5)*TS*S,hw=g.measureText(r.n).width/2+4;let best=null;[-1,0,1].forEach(m=>{const raw=(WX(r.lx)+.5+m*MW)*TS*S,cl=Math.max(hw,Math.min(c.width-hw,raw));if(best==null||Math.abs(cl-raw)<best[1])best=[cl,Math.abs(cl-raw)]});{const px=best[0];g.lineWidth=4;g.strokeStyle='rgba(20,10,30,.75)';g.strokeText(r.n,px,py);g.fillStyle='#ffe9a8';g.fillText(r.n,px,py)}});g.restore();g.font='bold 13px sans-serif';g.textAlign='center'}
+  for(const k in LM)if(k!=='storm')lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
+  for(const k of ['rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
   const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:absolute;inset:0;z-index:90;background:#000d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px';
   c.style.cssText='max-width:100%;max-height:84%;min-height:0;border:2px solid #fff6;border-radius:6px;image-rendering:pixelated';
@@ -3364,7 +3366,7 @@ function restStop(id,name,sub,hint1,hint2,kid){
   npc(p,12,12,{n:'こども',c:NM.child,say:kid||['ここで ひとやすみ すると、元気に なるんだよ。']});
 }
 const RTALE={
- rest1:{n:'ランプ職人の おじいさん',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、北西の 森から 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。森の 奥の 城に、妖精の王が こもって しまったと いう。','この 村を 出て 北西へ、ほんの すこし。雪原の ふちの 森に、城の 入口が ひっそり 口を あけて おる。……行くなら、この ランプの 話を おぼえて おいて くれ。']},
+ rest1:{n:'ランプ職人の おじいさん',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、北西の 森から 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。森の 奥の 城に、妖精の王が こもって しまったと いう。','この 村を 出て 北西へ、ほんの すこし。白紙の雪原が はじまる あたりの 森に、城の 入口が ひっそり 口を あけて おる。……行くなら、この ランプの 話を おぼえて おいて くれ。']},
  rest2:{n:'看板描きの おばあさん',img:'bld_blue',l:['わたしは むかし、この 宿場の 看板を ぜんぶ 描いて いたのさ。','字の かたち ひとつで、店の 声が かわる。やさしい 字、元気な 字、まじめな 字……。','いまは どこも おなじ 字。きれいだけど、どの 店も おなじ 声で しゃべって いる みたいでね。','東の りんごの島の 人たちも、だれの 話も 聞かなく なったと いう。……声が みんな おなじに なると、聞く 気も なくなるのかねえ。','あんたの 旅の 看板は、あんたの 字で 書きなさいよ。']},
  rest3:{n:'渡し守',img:'bld_blue',l:['この 島には、海を こえて とどく 手紙が あるんじゃ。','西の 大陸の 娘と、東の 島の 若者がな、びんに 手紙を いれて 流しあって おった。','とどくまで ひと月。返事が くるまで また ひと月。……それでも、ふたりは やめなかった。','はやく とどく ことより、とどけようと する 気持ちの ほうが 大事なんじゃと、わしは 思うよ。','ふたりが どうなったかって？ ……この 宿の 主人と おかみが、その ふたりさ。']},
  rest4:{n:'網あみの おばあさん',img:'bld_brown',l:['この 網はね、ひと目 ひと目、手で あんで いるんだよ。','機械で あめば 一日で 百枚。手で あめば ひと月で 一枚。','でもね、手で あんだ 網は、どこが よわいか、あんだ 人が 知って いる。だから やぶれる 前に つくろえる。','つくった ものを ほんとうに 知って いるのは、つくった 人 だけ。……それが「形にする」って ことさ。','南の 小島に 流れ着いた 道具箱、まだ だれも あけて いないよ。あんた、行って ごらん。']},
@@ -3419,7 +3421,7 @@ function meetEvent0(M){
 const DGQ={
  dg_see:{n:'プロトの 虫めがね',item:'虫めがね',hint:'東の国の 浜辺の「かすみの洞窟」へ。番人から 虫めがねを とりもどす',d:'洞窟の奥で、小さな レンズが きらりと 光った。のぞくと、世界の 輪郭が くっきり 見える。……これで ザックーリを 見すえられる。'},
  dg_make:{n:'ほそふでの ペン先',item:'ペン先',hint:'南の 浜の「らくがきの祠」へ。守り人を たおして ペン先を える',d:'祭壇の 上で、細い 金の ペン先が 光っていた。指先に のせると、線を 引きたくて うずうずする。'},
- dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'「ひとやすみの村」の すぐ 北西、雪原の ふちの 森に ある「妖精の城」へ',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
+ dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'キャンバス大陸の 北。白紙の雪原の ふち、「ひとやすみの村」の 北西の 森に ある「妖精の城」へ',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
  dg_choose:{n:'まよいの 羅針盤',item:'羅針盤',hint:'山の 手前の「まよいの迷宮」へ。奥の 羅針盤を とりに いく',d:'古い 羅針盤が 眠っていた。針は ぐるぐる 回り、やがて XDの 胸の 灯を さして ぴたりと 止まった。……進む道は、自分で えらぶ。'},
 };
 const dgOpen=k=>{const st=CH[G.ch]&&CH[G.ch].stops[G.stop];return !!((st&&st.type==='dungeon'&&st.at===k)||(G.dgdone&&G.dgdone[k]))};
@@ -3842,10 +3844,20 @@ const FKEYS={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w
 let _wasLand=null;addEventListener('resize',()=>{const l=isLand();if(_wasLand===null){_wasLand=l;return}if(l!==_wasLand){_wasLand=l;if(FLD.on)fieldScreen()}});
 addEventListener('keydown',e=>{if(!(FLD.on||TW.on)||!$('#ov').hidden)return;const d=FKEYS[e.key];if(d){e.preventDefault();setHeld(d,true)}});
 addEventListener('keyup',e=>{const d=FKEYS[e.key];if(d)setHeld(d,false)});
+/* 大陸・地方の 名前（ワールドマップの 表示と 地図に つかう） */
+const REGIONS=[
+ {n:'ブラウザ大陸',s:'西の 海の むこう。雷雲の 地',x0:12,y0:8,x1:57,y1:35,lx:30,ly:27},
+ {n:'東の国',s:'弓なりに つらなる 東の 島々',x0:112,y0:23,x1:126,y1:43},
+ {n:'守り人の大地',s:'南の ひろい 大地',x0:58,y0:35,x1:88,y1:51,lx:72,ly:43},
+ {n:'キャンバス大陸',s:'世界で いちばん 大きな 大陸',x0:60,y0:5,x1:121,y1:36,lx:88,ly:24},
+];
+const SNOWN={n:'白紙の雪原',s:'北の はての まっしろな 雪原',lx:116,ly:4};
+function regionAt(x,y){const t=grid[y]&&grid[y][x];if(t===0)return{n:'ひろい 海',s:'東と 西は つながって いる'};if(t===5)return SNOWN;
+  return REGIONS.find(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1)||{n:'ちいさな 島',s:''}}
 function showName(){
   const n=nameAt(P.tx,P.ty),b=$('#fbn');if(!b)return;
   /* 欄を けすと マップの 高さが かわって ずれるので、名前の ない 場所では 旅の とちゅうと 出して 欄は のこす */
-  const c=CH[G.ch]||CH[CH.length-1],v=n||{n:'旅の とちゅう',s:c?`${c.y}年「${c.t}」`:''};if($('#fbn1').textContent!==v.n)$('#fbn1').textContent=v.n;if($('#fbn2').textContent!==v.s)$('#fbn2').textContent=v.s;b.hidden=false;b.classList.toggle('road',!n);
+  const c=CH[G.ch]||CH[CH.length-1],rg=regionAt(P.tx,P.ty),v=n||{n:rg.n,s:rg.s||(c?`${c.y}年「${c.t}」`:'')};if($('#fbn1').textContent!==v.n)$('#fbn1').textContent=v.n;if($('#fbn2').textContent!==v.s)$('#fbn2').textContent=v.s;b.hidden=false;b.classList.toggle('road',!n);
 }
 /* 隊列：主人公の 通った あとを 仲間が たどる */
 const FGAP=15;
@@ -3977,12 +3989,6 @@ function drawFieldPass(cx,camx,camy,main){
   const ax=Math.round(L.x*TS+TS/2-camx),ay=Math.round((L.lm?(L.y+1)*TS+4-LH-8:L.y*TS-26)-camy+bob);
   cx.fillStyle='#140d1a';cx.beginPath();cx.moveTo(ax-8,ay-2);cx.lineTo(ax+8,ay-2);cx.lineTo(ax,ay+10);cx.fill();
   cx.fillStyle='#ffcf5a';cx.beginPath();cx.moveTo(ax-6,ay);cx.lineTo(ax+6,ay);cx.lineTo(ax,ay+8);cx.fill();
-  /* 行き先が 画面の 外なら、はしに 向きを 出す（東西は ちかい ほうへ） */
-  if(main){const WP=MW*TS;let dx=L.x*TS+TS/2-(P.px+TS/2);dx=((dx%WP)+WP*1.5)%WP-WP/2;const dy=L.y*TS+TS/2-(P.py+TS/2),sx=P.px+TS/2-camx,sy=P.py+TS/2-camy;
-    const tx=sx+dx,ty=sy+dy;if(tx<8||tx>VW-8||ty<8||ty>VH-8){const an=Math.atan2(dy,dx),m=18,k=Math.min(Math.abs((dx>0?VW-m-sx:sx-m)/(Math.cos(an)||1e-6)),Math.abs((dy>0?VH-m-sy:sy-m)/(Math.sin(an)||1e-6)));
-      const ex=sx+Math.cos(an)*k,ey=sy+Math.sin(an)*k,pu=1+.15*Math.sin(FLD.tick/7);cx.save();cx.translate(ex,ey);cx.rotate(an);cx.scale(pu,pu);
-      cx.fillStyle='#140d1a';cx.beginPath();cx.moveTo(12,0);cx.lineTo(-8,-9);cx.lineTo(-4,0);cx.lineTo(-8,9);cx.fill();
-      cx.fillStyle='#ffcf5a';cx.beginPath();cx.moveTo(9,0);cx.lineTo(-6,-6);cx.lineTo(-2,0);cx.lineTo(-6,6);cx.fill();cx.restore()}}
 }
 function boot(){
   let n=0;const go=()=>{if(++n<2)return;
