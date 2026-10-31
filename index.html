@@ -3829,7 +3829,8 @@ const FGAP=15;
 function trailPush(){const T=P.trail||(P.trail=[]);T.unshift({x:P.px,y:P.py,d:P.dir});if(T.length>110)T.length=110}
 function trailAt(n){const T=P.trail;if(!T||!T.length||Math.abs(T[0].x-P.px)+Math.abs(T[0].y-P.py)>4){P.trail=[];return{x:P.px,y:P.py,d:P.dir}}
   const e=T[Math.min(n,T.length)-1]||T[T.length-1];return e}
-function partyFollow(){const L=[];(G.allies||[]).forEach(k=>{if(k!=='ff'&&DSPS.includes(k))L.push({k,h:Math.round((NPCH[k]||40)*.92)})});
+const FOLLOW_ALLIES=false; /* 仲間の 歩きの 絵が できたら true */
+function partyFollow(){const L=[];(FOLLOW_ALLIES?G.allies||[]:[]).forEach(k=>{if(k!=='ff'&&DSPS.includes(k))L.push({k,h:Math.round((NPCH[k]||40)*.92)})});
   if(G.escort){const n=G.escort.n;L.push(n==='老航海士'?{h:31,img:d=>'sprites/ch_elder_'+d+'.png'}:{h:30,img:()=>sprite(n,G.escort.col[0],G.escort.col[1])})}
   return L}
 function fieldStep(){
