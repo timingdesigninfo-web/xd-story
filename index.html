@@ -2866,6 +2866,7 @@ function townSay(lines,done){
   const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();TW.busy=false;done&&done()}else show()};
       m._skip=()=>{ /* Bで 会話を ぬける：のこりの 行の 処理だけ して、さいごまで 読んだのと おなじに */for(let j=i+1;j<lines.length;j++)if(typeof lines[j][3]==='function')try{lines[j][3]()}catch(e){}endPort();m.remove();TW.busy=false;done&&done()}}
     const [who,tx,pt]=lines[i];m.innerHTML=`${who?`<b>${who}</b>`:''}${tx}<i>Aで つぎへ ▼</i>`;
+    if(!pt)endPort(); /* 立ち絵の ない 行では 前の 人の 立ち絵を のこさない */
     if(typeof lines[i][3]==='function')try{lines[i][3]()}catch(e){}
     if(pt){let im=$('#tport');if(!im){im=document.createElement('img');im.id='tport';im.className='tport';(app.querySelector('.fwrap .mid')||app.querySelector('.fwrap')||app).appendChild(im)}if(im.dataset.s!==pt){im.dataset.s=pt;im.src=pt;im.style.animation='none';void im.offsetWidth;im.style.animation=''}}};
   show();
@@ -2917,7 +2918,7 @@ function townStory(k){
     dw('雲の国へ行け。空の王の城で、Fiが待っておる。王から、授けていただくのじゃ。……どう使うかは、おまえ次第じゃぞ。'),
     ['','雲の国の王都へ。灯のゆくえは、そこで決まる。',PDW]],
     ()=>townChoice('',[{l:'雲の国へ',s:'Fiを 迎えに いく',f:()=>{sfx('lvup');townFin(()=>CONT&&CONT())}}]));
-  if(k==='e_hi'){const pr=(t)=>['プロト　からくり師',t];return townSay([
+  if(k==='e_hi'){const pr=(t)=>['プロト　からくり師',t,'sprites/b_prott.png'];return townSay([
     pr('……来て くれたんだね、XD。……ごめん、こんな すがたで。'),
     ['','工房の すみに、プロトが 立っている。その体は うすく すけて、むこうの 壁が 見える。'],
     pr('「見る力」を 食われて、ぼくの 輪郭は ほどけてしまった。ここに いるのは、ぼくの 記憶みたいな ものなんだ。'),
@@ -2926,11 +2927,10 @@ function townStory(k){
     pr('ザックーリは、ときどき ぼやける。ぼやけている間は、こちらの攻撃が 当たらないんだ。……よく見て。くっきり見えた 瞬間を、のがさないで。'),
     pr('ザックーリを はっきり 見すえるには、ぼくの「虫めがね」が いる。東の国の 南東の 浜辺に ある「かすみの洞窟」に、落として しまったんだ。……番人が いるから、気を つけて。拾って きて。ザックーリは 広場に いる。ぼくは ここで、待ってるよ。')],
     ()=>townFin(()=>CONT&&CONT()))}
-  if(k==='e_clear'){const pr=(t)=>['プロト　からくり師',t];return townSay([
+  if(k==='e_clear'){const pr=(t)=>['プロト　からくり師',t,'sprites/b_prott.png'];return townSay([
     ['','工房の すみで、うすれていた プロトの すがたが、少しずつ 色を とりもどした。'],
     pr('……やったね、XD。ザックーリが ほどけて、ぼくの 輪郭が もどってきた。東の国の 空気も すんだよ。'),
-    ['','ザックーリの体から、ひとつの光が こぼれ出た。それは、XDの灯に すいこまれていく。',PDW],
-    pr('見る力が、もどった。これからは、妖精の「ねらって」も、きみの 目を かりて 使えるはずだよ。'),
+    pr('見る力が、もどったんだね。これからは、ぼやけた 相手も、くっきり 見えるはずだよ。'),
     pr('でも、力は あと四つ ある。次は、町へ 行って。聞く力を 食った魔物が、人の声を ふさいでいると 聞く。')],
     ()=>{grantPower('see');sfx('lvup');townFin(()=>CONT&&CONT())})}
   if(k==='gate')return townSay([
@@ -2968,11 +2968,11 @@ const S2={
  ship_set:{w:'老航海士',c:['#3a6a8a','#d8d0c0'],hint:'老航海士を 連れて、王都の 船着き場へ もどる',l:['……これが 雲の王国の 船か。ふむ、いい 船だ。長く 海を 見て きたが、これほどの 船は めずらしい。','帆の 張りも、舵の 具合も、わるくない。……よし、この 老いぼれに まかせろ。','航海士は 船の 命じゃ。舵は わしが にぎる。おまえは 戦いに 集中せい。','海には 海の 魔物が いる。イカや カニ、サメの ような やつらだ。……さあ、出航だ！ 嵐の 大陸へ！'],fin:()=>{G.ship=1;G.sx=127;G.sy=21;G.sail=0;G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('雲の王国の 船'))G.keys.push('雲の王国の 船');setTimeout(()=>keyToast('雲の王国の 船'),300)}},
  h_hi:{w:'Ps　光を操る騎士',hint:'りんごの島の 琥珀の間へ。Psが 待っている',l:['来たな、XD。この島の者たちは、すっかり「うんうん」と うなずくだけに なってしまった。','だれの話も、まともに 聞かない。聞いた つもりで、流して しまうんだ。……「聞く力」を 食った 魔物が、宮殿に 居座っている。','名は「ナルホロ」。ことばを まともに 受けとらない 相手だ。……だが、あいつも 「間」だけは 聞いている。','島の 北西の 浜に、むかしから 昔話を 語って きた「語り部の おばあさん」が 住んで いる。彼女の 声なら、ナルホロの 耳にも とどくはずだ。……すまないが、彼女を ここまで 連れて きて くれ。']},
  h_bring:{w:'Ps　光を操る騎士',hint:'語り部を 連れて りんごの島の 琥珀の間へ',l:['……来て くれたか。それに、その方が……語り部の おばあさん だな。',['語り部　昔話の 語り手','……ほう、ここが りんごの島の 宮殿かい。むかしは 王さまも 子どもたちも、わたしの 話を 目を かがやかせて 聞いて くれたもんさ。'],['語り部　昔話の 語り手','さあ、ナルホロ。聞き流さずに、一度だけ 耳を おかし。……これは、あんたの 話でも あるんだよ。'],'……頼んだぞ、XD。声が とどくか どうかは、おまえの 戦いに かかっている。'],fin:()=>{G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('語り部の 声'))G.keys.push('語り部の 声');setTimeout(()=>keyToast('語り部の 声'),300)}},
- h_clear:{w:'Ps　光を操る騎士',hint:'Psに ほうこくする（りんごの島）',l:[['','ナルホロが ほどけ、ひとつの光が こぼれ出た。それは XDの 灯に すいこまれていく。'],'……聞こえるか、XD。島じゅうの 話し声が、もどってきた。','「聞く力」が、もどったな。人の声に 耳を かたむける。それが、すべての ものづくりの はじまりだ。','俺も いっしょに 行こう。光の 扱いなら 任せてくれ。次は 線の 祠だ。魔女が 暮らす場所で、描く力が うしなわれて いると 聞く。'],fin:()=>{grantPower('hear');if(!G.allies.includes('ps'))G.allies.push('ps');sfx('ally')}},
+ h_clear:{w:'Ps　光を操る騎士',hint:'Psに ほうこくする（りんごの島）',l:['……聞こえるか、XD。島じゅうの 話し声が、もどってきた。','「聞く力」が、もどったな。人の声に 耳を かたむける。それが、すべての ものづくりの はじまりだ。','俺も いっしょに 行こう。光の 扱いなら 任せてくれ。次は 線の 祠だ。魔女が 暮らす場所で、描く力が うしなわれて いると 聞く。'],fin:()=>{grantPower('hear');if(!G.allies.includes('ps'))G.allies.push('ps');sfx('ally')}},
  m_hi:{w:'Ai　線を紡ぐ魔女',hint:'線の祠の 魔女に 会う',l:['……来たのね、XD。見て、この祠。灯が、ほとんど 消えかけて いるでしょう。','みんな「ラフで いいや」「あとで 清書しよう」って言って……いつのまにか、だれも 線を 引かなくなった。','その怠けた心が「ンナモン」という 魔物になって、「描く力」を 食べて しまったの。','祠の 灯を もどすには、「ほそふでの ペン先」が いるの。南の 浜の「らくがきの祠」に まつられて いるけれど、守り人が 通して くれないでしょう。……戦って、手に 入れて きて。']},
- m_clear:{w:'Ai　線を紡ぐ魔女',hint:'祠の 魔女に ほうこくする',l:[['','ンナモンが ほどけて、あたたかい光が 灯に すいこまれていく。'],'……線が、また 引けるわ。ほら、ペンが 走る。','「描く力」が もどったのね。手で かたちに する。それは、だれにも ゆずれない 力よ。','私も ついていくわ。ベクターなら 任せて。次は 時の 泉。作った ものを 見せられずに いる人たちが いるの。'],fin:()=>{grantPower('make');if(!G.allies.includes('ai'))G.allies.push('ai');sfx('ally')}},
+ m_clear:{w:'Ai　線を紡ぐ魔女',hint:'祠の 魔女に ほうこくする',l:['……線が、また 引けるわ。ほら、ペンが 走る。','「描く力」が もどったのね。手で かたちに する。それは、だれにも ゆずれない 力よ。','私も ついていくわ。ベクターなら 任せて。次は 時の 泉。作った ものを 見せられずに いる人たちが いるの。'],fin:()=>{grantPower('make');if(!G.allies.includes('ai'))G.allies.push('ai');sfx('ally')}},
  o_hi:{w:'Ae　時を織る賢者',hint:'時の泉の 賢者に 会う',l:['よく 来た、XD。この泉の まわりを 見よ。つくった ものが、山のように 眠って おるじゃろう。','「まだ 見せられない」「もう少し 直してから」……そう 言って 手元に しまい込む うちに、世界に とどかぬ まま 時が すぎる。','そのためらいが「ペンディ」という 魔物に なった。人々の「伝える力」を 食って 育って おる。','公開する 勇気には、きっかけが いる。東の 原っぱに、作品を 出しそびれた「作り手」が おる。彼から 作品を あずかり、東の 空の 下で 待つ 人へ 届けて きなさい。']},
- o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:[['','ペンディが ほどけ、眠っていた 作品が 光に つつまれて、空へ のぼっていく。'],'見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が、最後の 鍵を 握って おる。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
+ o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:['見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が、最後の 鍵を 握って おる。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
  f_hi:{w:'Fi　生まれたての精霊',hint:'ブラウザ大陸の 嵐の ただなかへ',l:['……ここが、ブラウザ大陸。空は 嵐に とざされて、あの 中心に 人かげが 見える。','あれは フィグム。いまは この 大陸を 力で おさえつける 暴君。……「おまかせの 力」を 取り入れて、さからう 道具を ぜんぶ 従わせて いるの。','最後の 力は「考える力」。あの 暴君から 取りもどさなきゃ。……でも、なにを つくるか、どう 生きるかを 決めるのは、わたしじゃ ない。あなた。','でも、わたしは そばに いる。山の 手前に「まよいの 迷宮」が あるの。奥に「まよいの 羅針盤」が ねむって いる。それを 手に、嵐の ただなかへ 行こう、XD。']},
  f_clear:{w:'Fi　生まれたての精霊',hint:'Fiの もとへ もどる',l:[['','嵐が やみ、フィグムは ひざを ついた。胸の 奥から、うすい 桃色の 糸が ほどけて いく。','sprites/boss_figma.png'],['フィグム','……私は、いままで……だれかに、動かされて いたのか……？','sprites/boss_figma.png'],['フィグム','……XD。すまなかった。この 大陸の 者たちにも、詫びねば ならん。','sprites/boss_figma.png'],['Fi　生まれたての精霊','あの糸……北の 妖精の城から のびてる。みんなの「おまかせ」の 力を あつめて、フィグムを 暴君に して 操って いた王が いるの。——妖精の王。',PFF],['Fi　生まれたての精霊','フィグムは 悪く ない。力を むりやり 使わされて、この 大陸を おさえつけて いただけ。……それに 妖精の王にも、悪意は ないの。「みんなを しあわせに したい」って、ほんとうに 思ってる。',PFF],['Fi　生まれたての精霊','「考える力」は もどったよ、XD。でも、糸の さきを たたなければ、また 同じことが おきる。……妖精の城へ、行こう。',PFF]],fin:()=>{grantPower('choose');sfx('lvup')}},
 };
@@ -3909,7 +3909,14 @@ function village(k){
     `<p class="lead">${dn(a)}が たたかいに くわわった。「方針」で 動きかたを きめられる。<br>つかえる わざ：<b>${ASK[k].filter(x=>x.lv<=alv(k)).map(x=>x.n).join('、')}</b></p>`,
     [{l:'いっしょに行こう',s:'パーティに加わる',f:()=>{if(!G.allies.includes(k))G.allies.push(k);sfx('ally');if(k==='ff'&&CH[G.ch]&&CH[G.ch].stops[G.stop]&&CH[G.ch].stops[G.stop].k==='ff')return storyEvent('seek');nodeDone()}}]);
 }
-function updateNode(){
+const BOSSLIGHT={daitai:{pw:'see',t:'ザックーリの 体から、ひとつの 光が こぼれ出た。<br>それは、XDの 灯に すいこまれていく。'},
+  kikinagashi:{pw:'hear',t:'ナルホロが ほどけ、ひとつの 光が こぼれ出た。<br>それは、XDの 灯に すいこまれていく。'},
+  rafu:{pw:'make',t:'ンナモンが ほどけて、あたたかい 光が<br>XDの 灯に すいこまれていく。'},
+  okura:{pw:'open',t:'ペンディが ほどけ、眠っていた 作品が 光に つつまれて、空へ のぼっていく。<br>ひとすじの 光が、XDの 灯に すいこまれた。'}};
+async function bossLight(){const st=CH[G.ch]&&CH[G.ch].stops[G.stop],L=st&&st.type==='boss'&&BOSSLIGHT[st.k];if(!L||!(B&&document.querySelector('#log'))||(G.pw||[]).includes(L.pw))return;
+  sfx('lvup');say(L.t);try{fiFlash('255,214,120')}catch(e){}await wait(1600);grantPower(L.pw);await wait(900)}
+function updateNode(){return bossLight().then(updateNode0,updateNode0)}
+function updateNode0(){
   const k=G.pick||{t:0,h:0,c:0},mx=Math.max(k.t,k.h,k.c);let msg;
   G.hp=Math.min(G.max,G.hp+Math.round(G.max*.3));
   if(!mx){const r=Math.floor(Math.random()*3);if(r===0){G.str++;msg='戦いが 腕に なじんだ　こうげき+1'}else if(r===1){G.mpx=(G.mpx||0)+2;msg='ちからの うつわが ひろがった　さいだいMP+2'}else{G.max+=3;G.hp+=3;msg='からだが きたえられた　さいだいHP+3'}}
