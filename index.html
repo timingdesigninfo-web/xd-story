@@ -2548,7 +2548,7 @@ function placeScreen(id,tx,ty,dir){
   document.querySelectorAll('#pad button').forEach(b=>{const d=b.dataset.d;
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);setHeld(d,true)});
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>setHeld(d,false)))});
-  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};saveNow();
+  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};saveNow();{const sp=document.querySelector('.objective span');if(sp){const o0=sp.textContent;sp.textContent=(p.id===p.at?'街':'ここ')+'の 入り口で 記録されました';setTimeout(()=>{if(sp.isConnected)sp.textContent=o0},2600)}}
   TW.raf=requestAnimationFrame(townLoop);
   if(p.thru&&gateElig(p.id)&&!gateOpen(p.id))setTimeout(()=>{if(TW.on&&TW.pl===p&&!TW.busy)gateCeremony(p.id)},600);
 }
