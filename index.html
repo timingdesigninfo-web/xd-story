@@ -2415,6 +2415,7 @@ A('sakura','pr_sakura.png',.3);A('bush1','pr_bush_a.png',.3);A('bush2','pr_bush_
 ['futon','chabudai','zabuton_r','zabuton_b','fudzukue','tansu','chadana','hondana','byobu','andon','irori','kamidana','tsubo','ikebana','chobaba','shoptana','shoji','kakejiku','takaza','hashira','nobori','tsuitate'].forEach(n=>A('j_'+n,['jf_'+n+'_a.png','jf_'+n+'_b.png'],.4,1))}
 function npi(q,p){const d=NPR[q.k];if(!d||(!d.a&&/_in$/.test(p.id)))return null;const f=Array.isArray(d.f)?d.f[((q.x*7+q.y*13)>>1)%d.f.length]:d.f;const im=timg('sprites/'+f);if(!(im.complete&&im.naturalWidth))return 0;const sc=d.s*(q.sc||1);return{im,w:im.naturalWidth*sc,h:im.naturalHeight*sc}}
 /* 炎のゆらぎ：上半分を細い帯に分けて左右にゆらし、まわりに明るさの揺れるにじみを足す */
+const villLit=()=>!!G&&(G.ch*10+G.stop>=5); /* はじまりの村の 灯が ともったか */
 function flameDraw(c,ni,q,x,y){const im=ni.im,nw=im.naturalWidth,nh=im.naturalHeight,k=ni.w/nw,t=performance.now()/1000+q.x*1.7+q.y*.9,
     fh=Math.round(nh*.3),N=8,bh=fh/N,top=y-ni.h,L=Math.round(x-ni.w/2);
   c.drawImage(im,0,fh,nw,nh-fh,L,Math.round(top+fh*k),ni.w,Math.round((nh-fh)*k));
@@ -3055,6 +3056,9 @@ function furnishChapel(p,H,o={}){const x=H.x,y=H.y;
     npc(p,wm.x+2,wm.y+2,{n:'こなひきの おじさん',c:NM.man,say:['いらっしゃい。ここは 村の 風車小屋さ。','むかしは みんなが 麦を もってきて、わしが ぱんの 粉に ひいたもんだ。','いまは 「おまかせ」で できあいの 粉が とどく。……でも、手で ひいた 粉の ぱんは、ぜんぜん 味が ちがうんじゃよ。','羽根が まわるのを 見ると、村の 灯も まだ 消えて いないと 思えるのさ。']});
     npc(p,wm.x+1,wm.y+3,{n:'パンやの むすめ',c:NM.woman,say:['この 粉で、毎朝 ぱんを やくの。','今日は ちょっと こげちゃった……。でも、こげめも 手づくりの あじ、でしょ？']})}
   const ch=house(p,{x:16,y:10,w:7,h:6,img:'bld_chapel'});furnishChapel(p,ch,{npc:{n:'しんぷ',k:'pray',c:NM.mage,say:['ここは 旅人の 無事を いのる 小さな 礼拝堂です。','十年前の 春、空から 光が おちた 夜も、村じゅうが ここに 集まって いのっていました。','このごろ、灯が 日ごとに 弱まります。いのる 人も 減りました。……広場の おじいさんが、お話を したがっていますよ。']}});
+  /* 村の 灯：正式版（第1章の さいご）までは 小さく、そのあと 大きく 灯る */
+  {const q=prop(p,'torch',13,11,{say:['村の 灯。……ちいさく、ゆれている。'],vtorch:1});Object.defineProperty(q,'sc',{get:()=>villLit()?1.45:.72});
+   Object.defineProperty(q,'say',{get:()=>villLit()?['村の 灯。あたたかい 光が、広場いっぱいに ひろがっている。']:['村の 灯。……ちいさく、ゆれている。いまにも 消えそうだ。']})}
   prop(p,'signboard',15,6,{say:['はじまりの村','北: 宿屋と 道具屋　／　まんなか: 広場　／　南: 村の 出口']});
   prop(p,'well',14,6,{say:'つめたい 水が くみ上げられた。……おいしい。'});
   prop(p,'fountain',11,15,{fw:2,say:'ひろばの ふんすい。水面に、空の 光が ゆれている。'});
@@ -3613,6 +3617,11 @@ function drawTown(){
   if(WALK.complete)objs.push({y:TP.py+TT,f:()=>{const fr=TP.anim>0?Math.floor(TP.anim*FC/42)%FC:0;
     cx.drawImage(WALK,fr*38,ROW[TP.dir]*50,38,50,Math.round(TP.px+TT/2-15-camx),Math.round(TP.py+TT+1-40-12-camy),30,40)}});
   objs.sort((a,b)=>a.y-b.y);objs.forEach(o=>o.f());
+  if(p.id==='village'){const q=p.props.find(x=>x.vtorch),ni=q&&npi(q,p),lit=villLit(),t=performance.now()/1000;
+    const bx=q?(q.x+q.fw/2)*TT+q.dx-camx:0,by=q?(q.y+1)*TT+q.dy-camy:0,gy=ni?by-ni.h*.85:by-20;
+    if(!lit){cx.fillStyle='rgba(10,8,30,.5)';cx.fillRect(0,0,VW,VH); /* 薄暗い 村 */
+      if(ni){flameDraw(cx,ni,q,bx,by);const fl=.6+Math.sin(t*9)*.15,r=46+fl*6;cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(bx,gy,2,bx,gy,r);g.addColorStop(0,'rgba(255,150,60,'+(.22*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,110,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore()}}
+    else if(ni){const fl=.7+Math.sin(t*6)*.1+Math.sin(t*3.7)*.08,r=140+fl*14;cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(bx,gy,4,bx,gy,r);g.addColorStop(0,'rgba(255,190,90,'+(.28*fl).toFixed(3)+')');g.addColorStop(.5,'rgba(255,150,60,'+(.1*fl).toFixed(3)+')');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore()}}
 }
 /* ================= field ================= */
 let CONT=null;
