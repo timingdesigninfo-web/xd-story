@@ -966,6 +966,7 @@ const SKILLS=[
   {id:'sync',g:'x_sync',n:'ライブラリの盾',lv:9,mp:6,d:'みんなの まえに バリアを はる',f:()=>guardAll(1.3)},
 ];
 const LVCAP=30;
+const ATKCAP=2,ENATK=1.4,BOSSATK=1.25,BOSSACT=.5; /* BOSSACT：仲間 1人あたりの ボスの 追加行動（4人で +2回） */ /* 敵の 攻撃の 強さ：雑魚・ボス */ /* こうげきの 強化（わざ・Fi・構え など）の 合計の 上限 */
 const vshort=n=>n<=1?'Proto':n===2?'Beta':'v'+(n-2)+'.0'; /* 仲間も XDと おなじ バージョンで あらわす */
 const vname=(n=G.lv)=>n<=1?'プロトタイプ版':n===2?'ベータ版':'ver '+(n-2)+'.0';
 /* ===== 仲間システム =====
@@ -977,7 +978,7 @@ const crOf=()=>G.cr===undefined?80:G.cr;
 const crAdd=n=>{G.cr=Math.max(0,crOf()+n)};
 const fkb=()=>!!(typeof B!=='undefined'&&B&&B.fkb);
 const ordCost=()=>{const l=Math.max(1,G&&G.lv||1);return Math.max(1,Math.round((3+1.5*l+Math.floor(l*l/14))*(fkb()?.5:1)*(1-.12*Math.min(3,fiLv('choose')))))}; /* Lv1=5 Lv5=12 Lv10=25 Lv20=61 */
-const ordM=()=>(1.5+.03*Math.max(1,G&&G.lv||1))*(fkb()?2:1);
+const ordM=()=>(1.3+.01*Math.max(1,G&&G.lv||1))*(fkb()?1.3:1);
 /* 妖精への 指示。指示しなければ Fiは なにも しない
    戦いを任せる＝任せる(t)、サポートさせる・守らせる＝いっしょに(c)。指示しない 人は XDの こうげきで「手でやる」が たまる */
 const ORDERS=[
@@ -1058,13 +1059,21 @@ const GR={ps:{h:[30,9],m:[5,1.2],a:[5,1.5]},ai:{h:[20,5],m:[7,2.2],a:[4,1.1]},ae
 const GRN={ps:'体力と ちからが のびやすい',ai:'ちからと MPが のびやすい',ae:'MPが よく のびる',dw:'MPが とても のびやすい',ff:'MPが とても のびる（ちからは ひかえめ）'};
 const alv=k=>{G.al=G.al||{};if(!G.al[k])G.al[k]={lv:G.lv,xp:0};return G.al[k].lv};
 const gstat=(k,f,l)=>{const g=GR[k]&&GR[k][f];return g[0]+g[1]*(l===undefined?alv(k):l)};
-const allyMax=(k,l)=>GR[k]?Math.round(gstat(k,'h',l)):Math.round((24+G.lv*6)*apf(k,'hp')),allyAtk=(k,l)=>(GR[k]?gstat(k,'a',l):(4+G.lv))+eqSum(k,'atk'),allyMp=(k,l)=>(GR[k]?Math.round(gstat(k,'m',l)):Math.round((6+G.lv*2)*apf(k,'mp')))+eqSum(k,'mp');
+const allyMax=(k,l)=>GR[k]?Math.round(gstat(k,'h',l)+bx(k,'h')):Math.round((24+G.lv*6)*apf(k,'hp')),allyAtk=(k,l)=>(GR[k]?gstat(k,'a',l)+bx(k,'a'):(4+G.lv))+eqSum(k,'atk'),allyMp=(k,l)=>(GR[k]?Math.round(gstat(k,'m',l)+bx(k,'m')):Math.round((6+G.lv*2)*apf(k,'mp')))+eqSum(k,'mp');
+/* 戦い方で 育ちかたが かわる：B.cb に 与えた ダメージ(a)・受けた ダメージ(h)・わざに つかった MP(m) を ためる */
+function cbAdd(k,f,v){if(!B)return;B.cb=B.cb||{};const c=B.cb[k]||(B.cb[k]={a:0,h:0,m:0});c[f]+=v}
+const BXN={h:'HP',m:'MP',a:'こうげき'};
+const bx=(k,f)=>(G.al&&G.al[k]&&G.al[k].bx&&G.al[k].bx[f])||0;
 function allyGain(xp){const ms=[];if(xp<=0)return ms;
+  const cb=(B&&B.cb)||{},tot=k=>{const c=cb[k];return c?c.a+c.h+c.m:0},all=G.allies.filter(k=>GR[k]&&ALLIES[k]).reduce((s,k)=>s+tot(k),0),n=G.allies.filter(k=>GR[k]&&ALLIES[k]).length||1;
   for(const k of G.allies){if(!GR[k]||!ALLIES[k])continue;alv(k);const o=G.al[k];if(o.lv>=LVCAP)continue;
-    o.xp+=Math.round(xp*(o.lv<G.lv?1.3:1));
+    const sh=all>0?.5+.5*n*tot(k)/all:1; /* 半分は みんな おなじ、半分は はたらきに おうじて */
+    o.xp+=Math.round(xp*sh*(o.lv<G.lv?1.3:1));
+    {const c=cb[k];if(c&&c.a+c.h+c.m>0){o.pt=o.pt||{a:0,h:0,m:0};o.pt.a+=c.a;o.pt.h+=c.h*1.5;o.pt.m+=c.m}}
     while(o.lv<LVCAP&&o.xp>=need(o.lv)){const b=[allyMax(k),allyMp(k),allyAtk(k)];o.xp-=need(o.lv);o.lv++;
+      let bf=null;if(o.pt){const f=['a','h','m'].sort((x,y)=>o.pt[y]-o.pt[x])[0];if(o.pt[f]>0){bf=f;o.bx=o.bx||{a:0,h:0,m:0};o.bx[f]+=f==='a'?.6:f==='h'?3:1.5;o.pt[f]*=.5}}
       const a=[allyMax(k)-b[0],allyMp(k)-b[1],Math.round((allyAtk(k)-b[2])*10)/10],nk=(ASK[k]||[]).filter(x=>x.lv===o.lv&&!x.g).map(x=>x.n);
-      ms.push({k,lv:o.lv,h:`<b>${SNM[k]||dn(ALLIES[k])}</b>が <b>${vname(o.lv)}</b> に バージョンアップ！　HP+${a[0]}　MP+${a[1]}　こうげき+${a[2]}`+(nk.length?`<br>あたらしい わざ：<b>${nk.join('、')}</b>`:'')})}}
+      ms.push({k,lv:o.lv,h:`<b>${SNM[k]||dn(ALLIES[k])}</b>が <b>${vname(o.lv)}</b> に バージョンアップ！　HP+${a[0]}　MP+${a[1]}　こうげき+${a[2]}`+(bf?`<br><small>たたかいかたで <b>${BXN[bf]}</b>が よく のびた</small>`:'')+(nk.length?`<br>あたらしい わざ：<b>${nk.join('、')}</b>`:'')})}}
   return ms}
 const ASK={
   dw:[{lv:4,n:'インスペクタ',mp:3,role:'atk',d:'バリアを むしして 1.8ばい',f:()=>hit(1.8,true)},{lv:12,n:'マルチデバイス',mp:5,role:'aoe',d:'てきぜんたいに 1.3ばいの ダメージ',f:()=>hitF(1.3,'bolt:dw',true)},{lv:20,n:'サイト管理',mp:6,role:'guard',d:'みんなに バリア',f:()=>guardAll(1.3)},{lv:28,n:'ワンクリック公開',mp:12,role:'aoe',d:'てきぜんたいに 2.6ばいの ダメージ',f:()=>hitF(2.6,'bolt:dw',true)},{lv:1,n:'ライブプレビュー',mp:2,role:'atk',d:'1.5ばいの ダメージ',f:()=>hitF(1.5,'bolt:dw')},{lv:1,n:'コードビュー',mp:0,role:'mp',d:'XDの MPを 6 かいふく',f:()=>mpUp(6)},{lv:8,n:'ライブラリ同期',mp:0,role:'mp',d:'XDの MPを 9 かいふく',f:()=>mpUp(9)},{lv:16,n:'コード書きだし',mp:6,role:'atk',d:'2.4ばいの ダメージ',f:()=>hitF(2.4,'bolt:dw')},{lv:24,n:'ホットリロード',mp:9,role:'atk',d:'3.4ばいの ダメージ',f:()=>hitF(3.4,'bolt:dw')},],
@@ -1094,7 +1103,7 @@ async function alliesAct(){
     if(a.hp<=0||!aliveEs().length)continue;
     if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);continue} /* 起こされた ばかり */
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
-    if(ch){a.mp-=ch.mp;say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
+    if(ch){a.mp-=ch.mp;cbAdd(a.k,'m',ch.mp*4);say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
     else{const P=AP[a.k]||{an:'こうげき',am:1,ah:1};say(`<b>${a.n}</b>の <b>${P.an}</b>！`);sfx('swing');for(let q=0;q<P.ah;q++)hit(P.am);a.mp=Math.min(a.mpm,a.mp+1)}
     render();await wait(600);await runQ();ACT='xd';
     if(!aliveEs().length)return;
@@ -4010,7 +4019,7 @@ function makeMinion(tm){
   let all=MINIONS.filter(m=>(m.at||0)<=idx).sort((a,b)=>(b.at||0)-(a.at||0)),pool;
   if(sea)pool=MINIONS.filter(isK);
   else{pool=all.filter(m=>!isK(m)).slice(0,5);if(pool.length<2)pool=all.slice(0,5)}
-  const b=tm||pickOne(pool),k=1.25+G.ch*.12;
+  const b=tm||pickOne(pool),k=(1.25+G.ch*.12)*ENATK;
   const z=tm?1:dZone();
   return {...b,hp:Math.max(6,Math.round((b.hp*1.2+G.ch*9)*z)),m:b.m.map(mv=>({...mv,v:mv.t==='J'?mv.v:Math.max(1,Math.round(mv.v*k*z))}))};
 }
@@ -4219,7 +4228,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   music(battleTrack(boss,f0));
   /* ボスは 章と 仲間の 人数に あわせて 強く する（仲間が ふえるほど 楽に なりすぎない ように） */
   const nAl=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&ASK[k]).length,c1=Math.max(0,G.ch-1);
-  const ks=boss?1+c1*.13+nAl*.06:1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
+  const ks=boss?(1+c1*.13+nAl*.06)*BOSSATK:1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
   const es=fl.map((x,i)=>{const e=mkE(x,i,ks);if(boss&&hk!==1){e.hp=e.max=Math.round(e.max*hk)}return e});
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
@@ -4427,7 +4436,7 @@ function fxRun(kind,e){return new Promise(res=>{
   res()})}
 async function runQ(){
   while(Q.length&&!B.over){
-    const a=Q.shift(),base=a.who==='fi'?(atkPow()+B.str)*(1.8+.08*fiPow())*(fkb()?1.5:1):((a.who&&a.who!=='xd')?allyAtk(a.who):(atkPow()+B.str)*(B.stance==='atk'?1.25:1)*1);
+    const a=Q.shift(),xs=Math.min(B.str||0,Math.round(atkPow()*.5)),base=a.who==='fi'?(atkPow()+xs)*(1.8+.08*fiPow())*(fkb()?1.3:1):((a.who&&a.who!=='xd')?allyAtk(a.who):(atkPow()+xs));
     if(a.k==='hit'&&a.some){const es=aliveEs().slice().sort(()=>Math.random()-.5).slice(0,a.some);Q.unshift(...es.map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.k==='hit'&&a.all){Q.unshift(...aliveEs().map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.tid!==undefined&&B.es[a.tid].hp<=0){if(a.who&&a.who!=='xd'&&!a.ex&&aliveEs().length)a.tid=aliveEs()[0].id;else continue}
@@ -4439,10 +4448,12 @@ async function runQ(){
       let om=1;if(isX&&B.up){om*=1+(B.up.a?B.up.a.m:0)+(B.inSkill&&B.up.s?B.up.s.m:0)}
       if(isX&&B.inSkill&&fiLv('make')>0)om*=1+.1*fiLv('make'); /* 形にする力 */
       if(!isX&&a.who!=='fi'&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
-      if(isX&&B.ord&&B.ord.atk>0){if(B.bad){om*=.5;if(!B.badSaid){B.badSaid=1;say('……妖精の光が ぼうそうした！');await wait(520)}}else{om*=B.inSkill?ordM()+.4:(B.ord.m||ordM());if(B.ord.pr)pierce=true}}
+      if(isX&&B.ord&&B.ord.atk>0){if(B.bad){om*=.5;if(!B.badSaid){B.badSaid=1;say('……妖精の光が ぼうそうした！');await wait(520)}}else{om*=B.inSkill?ordM()+.2:(B.ord.m||ordM());if(B.ord.pr)pierce=true}}
       if(B.fiDown>0&&a.who!=='fi')om*=.75; /* Fiの 暴走で 弱まった */
       if(B.fkc){const fk=B.fkc;if(isX)om*=({h:1.3,c:1.1,f:.8,t:B.awk?1.4:.5})[fk]||1;else if(fk==='c')om*=1.15}
-      if(crit){pierce=true;d=Math.round(base*a.m*1.9*om)}
+      if(isX&&B.stance==='atk')om*=1.25;
+      om=Math.min(om,ATKCAP); /* 強化は ぜんぶ かけても 2倍まで */
+      if(crit){pierce=true;d=Math.round(base*a.m*Math.min(ATKCAP+.2,Math.max(1.5,om*1.5)))}
       else d=Math.max(1,Math.round(base*a.m*om*(.9+Math.random()*.2)));
       if(crit){say('<b>弱点を ついた！</b>');sfx('crit');jolt('#foe','shake');await wait(520)}
       let fully=false;
@@ -4451,7 +4462,7 @@ async function runQ(){
       sfx('atk');
       const sp=$('.eu[data-i="'+e.id+'"] .esp');if(sp){sp.classList.remove('blink');void sp.offsetWidth;sp.classList.add('blink')}
       let dying=false;
-      if(d){dying=e.hp-d<=0;if(dying)e._dying=1;e.hp=Math.max(0,e.hp-d);pop('#foe','-'+d,'dmg',e.id);render();say(`${e.n}に <b>${d}ポイント</b>の ダメージ！`)}
+      if(d){if(a.who&&a.who!=='xd'&&a.who!=='fi')cbAdd(a.who,'a',d);dying=e.hp-d<=0;if(dying)e._dying=1;e.hp=Math.max(0,e.hp-d);pop('#foe','-'+d,'dmg',e.id);render();say(`${e.n}に <b>${d}ポイント</b>の ダメージ！`)}
       else{pop('#foe','ふせがれた','blk',e.id);render();say(fully?`${e.n}は バリアで ふせいだ！`:`${e.n}には きかなかった！`)}
       if(dying){await wait(380);sfx('vanish');await deathMosaic(e);e._dying=0;render()}else await wait(560);
       if(e.hp<=0){
@@ -4698,7 +4709,10 @@ async function defeatEnemy(){
 }
 async function enemyTurn(){
   B.busy=true;render();
-  for(const e of B.es){if(e.hp<=0)continue;await enemyAct(e);if(B.over)return}
+  /* ボスは 仲間の 数だけ 手数が ふえる（5人に 1回では 勝負に ならない） */
+  const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0;
+  for(const e of B.es){if(e.hp<=0)continue;const n=1+(e===B.es[0]?nA:0);
+    for(let i=0;i<n;i++){const st=e.stun>0||e.sleep;await enemyAct(e);if(B.over)return;if(st||e.hp<=0||partyDead())break;if(i<n-1){say(`<b>${e.n}</b>の れんぞく こうどう！`);await wait(420)}}}
   if(B.nul>0){B.nul--;if(B.nul<=0){B.nulBlur=false;say('かかげた 光が きえた……')}}
   const e0=B.es[0];
   if(e0.survive&&B.turn>=e0.survive){B.over=true;render();say(`${e0.n}は よゆうの えみを のこして さっていった……。XDは、たっていた。`);await wait(1500);return winBattle(true)}
@@ -4726,7 +4740,7 @@ async function enemyAct(e){
         if(d>0)d=Math.max(1,d-eqSum(m.k,'def'));
         if(B.fkc==='c')d=Math.max(1,Math.ceil(d/1.15));else if(B.fkc==='t'&&B.awk)d=Math.max(1,Math.ceil(d/1.5));
         const b=Math.min(m.block,d);m.block-=b;d-=b;
-        if(d){m.hp=Math.max(0,m.hp-d);sfx('hurt');if(m.k==='xd')screenHurt(d>=G.max*.3);jolt(m.sel,'flash');hurtAnim(m.k);jolt('.eu[data-i="'+e.id+'"]','shake');pop(m.sel,'-'+d,'dmg');say(`${m.n}は <b>${d}ポイント</b>の ダメージを うけた！`);if(m.k==='xd'&&eqHas('xd','x_comp')&&e.hp>1){const r=Math.min(e.hp-1,Math.max(1,Math.round(d*.25)));e.hp-=r;await wait(420);pop('#foe','-'+r,'dmg',e.id);say(`<b>コンポーネントの盾</b>が ダメージを ${r}ポイント かえした！`)}}
+        if(d){if(m.k!=='xd')cbAdd(m.k,'h',d);m.hp=Math.max(0,m.hp-d);sfx('hurt');if(m.k==='xd')screenHurt(d>=G.max*.3);jolt(m.sel,'flash');hurtAnim(m.k);jolt('.eu[data-i="'+e.id+'"]','shake');pop(m.sel,'-'+d,'dmg');say(`${m.n}は <b>${d}ポイント</b>の ダメージを うけた！`);if(m.k==='xd'&&eqHas('xd','x_comp')&&e.hp>1){const r=Math.min(e.hp-1,Math.max(1,Math.round(d*.25)));e.hp-=r;await wait(420);pop('#foe','-'+r,'dmg',e.id);say(`<b>コンポーネントの盾</b>が ダメージを ${r}ポイント かえした！`)}}
         else{sfx('block');pop(m.sel,'ふせいだ','blk');say(`${m.n}は ダメージを ふせいだ！`)}
         render();await wait(640);
         if(m.hp<=0){sfx('lose');say(`<b>${m.n}</b>は たおれた！`);render();await wait(800)}
