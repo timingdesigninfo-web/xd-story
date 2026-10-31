@@ -19,7 +19,7 @@ const ID_RE = /^[a-z0-9]{10}$/;
 const MAX_IMG = 450 * 1024; // base64 を戻したあとのバイト数
 const TTL = 180 * 86400;
 const TITLE = 'XD戦記';
-const DESC = 'あなたはXDをおぼえているか？ XDと雲の仲間たちが、妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG。';
+const DESC = 'あのXDを覚えているか？ XDと雲の仲間たちが、妖精とその生き方を模索しながらクリエイターのチカラを探す旅をする超私的RPG。';
 
 async function db(cmds) {
   const r = await fetch(DB_URL + '/pipeline', {
