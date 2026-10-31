@@ -925,9 +925,12 @@ const crAdd=n=>{G.cr=Math.max(0,crOf()+n)};
 const fkb=()=>!!(typeof B!=='undefined'&&B&&B.fkb);
 const ordCost=()=>{const l=Math.max(1,G&&G.lv||1);return Math.round((8+2*l+Math.floor(l*l/10))*(fkb()?.5:1))};
 const ordM=()=>(1.5+.03*Math.max(1,G&&G.lv||1))*(fkb()?2:1);
+/* 妖精への 指示。指示しなければ Fiは なにも しない
+   戦いを任せる＝任せる(t)、サポートさせる・守らせる＝いっしょに(c)。指示しない 人は XDの こうげきで「手でやる」が たまる */
 const ORDERS=[
-  {id:'atk',n:'攻撃を 指示',d:()=>`3ターン、みんなの こうげきが つよくなる`,t:'t'},
-  {id:'grd',n:'守りを 指示',d:()=>`3ターン、みんなの うける ダメージが へる`,t:'c'}];
+  {id:'fight',n:'戦いを 任せる',d:()=>`Fiが 自分で 敵を こうげき。ときどき 敵ぜんたいに 生成攻撃`,t:'t'},
+  {id:'sup',n:'サポートさせる',d:()=>`こうげき・ぼうぎょ などの 強化を かける（せいこう ${Math.round(supP()*100)}%）`,t:'c'},
+  {id:'prot',n:'守らせる',d:()=>`みんなを かいふくして、うける ダメージを へらす`,t:'c'}];
 const FACET={
   see:{n:'見抜いて',item:'虫めがね',fn:'見る',t:'t',q:'わ、ぼやけてた ものが くっきり 見える！',d:l=>`${2+l}ターン、よわてんを つく（バリアも むし）`},
   make:{n:'形にして',item:'ペン先',fn:'描く',t:'t',q:'指さきが うずうずする……なにか 描きたい！',d:l=>`${2+l}ターン、こうげきが 大きく のびる`},
@@ -937,6 +940,8 @@ const FACET={
 const fiLv=k=>{const v=(G.fi&&G.fi[k])||0;return v>0&&fkb()?v+2:v};
 const fiN=()=>Object.keys(FACET).filter(k=>fiLv(k)>0).length;
 const badP=()=>fkb()?0:Math.max(0,.3-.07*fiN());
+const fiPow=()=>1+Object.keys(FACET).reduce((t,k)=>t+fiLv(k),0); /* Fiの レベル：取りもどした 力の Lvの 合計＋1 */
+const supP=()=>fkb()?1:Math.min(.95,.45+.06*fiPow());
 function healParty(f){const h=Math.min(Math.round(G.max*f),G.max-G.hp);if(h>0){G.hp+=h;pop('#me','+'+h,'hp')}B.allies.forEach(a=>{if(a.hp>0){const v=Math.min(Math.round(a.max*f),a.max-a.hp);if(v>0){a.hp+=v;pop(a.sel,'+'+v,'hp')}}})}
 async function fiAuto(){
   if(!G.fairy||B.over||B.turn<=1)return;
@@ -957,8 +962,8 @@ async function fiAuto(){
   else if(k==='open'){B.ord.atk=Math.max(B.ord.atk||0,1);B.ord.m=Math.max(B.ord.m||0,ordM());B.bad=false;m='みんなに つながった！'}
   else if(k==='choose'){const g=Math.min(1+L,mpMax()-B.mp);B.mp+=g;m='XDの MPが '+g+' かいふく'}
   pickTally('t');sfx('skill');say(`<b>Fiが「${F.n}」を 自分で かけた！</b><br>${m}`);pop('#me','Fi','pw');render();await wait(900)}
-function aiCmds(){return ORDERS.concat(Object.keys(FACET).filter(k=>fiLv(k)>0).map(k=>({id:k,n:FACET[k].n+' Lv'+fiLv(k),d:()=>FACET[k].d(fiLv(k)),t:FACET[k].t})))}
-const ordAct=id=>(id==='atk'||id==='see'||id==='make')?(B.ord.atk>0):(id==='grd'||id==='hear')?(B.ord.grd>0):false;
+function aiCmds(){return ORDERS.map(o=>({...o,n:o.n+(o.id==='fight'?'':'')}))}
+const ordAct=id=>false;
 const ordOn=()=>B&&B.ord&&((B.ord.atk||0)>0||(B.ord.grd||0)>0);
 const skCost=sk=>{const c=skCost0(sk);return B&&B.fkc==='h'&&c>0?Math.max(1,Math.ceil(c/2)):c};
 const skCost0=sk=>{if(B&&B.free)return 0;const c=hasPw('choose')&&sk.mp>0?Math.max(1,Math.floor(sk.mp*.8)):sk.mp;return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
@@ -1787,7 +1792,7 @@ function showRules(onClose){
       <li>毎ターン、コマンドをひとつ選ぶ。選んだあと、敵が行動する。</li>
       <li><b>こうげき</b>：MPなしで殴る。ときどき会心の一撃が出る。</li>
       <li><b>ぼうぎょ</b>：そのターン、受けるダメージが半分になる。敵の「つぎ」が重いときに。</li>
-      <li><b>妖精</b>：Fiに「攻撃」か「守り」を指示する。指示のたびに CR（クレジット）を レベルに おうじて 10〜 つかうが、ターンは使わない。CRは敵がおとす みんな共通のお金で、店でも使える。</li>
+      <li><b>妖精</b>：Fiに「戦いを 任せる」「サポートさせる」「守らせる」を 指示できる。指示しなければ Fiは なにも しない。指示のたびに CR（クレジット）を レベルに おうじて 10〜 つかうが、ターンは使わない。サポートは、旅で 取りもどした 力が ふえるほど せいこうしやすく、効果も 大きくなる。CRは敵がおとす みんな共通のお金で、店でも使える。</li>
       <li><b>そうび</b>：メニューの「そうび」で 武器と防具を つけかえる。武器は こうげき、防具は ぼうぎょ・MPが ふえ、わざが つかえるものも ある。店で CR を つかって 買う。</li>
       <li><b>わざ</b>：XDの機能。MP（メモリプール）を使う。容量はGBで数える。こうげきで1、ぼうぎょで2回復。バージョンが上がると増える。</li>
       <li><b>方針</b>：仲間の動きかたを選ぶ（ぜんぶ出しきる／ほどよく進める／まもりを固める／わざは温存）。ターンは使わない。仲間は自分で行動し、敵はランダムに狙ってくる。</li>
@@ -4228,7 +4233,7 @@ function fxRun(kind,e){return new Promise(res=>{
   res()})}
 async function runQ(){
   while(Q.length&&!B.over){
-    const a=Q.shift(),base=((a.who&&a.who!=='xd')?allyAtk(a.who):(atkPow()+B.str)*(B.stance==='atk'?1.25:1)*1);
+    const a=Q.shift(),base=a.who==='fi'?(atkPow()+B.str)*(1.3+.04*fiPow())*(fkb()?1.5:1):((a.who&&a.who!=='xd')?allyAtk(a.who):(atkPow()+B.str)*(B.stance==='atk'?1.25:1)*1);
     if(a.k==='hit'&&a.some){const es=aliveEs().slice().sort(()=>Math.random()-.5).slice(0,a.some);Q.unshift(...es.map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.k==='hit'&&a.all){Q.unshift(...aliveEs().map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.tid!==undefined&&B.es[a.tid].hp<=0){if(a.who&&a.who!=='xd'&&!a.ex&&aliveEs().length)a.tid=aliveEs()[0].id;else continue}
@@ -4238,7 +4243,7 @@ async function runQ(){
       const isX=!a.who||a.who==='xd',crit=(B.sure&&isX)||Math.random()<1/16;if(crit&&B.sure&&isX)B.sure=false;
       {const w=a.who&&a.who!=='xd'?a.who:'',fx=a.fx||(a.m>=2?'burst:'+w:(w&&AP[w]&&AP[w].fx?AP[w].fx+':'+w:'slash:'+w));await fxRun(fx,e)}
       let om=1;if(isX&&B.up){om*=1+(B.up.a?B.up.a.m:0)+(B.inSkill&&B.up.s?B.up.s.m:0)}
-      if(!isX&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
+      if(!isX&&a.who!=='fi'&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
       if(isX&&B.ord&&B.ord.atk>0){if(B.bad){om*=.5;if(!B.badSaid){B.badSaid=1;say('……妖精の光が ぼうそうした！');await wait(520)}}else{om*=B.inSkill?ordM()+.4:(B.ord.m||ordM());if(B.ord.pr)pierce=true}}
       if(B.fkc){const fk=B.fkc;if(isX)om*=({h:1.3,c:1.1,f:.8,t:B.awk?1.4:.5})[fk]||1;else if(fk==='c')om*=1.15}
       if(crit){pierce=true;d=Math.round(base*a.m*1.9*om)}
@@ -4336,7 +4341,7 @@ function navBack(){if(!B||B.busy||B.over)return;if(B.pane==='tgt'){B.pane=B.pend
 function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});if(B.ord.atk>0)B.bad=!B.ord.nb&&Math.random()<badP();if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
   if(G.hp<=0){B.busy=true;render();autoRound();return}
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
-  B.busy=true;fiAuto().then(()=>{if(B.over)return;B.busy=false;render()})}
+  B.busy=false;render()}
 async function autoAnim(){ACT='xd';Q=[];say('人形が じどうで こうげき！');B.t=B.es.indexOf(B.e);await wait(500);hitF(1.6,'puppet');await runQ();if(B.over)return;if(!aliveEs().length)return defeatEnemy();B.busy=false;render()}
 async function autoRound(){say('XDは たおれている……');await wait(900);await afterXD()}
 async function afterXD(){
@@ -4381,24 +4386,34 @@ function ordFx(atk){return new Promise(res=>{
     setTimeout(fin,2200)}catch(e){res()}})}
 async function giveOrder(k){
   const o=aiCmds().find(x=>x.id===k),c=ordCost();
-  if(!G.fairy||!o||crOf()<c||ordAct(k)||B.ordTurn>=1){sfx('junk');if(G.fairy&&crOf()<c)say('Fiは いま 動けない……（クレジットが たりない）');return}
+  if(!G.fairy||!o||crOf()<c||B.ordTurn>=1){sfx('junk');if(G.fairy&&crOf()<c)say('Fiは いま 動けない……（クレジットが たりない）');return}
   crAdd(-c);B.paid+=c;B.ordTurn=(B.ordTurn||0)+1;B.ordN=(B.ordN||0)+1;pickTally(o.t);
   B.busy=true;B.pane='cmd';B.menu='atk';B.ci=0;render();sfx('skill');timg('sprites/ch_ff_d.png');
-  const F=FACET[k],L=fiLv(k),atkLike=(k==='atk'||k==='see'||k==='make'||k==='open');
-  say(k==='atk'?'XDは Fiに <b>攻撃</b>を 要請した。<br>「あの 敵を ねらって、力を かして！」':k==='grd'?'XDは Fiに <b>守り</b>を 要請した。<br>「わたしを まもって、おねがい！」':`XDは Fiに「<b>${F.n}</b>」と たのんだ。<br>${F.q}`);
-  await wait(750);
-  await ordFx(atkLike);
-  const ptxt={atk:'攻撃↑',grd:'守り',see:'弱点',make:'攻撃↑↑',hear:'守り',open:'連携',choose:'ひらめき'}[k];
-  B.allies.forEach(a=>{if(a.hp>0)pop(a.sel,ptxt,'pw')});
-  if(k==='atk'){B.ord.atk=3;B.ord.m=0;B.ord.pr=false;B.bad=Math.random()<badP();B.badSaid=0;sfx('skill');say(`Fiの 光が みんなの 手に やどった！<br>これから <b>3ターン</b>、こうげきが ぐっと 重くなる。`)}
-  else if(k==='see'){const T=2+L;B.ord.atk=T;B.ord.m=1.3;B.ord.pr=true;B.ord.nb=true;B.bad=false;sfx('skill');say(`Fiが 弱点を 見ぬいた！<br><b>${T}ターン</b>、バリアを むしして 弱点を つく！`)}
-  else if(k==='make'){const T=2+L;B.ord.atk=T;B.ord.m=1.5+.15*L;B.ord.pr=false;B.ord.nb=true;B.bad=false;sfx('skill');say(`Fiが かたちに してくれた！<br><b>${T}ターン</b>、こうげきが ぐんと 大きくなる！`)}
-  else if(k==='grd'){B.ord.grd=3;B.ord.half=false;sfx('heal');say('光の かべが みんなを つつんだ！<br>これから <b>3ターン</b>、受けるダメージが やわらぐ。')}
-  else if(k==='hear'){const T=2+L;B.ord.grd=T;B.ord.half=true;sfx('heal');healParty(.08+.04*L);say(`Fiが みんなの 声を 聞いた！<br><b>${T}ターン</b>、受けるダメージが 半分に。`)}
-  else if(k==='open'){say('Fiが みんなに つなげた！<br>なかまが すぐに うごく！');render();await wait(700);await alliesAct();if(B.over)return}
-  else if(k==='choose'){B.free=true;const g=Math.min(2+L*2,mpMax()-B.mp);B.mp+=g;crAdd(Math.round(ordCost()/2));B.paid=Math.max(0,B.paid-ordCost());sfx('lvup');pop('#me','MP+'+g+'GB','pw');say(`Fiが 先を 読んだ！<br>つぎの わざは MPを つかわず、MPも <b>${g}GB</b> かいふく！`)}
-  if(k!=='atk'&&k!=='grd'){G.fiUse=G.fiUse||{};G.fiUse[k]=(G.fiUse[k]||0)+1;const u=G.fiUse[k];if(L<3&&u>=(L===1?3:7)){G.fi[k]=L+1;render();await wait(900);say(`<b>Fiの「${F.fn}」が 育った！</b>（Lv${L+1}）`);sfx('lvup')}}
-  render();await wait(1000);
+  const P=fiPow(),grow=fk=>{G.fiUse=G.fiUse||{};G.fiUse[fk]=(G.fiUse[fk]||0)+1;const L=fiLv(fk),u=G.fiUse[fk];if(L>0&&L<3&&u>=(L===1?3:7)){G.fi[fk]=L+1;return `<br><b>Fiの「${FACET[fk].fn}」が 育った！</b>（Lv${L+1}）`}return ''};
+  const own=Object.keys(FACET).filter(x=>fiLv(x)>0);
+  if(k==='fight'){ /* 任せる：Fiが 自分で 戦う */
+    say('XDは Fiに <b>戦いを 任せた</b>。<br>「たのんだよ、Fi！」');await wait(750);
+    if(Math.random()<badP()){sfx('junk');say('……妖精の光が ぼうそうした！<br>Fiの こうげきは それて しまった。');await wait(900)}
+    else{ACT='fi';Q=[];ACT_T=((B.e&&B.e.hp>0)?B.e:aliveEs()[0]).id;const gen=Math.random()<Math.min(.5,.2+.03*P);
+      if(gen){say('Fiの <b>生成攻撃</b>！<br>光が 敵ぜんたいに ふりそそぐ！');sfx('skill');await wait(500);hitF(.75+.03*P,'burst:',true)}
+      else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
+      await runQ();ACT='xd';if(B.over)return;if(!aliveEs().length){B.busy=false;return defeatEnemy()}}
+  }else if(k==='sup'){ /* いっしょに：強化（成功率・効果は Fiの レベルしだい） */
+    say('XDは Fiに <b>サポート</b>を たのんだ。<br>「力を かして！」');await wait(750);
+    if(Math.random()>supP()){sfx('junk');say('Fiは がんばったけど、うまく いかなかった……<br><small>（Fiの 力が 育つと、せいこうしやすく なる）</small>');await wait(900)}
+    else{await ordFx(true);const T=2+Math.floor(P/5),pool=['atk','def'].concat(own.filter(x=>x==='see'||x==='make'||x==='open'||x==='choose'));const e=pool[Math.floor(Math.random()*pool.length)];let m='',gr='';
+      if(e==='atk'){B.ord.atk=T;B.ord.m=1.2+.05*P;B.ord.pr=false;B.bad=false;m=`みんなの こうげきが 上がった！（<b>${T}ターン</b>）`}
+      else if(e==='def'){B.ord.grd=T;B.ord.half=false;m=`光の かべが みんなを つつんだ！（<b>${T}ターン</b>）`}
+      else if(e==='see'){B.ord.atk=T;B.ord.m=1.2+.04*P;B.ord.pr=true;B.ord.nb=true;B.bad=false;m=`弱点を 見ぬいた！ バリアを むしして つく（<b>${T}ターン</b>）`;gr=grow('see')}
+      else if(e==='make'){B.ord.atk=T;B.ord.m=1.4+.06*P;B.ord.pr=false;B.ord.nb=true;B.bad=false;m=`かたちに なった！ こうげきが ぐんと 大きく（<b>${T}ターン</b>）`;gr=grow('make')}
+      else if(e==='open'){say('Fiが みんなに つなげた！<br>なかまが すぐに うごく！');render();await wait(700);gr=grow('open');await alliesAct();if(B.over)return;m='みんなが つながった！'}
+      else if(e==='choose'){B.free=true;const g=Math.min(2+Math.floor(P/2),mpMax()-B.mp);B.mp+=g;pop('#me','MP+'+g+'GB','pw');m=`先を 読んだ！ つぎの わざは MP0、MPも <b>${g}GB</b> かいふく`;gr=grow('choose')}
+      B.allies.forEach(a=>{if(a.hp>0)pop(a.sel,'サポート','pw')});sfx('lvup');say(`<b>Fiの サポート</b>　${m}${gr}`);await wait(1000)}
+  }else if(k==='prot'){ /* いっしょに：回復と 守り */
+    say('XDは Fiに <b>守り</b>を たのんだ。<br>「みんなを まもって！」');await wait(750);await ordFx(false);
+    const T=2+Math.floor(P/5),half=own.includes('hear');healParty(.1+.02*P);B.ord.grd=T;B.ord.half=half;let gr=half?grow('hear'):'';
+    sfx('heal');say(`Fiが みんなを いやして、まもりの 光で つつんだ！<br><b>${T}ターン</b>、うける ダメージが ${half?'半分に':'やわらぐ'}。${gr}`);await wait(1000)}
+  render();await wait(600);
   B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;render()}
 function chooseTarget(m,k){
   if(m==='ai')return giveOrder(k);
