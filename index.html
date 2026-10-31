@@ -850,7 +850,7 @@ function gridToURL(rows,pal){
 }
 let HERO='';
 function rng(seed){let s=2166136261;for(const ch of seed)s=Math.imul(s^ch.charCodeAt(0),16777619)>>>0;return()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296}}
-const SPRIMG={ダレカニ:'sprites/en_sea_dareka.png',ナントナクラゲ:'sprites/en_sea_nantona.png',シラケザメ:'sprites/en_sea_shirake.png',ヤッツケダコ:'sprites/en_sea_yattsuke.png',ヒトマカセガイ:'sprites/en_sea_hitomaka.png',ボヤケモリ:'sprites/en4_boyake.png',ラクガキゴーレム:'sprites/en4_rakugaki.png',マヨイノヌシ:'sprites/en4_mayoi.png',ザックーリ:'sprites/en4_zakkuri.png',ナルホロ:'sprites/en4_naruhoro.png',ンナモン:'sprites/en4_rafu.png',ペンディ:'sprites/en4_pendi.png',ノーコードの巨人:'sprites/en4_nocode.png',キカヌン:'sprites/en2_mimi.png',ヤリボン:'sprites/en2_uwa.png',シタガッキー:'sprites/en2_shita.png',ケシゴムシ:'sprites/en2_keshi.png',ヒミツノ:'sprites/en2_himi.png',モスコッシ:'sprites/en2_mou.png',マルナンゲ:'sprites/en2_maru.png',オマカンセ:'sprites/en2_zen.png',クショクショ:'sprites/en3_cushion.png',チャオチャオ:'sprites/en3_teapot.png',エラベン:'sprites/en3_glove.png',マドローミ:'sprites/en3_curtain.png',ダイペン:'sprites/en3_pen.png',ノージーフラワー:'sprites/en3_flower.png',サキマワリン:'sprites/en3_saki.png',ヤキオセワ:'sprites/en3_oseva.png',カワリーン:'sprites/en3_kawari.png',ソノマンマー:'sprites/en3_sono.png',オマカッシー:'sprites/en3_omaka.png','Principle':'sprites/en2_principle.png','Penpot':'sprites/en2_penpot.png','妖精の王':'sprites/en2_figmax.png','語り部の おばあさん':'sprites/npc_elder.png','かげの 作り手':'sprites/npc_shadow.png','まちぼうけの 旅人':'sprites/npc_traveler.png',メンドウ:'sprites/en_mendo.png',マイイカ:'sprites/en_maaii.png',マーセキリ:'sprites/en_dareka.png',コピペ虫:'sprites/en_kopipe.png',ウノミー:'sprites/en_unomi.png',ゴテゴテ:'sprites/en_atomawashi.png',チラケル:'sprites/en_omakase.png',ニードネル:'sprites/en_nidoneru.png',ニドーネル:'sprites/en_nidoneru_g.png',モイイカ:'sprites/en_mooiika.png',イッタキリ:'sprites/en_ittakiri.png',ホウチ虫:'sprites/en_houchi.png',サーシラン:'sprites/en_saashiran.png',サンドーネル:'sprites/en_sandoneru.png',Dw:'sprites/ally_dw.png',Ai:'sprites/ally_ai.png','Ae':'sprites/ally_ae.png',Ps:'sprites/ally_ps.png',Fi:'sprites/ally_ff.png',DreamweaverF:'sprites/ally_dw_f.png',Sketch:'sprites/boss_sketch.png',Canva:'sprites/boss_canva.png',Prott:'sprites/boss_prott.png','InVision Studio':'sprites/boss_invision.png','STUDIO':'sprites/boss_studio_atk.png','Framer':'sprites/boss_framer.png','Figma':'sprites/boss_figma.png','クラウド王':'sprites/boss_king.png'};
+const SPRIMG={ダレカニ:'sprites/en_sea_dareka.png',ナントナクラゲ:'sprites/en_sea_nantona.png',シラケザメ:'sprites/en_sea_shirake.png',ヤッツケダコ:'sprites/en_sea_yattsuke.png',ヒトマカセガイ:'sprites/en_sea_hitomaka.png',ボヤケモリ:'sprites/en4_boyake.png',ラクガキゴーレム:'sprites/en4_rakugaki.png',マヨイノヌシ:'sprites/en4_mayoi.png',ザックーリ:'sprites/en4_zakkuri.png',ナルホロ:'sprites/en4_naruhoro.png',ンナモン:'sprites/en4_rafu.png',ペンディ:'sprites/en4_pendi.png',ノーコードの巨人:'sprites/en4_nocode.png',キカヌン:'sprites/en2_mimi.png',ヤリボン:'sprites/en2_uwa.png',シタガッキー:'sprites/en2_shita.png',ケシゴムシ:'sprites/en2_keshi.png',ヒミツノ:'sprites/en2_himi.png',モスコッシ:'sprites/en2_mou.png',マルナンゲ:'sprites/en2_maru.png',オマカンセ:'sprites/en2_zen.png',クショクショ:'sprites/en3_cushion.png',チャオチャオ:'sprites/en3_teapot.png',エラベン:'sprites/en3_glove.png',マドローミ:'sprites/en3_curtain.png',ダイペン:'sprites/en3_pen.png',ノージーフラワー:'sprites/en3_flower.png',サキマワリン:'sprites/en3_saki.png',ヤキオセワ:'sprites/en3_oseva.png',カワリーン:'sprites/en3_kawari.png',ソノマンマー:'sprites/en3_sono.png',オマカッシー:'sprites/en3_omaka.png','Principle':'sprites/en2_principle.png','Penpot':'sprites/en2_penpot.png','妖精の王':'sprites/en2_figmax.png','語り部の おばあさん':'sprites/npc_elder.png','かげの 作り手':'sprites/npc_shadow.png','まちぼうけの 旅人':'sprites/npc_traveler.png',メンドウ:'sprites/en_mendo.png',マイイカ:'sprites/en_maaii.png',マーセキリ:'sprites/en_dareka.png',コピペ虫:'sprites/en_kopipe.png',ウノミー:'sprites/en_unomi.png',ゴテゴテ:'sprites/en_atomawashi.png',チラケル:'sprites/en_omakase.png',ニードネル:'sprites/en_nidoneru.png',ニドーネル:'sprites/en_nidoneru_g.png',モイイカ:'sprites/en_mooiika.png',イッタキリ:'sprites/en_ittakiri.png',ホウチ虫:'sprites/en_houchi.png',サーシラン:'sprites/en_saashiran.png',サンドーネル:'sprites/en_sandoneru.png',Dw:'sprites/ally_dw.png',Ai:'sprites/ally_ai.png','Ae':'sprites/ally_ae.png',Ps:'sprites/ally_ps.png',Fi:'sprites/ally_ff.png',DreamweaverF:'sprites/ally_dw_f.png',スケッチャ:'sprites/boss_sketch.png',キャンバル:'sprites/boss_canva.png',プロト:'sprites/boss_prott.png','インビジョーン':'sprites/boss_invision.png','スタディーオ':'sprites/boss_studio_atk.png','フレイマ':'sprites/boss_framer.png','フィグム':'sprites/boss_figma.png','クラウド王':'sprites/boss_king.png'};
 function sprite(seed,c1,c2,n=14){
   if(SPRIMG[seed])return SPRIMG[seed];
   if(SPR[seed])return SPR[seed];
@@ -1552,23 +1552,23 @@ const MINIONS=[
   SPR['とめはねフデ']=mkS((r,el,eyes)=>{r(18,2,5,22,'#b5483a');r(18,2,2,22,'#d9705c');r(17,24,7,5,'#c9c9d4');r(17,24,7,1,'#fff');for(let k=0;k<9;k++){const w=Math.max(1,7-Math.floor(k*.8));r(20-Math.floor(w/2),29+k,w,1,'#2a2430')}r(19,36,2,2,'#2a2430');eyes(17,10,5)});
 })();
 const BOSSES={
-  sketch:   {n:'Sketch',s:'りんごの島の王',hp:48,col:['#ffb547','#b86a12'],m:[A(7,'シンボル斬り'),D(9,'りんごの城壁'),M(3,3,'プラグイン軍団'),A(11,'王者の風格')]},
+  sketch:   {n:'スケッチャ',s:'りんごの島の王',hp:48,col:['#ffb547','#b86a12'],m:[A(7,'シンボル斬り'),D(9,'りんごの城壁'),M(3,3,'プラグイン軍団'),A(11,'王者の風格')]},
   principle:{n:'Principle',s:'動きの職人',hp:54,col:['#7ad7ff','#2a79a8'],m:[A(7,'タイムライン'),U(2,'イージング'),A(9,'ドライバー'),D(8,'キーフレーム')]},
-  invision: {n:'InVision Studio',s:'プロトの老舗',hp:125,col:['#ff7aa2','#a83260'],m:[J(2,'コメント地獄'),A(10,'モーション'),M(5,2,'画面遷移'),D(11,'デザインシステム')]},
-  studio:   {n:'STUDIO',s:'国産の刺客',hp:160,col:['#9fe870','#4a8f2a'],m:[A(10,'ノーコード公開'),D(12,'CMS'),M(4,3,'レスポンシブ'),U(2,'そのまま本番')]},
-  framer:   {n:'Framer',s:'コード派の挑戦者',hp:200,col:['#a08cff','#5241b8'],m:[M(6,2,'Reactコンポーネント'),U(2,'インタラクション'),A(13,'サイト公開'),J(1,'仕様変更')]},
-  figma:    {n:'Figma',s:'ブラウザの嵐の主',hp:700,survive:6,col:['#ff7a45','#a83d16'],m:[M(5,3,'マルチカーソル'),A(14,'URLで即共有'),D(15,'無料プラン'),A(17,'コミュニティ')]},
+  invision: {n:'インビジョーン',s:'プロトの老舗',hp:125,col:['#ff7aa2','#a83260'],m:[J(2,'コメント地獄'),A(10,'モーション'),M(5,2,'画面遷移'),D(11,'デザインシステム')]},
+  studio:   {n:'スタディーオ',s:'国産の刺客',hp:160,col:['#9fe870','#4a8f2a'],m:[A(10,'ノーコード公開'),D(12,'CMS'),M(4,3,'レスポンシブ'),U(2,'そのまま本番')]},
+  framer:   {n:'フレイマ',s:'コード派の挑戦者',hp:200,col:['#a08cff','#5241b8'],m:[M(6,2,'Reactコンポーネント'),U(2,'インタラクション'),A(13,'サイト公開'),J(1,'仕様変更')]},
+  figma:    {n:'フィグム',s:'ブラウザの嵐の主',hp:700,survive:6,col:['#ff7a45','#a83d16'],m:[M(5,3,'マルチカーソル'),A(14,'URLで即共有'),D(15,'無料プラン'),A(17,'コミュニティ')]},
   penpot:   {n:'Penpot',s:'オープンソースの新星',hp:300,col:['#3ee0c2','#16806c'],m:[A(12,'オープンソース'),J(2,'セルフホスト'),M(5,3,'ぜんぶ無料'),D(12,'Web標準')]},
-  figmaX:   {n:'Figma',s:'嵐の 暴君',hp:900,col:['#ff7a45','#a83d16'],m:[U(3,'おまかせ生成'),M(6,3,'マルチカーソル'),J(2,'修正依頼の嵐'),A(22,'年次カンファレンス'),H(14,'コミュニティ'),D(16,'エコシステム')]},
+  figmaX:   {n:'フィグム',s:'嵐の 暴君',hp:900,col:['#ff7a45','#a83d16'],m:[U(3,'おまかせ生成'),M(6,3,'マルチカーソル'),J(2,'修正依頼の嵐'),A(22,'年次カンファレンス'),H(14,'コミュニティ'),D(16,'エコシステム')]},
   fairyKing:{n:'妖精の王',s:'妖精の城の 主',hp:1500,col:['#ff9ccf','#a8366f'],m:[U(4,'おまかせの うた'),M(8,3,'ゆめの かけら'),J(3,'ねむりの うず'),A(26,'ひかりの はんらん'),H(18,'ようせいの いのり'),D(20,'まもりの まく')]},
 };
 Object.assign(BOSSES,{
   nidoneru:{sc:.95,n:'ニードネル',s:'「あと5分」から生まれた',hp:84,col:['#c8c8f8','#f0e0b0'],m:[A(5,'ごろごろ'),H(10,'二度寝'),NAP('あと5分'),A(7,'寝坊アタック'),D(8,'寝返り')]},
   daitai:{sc:.8,n:'ザックーリ',s:'「ざっくり わかった」から生まれた',hp:170,blur:1,col:['#e8a8ff','#7a3aa8'],m:[A(7,'だいたい'),U(2,'わかったつもり'),M(5,2,'ざっくり'),D(10,'みなかったこと')]},
   mendo:{sc:.62,n:'メンドウ',s:'「めんどう」から生まれた',hp:90,col:['#9aa0b4','#4b5066'],m:[A(5,'あとで'),D(7,'ごろん'),A(6,'めんどくさい……'),U(1,'やる気ゼロ')]},
-  prott:{n:'Prott',s:'国産のからくり師',hp:90,col:['#7a8cff','#2a3a9c'],m:[A(7,'手描きラフ'),U(2,'画面遷移'),A(10,'ワイヤーフレーム'),D(9,'紙の画面')]},
+  prott:{n:'プロト',s:'国産のからくり師',hp:90,col:['#7a8cff','#2a3a9c'],m:[A(7,'手描きラフ'),U(2,'画面遷移'),A(10,'ワイヤーフレーム'),D(9,'紙の画面')]},
   nocode:{n:'ノーコードの巨人',s:'Webを飲み込んだ者',hp:330,col:['#c9ced8','#4b5366'],m:[A(12,'自動生成'),D(12,'テンプレ量産'),M(5,3,'ワンクリック公開'),U(2,'プロンプト'),J(2,'全部やり直し')]},
-  canva:{n:'Canva',s:'なんでも屋の魔法使い',hp:280,col:['#4fd8ff','#7a4bd6'],m:[A(11,'テンプレート'),U(2,'ワンクリック'),M(5,3,'素材ライブラリ'),D(13,'無料プラン'),J(2,'デザイン依頼')]},
+  canva:{n:'キャンバル',s:'なんでも屋の魔法使い',hp:280,col:['#4fd8ff','#7a4bd6'],m:[A(11,'テンプレート'),U(2,'ワンクリック'),M(5,3,'素材ライブラリ'),D(13,'無料プラン'),J(2,'デザイン依頼')]},
   cloudKing:{n:'クラウド王',s:'雲の王国の主',hp:330,col:['#d9243f','#4a0f1c'],m:[A(14,'サブスクリプション'),D(16,'クラウド同期'),M(6,3,'アップデート通知'),U(3,'新機能発表'),J(2,'ライセンス認証'),A(24,'メンテナンスモード')]},
 });
 Object.assign(BOSSES,{
@@ -1596,7 +1596,7 @@ const CH=[
   {y:2026,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'}]},
   {y:2026,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
   {y:2026,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'}]},
-  {y:2026,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主Figmaが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'storm',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
+  {y:2026,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'storm',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
 ];
 
 /* ================= state & save ================= */
@@ -1945,15 +1945,15 @@ const OPTEXT=`<p>むかし、雲の王国には<br>ひとつの巨大な城が�
 <p>プレビューの旅が始まる。<br>灯を胸に、XDは村を発った。</p>
 <p>海を越え、琥珀の島、りんごの島へ。</p>
 <p class="gp"><br></p>
-<p data-s="mac" data-c="xdA,sk@17">宝石の杖を掲げる王 Sketch</p>
+<p data-s="mac" data-c="xdA,sk@17">宝石の杖を掲げる王 スケッチャ</p>
 <p class="gp"><br></p>
-<p data-s="east" data-c="pt@83">歯車をはずませる国産の発明家 Prott</p>
+<p data-s="east" data-c="pt@83">歯車をはずませる国産の発明家 プロト</p>
 <p class="gp"><br></p>
-<p data-s="castle" data-c="iv@17">本と水晶球を携える老舗の賢者 InVision</p>
+<p data-s="castle" data-c="iv@17">本と水晶球を携える老舗の賢者 インビジョーン</p>
 <p class="gp"><br></p>
-<p data-s="east" data-c="st@83">さらに、黒と白の剣を携える若き新鋭 STUDIO</p>
+<p data-s="east" data-c="st@83">さらに、黒と白の剣を携える若き新鋭 スタディーオ</p>
 <p class="gp"><br></p>
-<p data-s="east" data-c="fr@17">そして、光る矢印を操るコードの挑戦者 Framer</p>
+<p data-s="east" data-c="fr@17">そして、光る矢印を操るコードの挑戦者 フレイマ</p>
 <p class="gp"><br></p>
 <p>戦い、傷ついても、成長を重ね、<br>XDは歩みを止めなかった</p>
 <p class="gp"><br></p>
@@ -1961,16 +1961,16 @@ const OPTEXT=`<p>むかし、雲の王国には<br>ひとつの巨大な城が�
 <p class="gp"><br></p>
 <p data-s="storm">そして、嵐が来た。</p>
 <p data-s="storm">URLひとつで、世界じゅうを飲み込む</p>
-<p data-s="storm" data-c="fg@83">五色の宝石をまとう嵐の王 —— Figma。</p>
+<p data-s="storm" data-c="fg@83">五色の宝石をまとう嵐の王 —— フィグム。</p>
 <p class="gp"><br><br></p>
 <p class="yr" data-s="castle">2022 — 2024</p>
 <p class="gp"><br></p>
-<p data-s="castle">2022年9月、王国は<br>嵐の主Figmaとの同盟を宣言した。</p>
+<p data-s="castle">2022年9月、王国は<br>嵐の主フィグムとの同盟を宣言した。</p>
 <p data-s="castle">だが2023年12月、同盟は白紙に還る。</p>
 <p>XDは新たな力を宿すことができなくなり、<br>やがて王国も、力を注ぐのをやめた。</p>
 <p class="gp"><br></p>
 <p data-s="castle">そのころ、新たな挑戦者も現れた。</p>
-<p data-s="castle" data-c="cv@17">誰もが色を手にできる、軽やかな旅人 —— Canva。</p>
+<p data-s="castle" data-c="cv@17">誰もが色を手にできる、軽やかな旅人 —— キャンバル。</p>
 <p class="gp"><br></p>
 <p data-s="tower">XDは眠りの塔で、静かに時を数える。</p>
 <p class="gp"><br></p>
@@ -1996,14 +1996,14 @@ const OPTEXT2=`<p>むかし、雲の王国に<br>創造の火を守る王都—�
 <p class="yr">2015年</p>
 <p data-c="xd@17">空から彗星が落ち、<br>ひとつの命が目を覚ました。<br>その名は　XD。</p>
 <p class="gp"><br></p>
-<p>XDは旅に出て、<br>Sketch、Prott、InVision、STUDIO、Framer——<br>さまざまな敵と出会い、戦った。</p>
+<p>XDは旅に出て、<br>スケッチャ、プロト、インビジョーン、スタディーオ、フレイマ——<br>さまざまな敵と出会い、戦った。</p>
 <p>傷つきながらも、XDは強くなった。</p>
 <p class="gp"><br></p>
 <p class="yr" data-t="storm">2021年</p>
-<p data-t="storm">そこへ、嵐が来た。<br>URLひとつで世界を飲み込む王——Figma。</p>
+<p data-t="storm">そこへ、嵐が来た。<br>URLひとつで世界を飲み込む王——フィグム。</p>
 <p class="gp"><br></p>
 <p class="yr" data-t="dark">2022 — 2023</p>
-<p data-t="dark">王国はFigmaと同盟を宣言した。<br>だが翌年、その同盟は白紙に還った。</p>
+<p data-t="dark">王国はフィグムと同盟を宣言した。<br>だが翌年、その同盟は白紙に還った。</p>
 <p data-t="dark">XDは新しい力を宿せなくなり、<br>王国も、力を注ぐのをやめた。</p>
 <p data-t="dark">XDは眠りの塔で、静かに時を数えた。</p>
 <p class="gp"><br></p>
@@ -2132,8 +2132,8 @@ function openingLong(after,label,cfg){window.__bpmSet=0;
     return [A[0]+dx*q,A[1]+dy*q,Math.abs(dx)>Math.abs(dy)?(dx>0?3:2):(dy>0?0:1)]}
   // camera keyframes for the flyover: [time, place, zoom]
   const KEY=[[70,'castle',1.2],[82,'mac',1.3],[88,'castle',1.2],[94,'east',1.3],[100,'tower',1.3],[106,'storm',1.3],[112,'storm',1.5]];
-  const SUBS=[[71,75.5,'2016　はじまりの村'],[77,81.5,'雲の王都　——　王国の中心'],[83,87.5,'2016　りんごの島　Sketch'],[95,99.5,'2017・2019　東の国　Prott ／ STUDIO'],[101,105.5,'2024　眠りの塔　Canva'],[107,111.5,'2021　ブラウザ大陸　Figma'],
-    [113,118,'2022　王国は、嵐の主Figmaとの同盟を宣言した'],[118.5,123.5,'2023　同盟は白紙に。XDは単体では手に入らなくなった'],[124,128,'2024　眠りの塔に、静かな時間が流れる'],[129,134.5,'それでも、XDは立っている'],[135.5,141,'十年目——']];
+  const SUBS=[[71,75.5,'2016　はじまりの村'],[77,81.5,'雲の王都　——　王国の中心'],[83,87.5,'2016　りんごの島　スケッチャ'],[95,99.5,'2017・2019　東の国　プロト ／ スタディーオ'],[101,105.5,'2024　眠りの塔　キャンバル'],[107,111.5,'2021　ブラウザ大陸　フィグム'],
+    [113,118,'2022　王国は、嵐の主フィグムとの同盟を宣言した'],[118.5,123.5,'2023　同盟は白紙に。XDは単体では手に入らなくなった'],[124,128,'2024　眠りの塔に、静かな時間が流れる'],[129,134.5,'それでも、XDは立っている'],[135.5,141,'十年目——']];
   function camAt(t){
     let i=0;while(i<KEY.length-2&&t>=KEY[i+1][0])i++;
     const a=KEY[i],b=KEY[i+1],u=ease(clamp((t-a[0])/(b[0]-a[0]),0,1)),A=ctr(a[1]),B=ctr(b[1]);
@@ -2774,8 +2774,8 @@ function placeObj(p){
   if(st&&st.k==='free')return 'ゆっくり 見てまわろう';
   if(st&&st.k==='gate'&&(G.hunt||0)>=st.need)return '雲の王の ひろまへ（最後の かんもん）';
   if(st&&st.need&&(G.hunt||0)<st.need)return `村の そとで 戦いに なれよう（${G.hunt||0}/${st.need}）`;
-  if(p.id==='east'&&stopHere(p)&&st.k==='e_hi')return '町の 人や 城の 王に Prottの ゆくえを 聞こう。工房は 広場の 右の 家';
-  if(p.id==='east'&&stopHere(p)&&st.k==='e_clear')return '広場の 右の 工房へ。Prottに ほうこくしよう';
+  if(p.id==='east'&&stopHere(p)&&st.k==='e_hi')return '町の 人や 城の 王に プロトの ゆくえを 聞こう。工房は 広場の 右の 家';
+  if(p.id==='east'&&stopHere(p)&&st.k==='e_clear')return '広場の 右の 工房へ。プロトに ほうこくしよう';
   if(p.at==='dg')return '魔物や 番人に 話しかけると 戦いになる。奥の 宝箱を めざそう。出口は 下の道';
   if(stopHere(p))return p.stopHint||'あたりの ひとに はなしかけよう';
   if(st&&st.at===p.at)return p.inHint||'おくへ すすもう';
@@ -2827,13 +2827,13 @@ function townSay(lines,done){
 let LASTPL=null;
 const BOSSWHY={
 daitai:['……だいたい、わかった。','おまえが XDだな。「だいたい」で ぜんぶ わかる。くわしく 見る 必要は ない……。','……村の人の「見る力」は、おいしかったぞ。'],
-sketch:['よく来たな、XD。わたしはSketch。りんごの島で、UIデザインの道具として一番に選ばれてきた。','おまえは後から生まれた新入りだ。りんごの島だけでなく、みんなの道具になりたいのだろう？','ならば、この島の王である わたしを越えてみせろ！'],
-prott:['わたしはPrott。紙に描いた絵を、そのまま動く画面に変えるからくり師だ。','おまえも「画面をつなげて動かす」道具だと聞いた。同じ仕事をする者が、ふたりもいらぬ。','どちらが先へ進むか、勝負だ！'],
-invision:['おれはInVision。XDより先に、プロトタイプの世界を作った老舗さ。','新参者に、この関所は通させない。みんな、おれのコメント機能で仕事をしているんだ。','通りたければ、おれを倒していけ！'],
-studio:['わたしはSTUDIO。コードを書かずに、サイトをそのまま公開できる国産の道具だ。','デザインを描くだけのおまえと、公開までできるわたし。どちらが便利か、試してみよう。'],
-framer:['ぼくはFramer。本物のコードで動くプロトタイプが作れるんだ。','絵が動くだけのおまえと、中身まで動くぼく。違いを見せてあげるよ！'],
-figma:['私はFigma。ブラウザひとつで、みんなが同時に触れる。いまや世界じゅうが 私を使っている。','XD、おまえは強い。だが、時代の流れは止められん。','……立っていられるか。嵐が過ぎるまで！'],
-canva:['はじめまして、XD。わたしはCanva。デザインを知らない人でも、ワンクリックで素敵なものが作れるのよ。','あなたの塔は静かね。みんなの興味は、もう わたしたちに移っているわ。','あなたの力、少しだけ見せて？'],
+sketch:['よく来たな、XD。わたしはスケッチャ。りんごの島で、UIデザインの道具として一番に選ばれてきた。','おまえは後から生まれた新入りだ。りんごの島だけでなく、みんなの道具になりたいのだろう？','ならば、この島の王である わたしを越えてみせろ！'],
+prott:['わたしはプロト。紙に描いた絵を、そのまま動く画面に変えるからくり師だ。','おまえも「画面をつなげて動かす」道具だと聞いた。同じ仕事をする者が、ふたりもいらぬ。','どちらが先へ進むか、勝負だ！'],
+invision:['おれはインビジョーン。XDより先に、プロトタイプの世界を作った老舗さ。','新参者に、この関所は通させない。みんな、おれのコメント機能で仕事をしているんだ。','通りたければ、おれを倒していけ！'],
+studio:['わたしはスタディーオ。コードを書かずに、サイトをそのまま公開できる国産の道具だ。','デザインを描くだけのおまえと、公開までできるわたし。どちらが便利か、試してみよう。'],
+framer:['ぼくはフレイマ。本物のコードで動くプロトタイプが作れるんだ。','絵が動くだけのおまえと、中身まで動くぼく。違いを見せてあげるよ！'],
+figma:['私はフィグム。ブラウザひとつで、みんなが同時に触れる。いまや世界じゅうが 私を使っている。','XD、おまえは強い。だが、時代の流れは止められん。','……立っていられるか。嵐が過ぎるまで！'],
+canva:['はじめまして、XD。わたしはキャンバル。デザインを知らない人でも、ワンクリックで素敵なものが作れるのよ。','あなたの塔は静かね。みんなの興味は、もう わたしたちに移っているわ。','あなたの力、少しだけ見せて？'],
 nocode:['……おれは、ノーコードの巨人。Webを、ひとりでに生まれるものに変えてきた。','おまえの仲間の灯は、もうすぐ消える。おれが吸っているからな。','取り戻したければ、おれを倒してみろ。'],
 figmaX:['……来たか、XD。この 大陸の 主は、私だ。妖精の力も、道具たちも、すべて 私に ひざまずく。','「考える力」が 欲しいか。ならば、力で 奪ってみせろ！'],
 fairyKing:['よく 来たね、XD。……わたしは 妖精の王。みんなを しあわせに したいだけ なの。','考えるのも、つくるのも、まよう のも……もう、つらいでしょう？ わたしが ぜんぶ やってあげる。みんなは、なにも しなくて いいの。','だから その 灯も、わたしに あずけて。……やさしく、ねむらせて あげるから。']};
@@ -2870,17 +2870,17 @@ function townStory(k){
     dw('雲の国へ行け。空の王の城で、Fiが待っておる。王から、授けていただくのじゃ。……どう使うかは、おまえ次第じゃぞ。'),
     ['','雲の国の王都へ。灯のゆくえは、そこで決まる。',PDW]],
     ()=>townChoice('',[{l:'雲の国へ',s:'Fiを 迎えに いく',f:()=>{sfx('lvup');townFin(()=>CONT&&CONT())}}]));
-  if(k==='e_hi'){const pr=(t)=>['Prott　国産のからくり師',t];return townSay([
+  if(k==='e_hi'){const pr=(t)=>['プロト　国産のからくり師',t];return townSay([
     pr('……来て くれたんだね、XD。……ごめん、こんな すがたで。'),
-    ['','工房の すみに、Prottが 立っている。その体は うすく すけて、むこうの 壁が 見える。'],
+    ['','工房の すみに、プロトが 立っている。その体は うすく すけて、むこうの 壁が 見える。'],
     pr('「見る力」を 食われて、ぼくの 輪郭は ほどけてしまった。ここに いるのは、ぼくの 記憶みたいな ものなんだ。'),
     pr('この国の者たちは、いつからか、細かいところを 見なくなった。「だいたい わかった」と言って、見たつもりで 済ませてしまう。'),
     pr('そのだらけた心が、「ザックーリ」という魔物になった。……人々の「見る力」を、食って 育ったんだ。'),
     pr('ザックーリは、ときどき ぼやける。ぼやけている間は、こちらの攻撃が 当たらないんだ。……よく見て。くっきり見えた 瞬間を、のがさないで。'),
     pr('ザックーリを はっきり 見すえるには、ぼくの「虫めがね」が いる。東の国の 南東の 浜辺に ある「かすみの洞窟」に、落として しまったんだ。……番人が いるから、気を つけて。拾って きて。ザックーリは 広場に いる。ぼくは ここで、待ってるよ。')],
     ()=>townFin(()=>CONT&&CONT()))}
-  if(k==='e_clear'){const pr=(t)=>['Prott　国産のからくり師',t];return townSay([
-    ['','工房の すみで、うすれていた Prottの すがたが、少しずつ 色を とりもどした。'],
+  if(k==='e_clear'){const pr=(t)=>['プロト　国産のからくり師',t];return townSay([
+    ['','工房の すみで、うすれていた プロトの すがたが、少しずつ 色を とりもどした。'],
     pr('……やったね、XD。ザックーリが ほどけて、ぼくの 輪郭が もどってきた。東の国の 空気も すんだよ。'),
     ['','ザックーリの体から、ひとつの光が こぼれ出た。それは、XDの灯に すいこまれていく。',PDW],
     pr('見る力が、もどった。これからは、妖精の「ねらって」も、きみの 目を かりて 使えるはずだよ。'),
@@ -2926,8 +2926,8 @@ const S2={
  m_clear:{w:'Ai　線を紡ぐ魔女',hint:'祠の 魔女に ほうこくする',l:[['','ンナモンが ほどけて、あたたかい光が 灯に すいこまれていく。'],'……線が、また 引けるわ。ほら、ペンが 走る。','「描く力」が もどったのね。手で かたちに する。それは、だれにも ゆずれない 力よ。','私も ついていくわ。ベクターなら 任せて。次は 時の 泉。作った ものを 見せられずに いる人たちが いるの。'],fin:()=>{grantPower('make');if(!G.allies.includes('ai'))G.allies.push('ai');sfx('ally')}},
  o_hi:{w:'Ae　時を織る賢者',hint:'時の泉の 賢者に 会う',l:['よく 来た、XD。この泉の まわりを 見よ。つくった ものが、山のように 眠って おるじゃろう。','「まだ 見せられない」「もう少し 直してから」……そう 言って 手元に しまい込む うちに、世界に とどかぬ まま 時が すぎる。','そのためらいが「ペンディ」という 魔物に なった。人々の「伝える力」を 食って 育って おる。','公開する 勇気には、きっかけが いる。東の 原っぱに、作品を 出しそびれた「作り手」が おる。彼から 作品を あずかり、東の 空の 下で 待つ 人へ 届けて きなさい。']},
  o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:[['','ペンディが ほどけ、眠っていた 作品が 光に つつまれて、空へ のぼっていく。'],'見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が、最後の 鍵を 握って おる。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
- f_hi:{w:'Fi　生まれたての精霊',hint:'ブラウザ大陸の 嵐の ただなかへ',l:['……ここが、ブラウザ大陸。空は 嵐に とざされて、あの 中心に 人かげが 見える。','あれは Figma。いまは この 大陸を 力で おさえつける 暴君。……「おまかせの 力」を 取り入れて、さからう 道具を ぜんぶ 従わせて いるの。','最後の 力は「考える力」。あの 暴君から 取りもどさなきゃ。……でも、なにを つくるか、どう 生きるかを 決めるのは、わたしじゃ ない。あなた。','でも、わたしは そばに いる。山の 手前に「まよいの 迷宮」が あるの。奥に「まよいの 羅針盤」が ねむって いる。それを 手に、嵐の ただなかへ 行こう、XD。']},
- f_clear:{w:'Fi　生まれたての精霊',hint:'Fiの もとへ もどる',l:[['','嵐が やみ、Figmaは ひざを ついた。胸の 奥から、うすい 桃色の 糸が ほどけて いく。','sprites/boss_figma.png'],['Figma','……私は、いままで……だれかに、動かされて いたのか……？','sprites/boss_figma.png'],['Figma','……XD。すまなかった。この 大陸の 者たちにも、詫びねば ならん。','sprites/boss_figma.png'],['Fi　生まれたての精霊','あの糸……北の 妖精の城から のびてる。みんなの「おまかせ」の 力を あつめて、Figmaを 暴君に して 操って いた王が いるの。——妖精の王。',PFF],['Fi　生まれたての精霊','Figmaは 悪く ない。力を むりやり 使わされて、この 大陸を おさえつけて いただけ。……それに 妖精の王にも、悪意は ないの。「みんなを しあわせに したい」って、ほんとうに 思ってる。',PFF],['Fi　生まれたての精霊','「考える力」は もどったよ、XD。でも、糸の さきを たたなければ、また 同じことが おきる。……妖精の城へ、行こう。',PFF]],fin:()=>{grantPower('choose');sfx('lvup')}},
+ f_hi:{w:'Fi　生まれたての精霊',hint:'ブラウザ大陸の 嵐の ただなかへ',l:['……ここが、ブラウザ大陸。空は 嵐に とざされて、あの 中心に 人かげが 見える。','あれは フィグム。いまは この 大陸を 力で おさえつける 暴君。……「おまかせの 力」を 取り入れて、さからう 道具を ぜんぶ 従わせて いるの。','最後の 力は「考える力」。あの 暴君から 取りもどさなきゃ。……でも、なにを つくるか、どう 生きるかを 決めるのは、わたしじゃ ない。あなた。','でも、わたしは そばに いる。山の 手前に「まよいの 迷宮」が あるの。奥に「まよいの 羅針盤」が ねむって いる。それを 手に、嵐の ただなかへ 行こう、XD。']},
+ f_clear:{w:'Fi　生まれたての精霊',hint:'Fiの もとへ もどる',l:[['','嵐が やみ、フィグムは ひざを ついた。胸の 奥から、うすい 桃色の 糸が ほどけて いく。','sprites/boss_figma.png'],['フィグム','……私は、いままで……だれかに、動かされて いたのか……？','sprites/boss_figma.png'],['フィグム','……XD。すまなかった。この 大陸の 者たちにも、詫びねば ならん。','sprites/boss_figma.png'],['Fi　生まれたての精霊','あの糸……北の 妖精の城から のびてる。みんなの「おまかせ」の 力を あつめて、フィグムを 暴君に して 操って いた王が いるの。——妖精の王。',PFF],['Fi　生まれたての精霊','フィグムは 悪く ない。力を むりやり 使わされて、この 大陸を おさえつけて いただけ。……それに 妖精の王にも、悪意は ないの。「みんなを しあわせに したい」って、ほんとうに 思ってる。',PFF],['Fi　生まれたての精霊','「考える力」は もどったよ、XD。でも、糸の さきを たたなければ、また 同じことが おきる。……妖精の城へ、行こう。',PFF]],fin:()=>{grantPower('choose');sfx('lvup')}},
 };
 function townStory2(k){const d=S2[k];
   const W=STORYWHO[k]||[],pt=({ps:'sprites/ally_ps.png',ai:'sprites/ally_ai.png',ae:'sprites/ally_ae.png',ff:PFF,dw:PDW,prott:'sprites/boss_prott.png',figma:'sprites/boss_figma.png',cloudKing:'sprites/boss_king.png'})[W[1]]||null;
@@ -2961,11 +2961,11 @@ const STAGE_SAY={
  'castle:へいし':[[3,['Fiを 連れた 旅人が 王都に 来た、と 町じゅうの うわさだ。']],[5,['正式版の 灯が、城の 塔まで 届いた。見たか？ あの 明るさを。']]],
  'castle:おうとの おんな':[[3,['あの ちいさな 光……なんだか、見てると やさしい 気持ちに なるわ。']],[5,['ひさしぶりに、広場で 絵を 描いている 子を 見たの。うれしくて……。']]],
  'castle:しょうにん':[[3,['妖精つきの 旅人か。……商売に 使えるかも しれんが、頼りきる 商人は つぶれるよ。']],[5,['灯が 明るく なってから、客の 目が 変わった。手で 作った 品が 売れるんだ。']]],
- 'east:まちびと':[[10,['Prottさん？ そういえば、ここ数日 すがたを 見かけないねえ。','……いや、見えて いないだけ かも。このごろ、みんな 細かい ところを 見なくなって ねえ。']],[11,['広場に ザックーリって 魔物が 出たらしいよ。Prottさんの 工房から、あかりが もれて いたねえ。']],[13,['ザックーリが 消えた？ Prottさんに 知らせて あげなよ。']],[20,['Prottさん、もとの すがたに もどったんだって？ 工房に あかりが ともったよ。']]],
- 'east:行商人':[[10,['Prottを さがしてる？ あの 歯車を のせた 塔の 家が 工房さ。','だけど 気を つけな。中の Prottは、すけて いて 幽霊みたいだぜ。']],[11,['ザックーリは 広場の まんなかに いるそうだ。ぼやけて いる ときは、手を 出さない ほうが いいぜ。']],[13,['ザックーリが ほどけたって！？ Prottに 知らせて やりな。工房に いる はずだ。']],[20,['Prottが もとに もどって、客も ふえたよ。ありがてえ。']]],
- 'east:おかみさん':[[10,['Prottさんなら、歯車の 塔の 工房に こもりきりよ。このごろ ぼんやり して、輪郭が うすいのよね……。']],[11,['Prottさんと 話せたのね。よかった。ザックーリは 広場よ、気を つけて。']],[13,['ザックーリが いなくなったの？ Prottさんの 工房へ 行って あげて。']],[20,['Prottさんの 姿が くっきり 見えるように なったわ。ありがとう、旅の 人。']]],
- 'east:ろうじん':[[10,['見る力を 食われた 者は、すがたまで ぼやける そうじゃ。……工房へ 行って やれ。']],[11,['見る力を 取り戻すには、ザックーリを 倒すしか あるまい。……たのんだぞ。']],[13,['ザックーリが 消えたか。工房の Prottに 知らせて やれ。']],[20,['むかしの 図面が、また くっきり 見える。ありがたいことじゃ。']]],
- 'east:こども':[[10,['Prott兄ちゃん、すけて 見えるんだ！ 工房に いるよ、おばけ みたい。']],[11,['ザックーリ、広場に いたよ。ぼやぼやして、こわい……。']],[13,['ザックーリ、いなくなった！ Prott兄ちゃんに 教えて あげて！']],[20,['Prott兄ちゃん、もどったよ！ 手が ちゃんと 見える！']]],
+ 'east:まちびと':[[10,['プロトさん？ そういえば、ここ数日 すがたを 見かけないねえ。','……いや、見えて いないだけ かも。このごろ、みんな 細かい ところを 見なくなって ねえ。']],[11,['広場に ザックーリって 魔物が 出たらしいよ。プロトさんの 工房から、あかりが もれて いたねえ。']],[13,['ザックーリが 消えた？ プロトさんに 知らせて あげなよ。']],[20,['プロトさん、もとの すがたに もどったんだって？ 工房に あかりが ともったよ。']]],
+ 'east:行商人':[[10,['プロトを さがしてる？ あの 歯車を のせた 塔の 家が 工房さ。','だけど 気を つけな。中の プロトは、すけて いて 幽霊みたいだぜ。']],[11,['ザックーリは 広場の まんなかに いるそうだ。ぼやけて いる ときは、手を 出さない ほうが いいぜ。']],[13,['ザックーリが ほどけたって！？ プロトに 知らせて やりな。工房に いる はずだ。']],[20,['プロトが もとに もどって、客も ふえたよ。ありがてえ。']]],
+ 'east:おかみさん':[[10,['プロトさんなら、歯車の 塔の 工房に こもりきりよ。このごろ ぼんやり して、輪郭が うすいのよね……。']],[11,['プロトさんと 話せたのね。よかった。ザックーリは 広場よ、気を つけて。']],[13,['ザックーリが いなくなったの？ プロトさんの 工房へ 行って あげて。']],[20,['プロトさんの 姿が くっきり 見えるように なったわ。ありがとう、旅の 人。']]],
+ 'east:ろうじん':[[10,['見る力を 食われた 者は、すがたまで ぼやける そうじゃ。……工房へ 行って やれ。']],[11,['見る力を 取り戻すには、ザックーリを 倒すしか あるまい。……たのんだぞ。']],[13,['ザックーリが 消えたか。工房の プロトに 知らせて やれ。']],[20,['むかしの 図面が、また くっきり 見える。ありがたいことじゃ。']]],
+ 'east:こども':[[10,['プロト兄ちゃん、すけて 見えるんだ！ 工房に いるよ、おばけ みたい。']],[11,['ザックーリ、広場に いたよ。ぼやぼやして、こわい……。']],[13,['ザックーリ、いなくなった！ プロト兄ちゃんに 教えて あげて！']],[20,['プロト兄ちゃん、もどったよ！ 手が ちゃんと 見える！']]],
 };
 function stageSay(n){const t=STAGE_SAY[(TW.pl?TW.pl.id:'')+':'+n.n];if(!t)return n.say;let r=n.say;t.forEach(([k,l])=>{if(G.ch*10+G.stop>=k)r=l});return r}
 function townNPC(n){
@@ -3094,7 +3094,7 @@ function furnishChapel(p,H,o={}){const x=H.x,y=H.y;
   npc(p,5,9,{n:'へいし',c:NM.guard,say:['王の 御前だ。しずかに。']});npc(p,9,9,{n:'へいし',c:NM.guard,say:['……それでも 王は、旅人を 拒まれぬ。']});
 }
 /* ---- Mac ---- */
-{const p=mkP('mac','mac',22,16,{name:'りんごの島',sub:'王Sketchの琥珀の宮殿',spawn:[10,14],exit:[10,11],inHint:'琥珀の 宮殿へ はいろう'});
+{const p=mkP('mac','mac',22,16,{name:'りんごの島',sub:'王スケッチャの琥珀の宮殿',spawn:[10,14],exit:[10,11],inHint:'琥珀の 宮殿へ はいろう'});
   border(p,[10,11],{ks:['tree1','tree3','tree2','tree4','pine2']});
   fillG(p,'d',10,5,2,11);fillG(p,'c',6,9,10,5);fillG(p,'c',8,8,6,1);
   big(p,{x:8,y:3,w:5,h:5,img:'bld_mac_new',dc:2,to:['mac_in',6,9]});
@@ -3104,11 +3104,11 @@ function furnishChapel(p,H,o={}){const x=H.x,y=H.y;
   [[3,12],[18,12],[2,5],[19,5]].forEach(([x,y])=>prop(p,'flowerbed',x,y));
   prop(p,'barrel',17,14);prop(p,'crate',18,14);prop(p,'bench',7,13,{fw:2});prop(p,'bench',13,13,{fw:2});
   scatter(p,['flowers2','flowers4','flowers6','flowers8','flowers10'],16,9);
-  npc(p,9,8,{n:'もんばん',c:NM.guard,say:['ここは りんごの島。王Sketchの 宮殿だ。']});npc(p,13,8,{n:'もんばん',c:NM.guard,say:['王は 強い。だが 礼を 欠く 者には 会わぬ。']});
+  npc(p,9,8,{n:'もんばん',c:NM.guard,say:['ここは りんごの島。王スケッチャの 宮殿だ。']});npc(p,13,8,{n:'もんばん',c:NM.guard,say:['王は 強い。だが 礼を 欠く 者には 会わぬ。']});
   prop(p,'sign_tool',11,12,{ns:1});npc(p,12,12,{n:'しまの おとこ',k:'shop2',cat:'tool',dsp:'clerk_t',c:NM.man,say:['シンボルの 使い方は 王から 教わったのさ。','XDも ずいぶん 参考に したらしいぜ。']});
 }
 npc(PLACES.mac,17,13,{n:'Fw',k:'fw',dsp:'fw',still:1,c:['#484728','#e3e40a']});
-{const p=mkP('mac_in','mac',13,11,{name:'琥珀の間',sub:'Sketchの 玉座',base:'c',spawn:[6,9],stop:{x:6,y:4,dir:'down'}});
+{const p=mkP('mac_in','mac',13,11,{name:'琥珀の間',sub:'スケッチャの 玉座',base:'c',spawn:[6,9],stop:{x:6,y:4,dir:'down'}});
   fillG(p,'W',0,0,13,2);fillG(p,'W',0,0,1,11);fillG(p,'W',12,0,1,11);fillG(p,'W',0,10,13,1);fillG(p,'c',6,10,1,1);
   solidR(p,0,0,13,2);solidR(p,0,0,1,11);solidR(p,12,0,1,11);solidR(p,0,10,13,1);solidR(p,6,10,1,1,false);
   p.warps.push({x:6,y:10,to:'mac',tx:10,ty:8,dir:'down'});
@@ -3143,15 +3143,15 @@ function furnishJp(p,H,o={}){const x=H.x,y=H.y,v=(x*5+y*3)&1;
   else{prop(p,v?'j_chadana':'j_hondana',x+3,y+1);prop(p,'j_tansu',x+5,y+1);prop(p,'j_chabudai',x+4,y+3);prop(p,'j_zabuton_r',x+3,y+3,{ns:1});prop(p,v?'j_ikebana':'j_tsubo',x+1,y+3,{ns:1})}
   if(o.npc)npc(p,x+3,y+2,o.npc)}
 const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','flowers7','flowers8','flowers9','flowers10'];
-{const p=mkP('east','east',26,18,{name:'東の城',sub:'城下町と 東の城。STUDIOと Prottの 故郷',base:'g',spawn:[12,16],exit:[12,13],stop:{x:14,y:10,dir:'left'},stopP:{x:21,y:4,dir:'down'}});
+{const p=mkP('east','east',26,18,{name:'東の城',sub:'城下町と 東の城。スタディーオと プロトの 故郷',base:'g',spawn:[12,16],exit:[12,13],stop:{x:14,y:10,dir:'left'},stopP:{x:21,y:4,dir:'down'}});
   border(p,[12,13],{ks:['sakura','tree1','sakura','pine2','sakura','cypress']});
   fillG(p,'d',12,3,2,15);fillG(p,'c',8,7,10,6);
   fillG(p,'d',4,7,1,2);fillG(p,'d',4,8,5,1);fillG(p,'d',21,7,1,2);fillG(p,'d',17,8,5,1);
   fillG(p,'d',4,16,1,1);fillG(p,'d',4,16,8,1);fillG(p,'d',21,16,1,1);fillG(p,'d',14,16,8,1);
   const h1=house(p,{x:1,y:2,w:7,h:5,img:'bld_jp_machiya'});furnishJp(p,h1,{npc:{n:'おかみさん',c:NM.woman,say:['いらっしゃい。東の国の 家は 雨の音が きれいに 聞こえるのよ。']}});
-  const h2=house(p,{x:18,y:2,w:7,h:5,img:'bld_jp_shop'});furnishJp(p,h2,{shop:1});npc(p,22,5,{n:'わかもの',c:NM.man,say:['STUDIOの 話、聞いたか？ コードを 書かずに サイトを 公開 できるんだって。']});
-  npc(p,21,4,{n:'Prott',dsp:'prottf',dir:'down',hideIf:()=>!(G.ch===1&&G.stop===1),say:['……ザックーリを、たのむよ。広場の まんなかに いる。','（Prottの すがたは、いまにも 消えそうだ。）']});
-  npc(p,21,4,{n:'Prott',dsp:'prott',dir:'down',hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次の町では、人の声が ふさがれて いるらしい。気をつけて。']});
+  const h2=house(p,{x:18,y:2,w:7,h:5,img:'bld_jp_shop'});furnishJp(p,h2,{shop:1});npc(p,22,5,{n:'わかもの',c:NM.man,say:['スタディーオの 話、聞いたか？ コードを 書かずに サイトを 公開 できるんだって。']});
+  npc(p,21,4,{n:'プロト',dsp:'prottf',dir:'down',hideIf:()=>!(G.ch===1&&G.stop===1),say:['……ザックーリを、たのむよ。広場の まんなかに いる。','（プロトの すがたは、いまにも 消えそうだ。）']});
+  npc(p,21,4,{n:'プロト',dsp:'prott',dir:'down',hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次の町では、人の声が ふさがれて いるらしい。気をつけて。']});
   const h3=house(p,{x:1,y:11,w:7,h:5,img:'bld_jp_tea'});furnishJp(p,h3,{npc:{n:'ろうじん',c:NM.old,say:['むかしは 手書きの 図面だけが たよりだった。いまは 国産の からくりが 山ほど あるわい。']}});
   const h4=house(p,{x:18,y:11,w:7,h:5,img:'bld_jp_shrine'});furnishJp(p,h4,{shrine:1,npc:{n:'こども',c:NM.child,say:['さくらの 木の 下で、からくり人形が おどるんだよ！']}});
   big(p,{x:10,y:0,w:7,h:8,img:'bld_castle_jp',dc:3,to:['east_in',7,10]});
@@ -3161,7 +3161,7 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   prop(p,'well',10,12,{say:'つめたい 井戸の 水。'});prop(p,'bench',14,12,{fw:2});prop(p,'sakura',6,13);prop(p,'sakura',19,8);prop(p,'sakura',7,9);
   [[2,9],[6,9],[20,9],[24,9]].forEach(([x,y])=>prop(p,'flowerbed',x,y));
   scatter(p,FLW,22,2);
-  npc(p,13,10,{n:'東の王',dsp:'tono',h:36,Rw:6,c:['#c0394f','#e8c850'],hideIf:()=>KL!=='out',say:['おお、旅の者か。城に おっても 退屈でな、こうして 町を 歩いて おる。','Prott殿を 探して おるのか。広場の 東の 家に おるぞ。','国産の からくりは、自分の 目で 見て 回るのが いちばん よい。']});
+  npc(p,13,10,{n:'東の王',dsp:'tono',h:36,Rw:6,c:['#c0394f','#e8c850'],hideIf:()=>KL!=='out',say:['おお、旅の者か。城に おっても 退屈でな、こうして 町を 歩いて おる。','プロト殿を 探して おるのか。広場の 東の 家に おるぞ。','国産の からくりは、自分の 目で 見て 回るのが いちばん よい。']});
   npc(p,12,9,{n:'まちびと',c:NM.red,say:['ようこそ、東の城へ。桜が 咲くと、道が 淡く 染まるんだ。']});
   prop(p,'sign_yorozu',10,14,{ns:1});npc(p,11,14,{n:'行商人',k:'shop2',dsp:'clerk_p',c:NM.orange,say:['国境の 向こうの 話は 面白いぞ。西には 王都、北東には 嵐の 大陸だ。']});
 }
@@ -3174,13 +3174,13 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   prop(p,'j_nobori',3,1,{ns:1});prop(p,'j_nobori',5,1,{ns:1});prop(p,'j_nobori',9,1,{ns:1});prop(p,'j_nobori',11,1,{ns:1});
   prop(p,'j_shoji',2,1,{ns:1});prop(p,'j_shoji',12,1,{ns:1});
   prop(p,'j_andon',2,4);prop(p,'j_andon',12,4);prop(p,'j_andon',2,9);prop(p,'j_andon',12,9);
-  const KS=['よく来た、旅の者。この国では 昔から、ものを 「見る」ことを 大切に してきた。','近ごろ 民が 「だいたい」で 済ませるのは、見る力を 奪われたからだ。','国産のからくり師 Prottが、広場の 東の 家に 工房を 構えておる。まずは 訪ねるが よい。'];
+  const KS=['よく来た、旅の者。この国では 昔から、ものを 「見る」ことを 大切に してきた。','近ごろ 民が 「だいたい」で 済ませるのは、見る力を 奪われたからだ。','国産のからくり師 プロトが、広場の 東の 家に 工房を 構えておる。まずは 訪ねるが よい。'];
   npc(p,7,3,{n:'東の王',dsp:'tono',h:36,Rw:3,c:['#c0394f','#e8c850'],hideIf:()=>KL!=='in',say:KS});
-  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL!=='in',say:['王の 御前だ。……だが 旅人には やさしい 王だ。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL!=='in',say:['Prott殿の 工房は 広場の 右手。町の 者も 場所を 知っておるよ。']});
-  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL==='in',say:['……また 殿が 散歩に 行って しまわれた。','町のほうに おられるはずだ。ふらりと 歩き回るのが お好きでな。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL==='in',say:['殿は また お忍びで 町へ……。','Prott殿の ことなら、殿に 聞くのが 早い。広場の あたりを 探されよ。']});
+  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL!=='in',say:['王の 御前だ。……だが 旅人には やさしい 王だ。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL!=='in',say:['プロト殿の 工房は 広場の 右手。町の 者も 場所を 知っておるよ。']});
+  npc(p,5,9,{n:'へいし',c:NM.guard,hideIf:()=>KL==='in',say:['……また 殿が 散歩に 行って しまわれた。','町のほうに おられるはずだ。ふらりと 歩き回るのが お好きでな。']});npc(p,9,9,{n:'大臣',c:NM.old,hideIf:()=>KL==='in',say:['殿は また お忍びで 町へ……。','プロト殿の ことなら、殿に 聞くのが 早い。広場の あたりを 探されよ。']});
 }
 /* ---- storm ---- */
-{const p=mkP('storm','storm',20,15,{name:'ブラウザ大陸',sub:'暴君Figmaが 待つ 雷雲の地',base:'k',tint:'#1a0c4a55',spawn:[9,13],exit:[9,10],stop:{x:9,y:9,dir:'down'},stopHint:'嵐の ただなかに、暴君の かげが 立っている'});
+{const p=mkP('storm','storm',20,15,{name:'ブラウザ大陸',sub:'暴君フィグムが 待つ 雷雲の地',base:'k',tint:'#1a0c4a55',spawn:[9,13],exit:[9,10],stop:{x:9,y:9,dir:'down'},stopHint:'嵐の ただなかに、暴君の かげが 立っている'});
   border(p,[9,10],{ks:['dead_tree','cypress','dead_tree','pine2']});
   big(p,{x:7,y:2,w:5,h:5,img:'lm_storm',sc:1.3,dc:2});
   fillG(p,'c',8,7,4,8);
@@ -3270,9 +3270,9 @@ function meetEvent(M){
 function meetEvent0(M){
   scene('であい',M.n,M.l.map(t=>talk(sprite(M.n,M.col[0],M.col[1]),M.n,t)).join(''),[{l:M.opt,s:'',f:()=>{sfx('ally');M.after&&M.after();nodeDone()}}])}
 const DGQ={
- dg_see:{n:'Prottの 虫めがね',item:'虫めがね',hint:'東の国の 浜辺の「かすみの洞窟」へ。番人から 虫めがねを とりもどす',d:'洞窟の奥で、小さな レンズが きらりと 光った。のぞくと、世界の 輪郭が くっきり 見える。……これで ザックーリを 見すえられる。'},
+ dg_see:{n:'プロトの 虫めがね',item:'虫めがね',hint:'東の国の 浜辺の「かすみの洞窟」へ。番人から 虫めがねを とりもどす',d:'洞窟の奥で、小さな レンズが きらりと 光った。のぞくと、世界の 輪郭が くっきり 見える。……これで ザックーリを 見すえられる。'},
  dg_make:{n:'ほそふでの ペン先',item:'ペン先',hint:'南の 浜の「らくがきの祠」へ。守り人を たおして ペン先を える',d:'祭壇の 上で、細い 金の ペン先が 光っていた。指先に のせると、線を 引きたくて うずうずする。'},
- dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'北の「妖精の城」へ。Figmaを 操った 妖精の王を 止める',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
+ dg_castle:{n:'妖精の灯',item:'妖精の灯',hint:'北の「妖精の城」へ。フィグムを 操った 妖精の王を 止める',d:'玉座の 奥で、小さな 灯が ゆれていた。「みんなを しあわせに したかった」……王の ねがいは、やさしすぎた。XDは 灯を そっと 胸に 抱いた。'},
  dg_choose:{n:'まよいの 羅針盤',item:'羅針盤',hint:'山の 手前の「まよいの迷宮」へ。奥の 羅針盤を とりに いく',d:'古い 羅針盤が 眠っていた。針は ぐるぐる 回り、やがて XDの 胸の 灯を さして ぴたりと 止まった。……進む道は、自分で えらぶ。'},
 };
 const dgOpen=k=>{const st=CH[G.ch]&&CH[G.ch].stops[G.stop];return !!((st&&st.type==='dungeon'&&st.at===k)||(G.dgdone&&G.dgdone[k]))};
@@ -3640,8 +3640,8 @@ function objText(){
   if(st.type==='dungeon'&&DGQ[st.at])return DGQ[st.at].hint;
   if(st.type==='story'&&S2[st.k]&&!(st.need&&(G.hunt||0)<st.need))return S2[st.k].hint+'（'+L.n+'）';
   if(st.k==='release')return 'Dwに ほうこくする（村）';
-  if(st.k==='e_hi')return 'Prottを さがす。東の国の 町の 人や、城の 王に 聞いてみよう';
-  if(st.k==='e_clear')return '工房の Prottに ほうこくする（東の城）';
+  if(st.k==='e_hi')return 'プロトを さがす。東の国の 町の 人や、城の 王に 聞いてみよう';
+  if(st.k==='e_clear')return '工房の プロトに ほうこくする（東の城）';
   if(st.k==='gate'&&(G.hunt||0)>=st.need)return '雲の王の ひろまへ（最後の かんもん）';
   if(st.k==='gate')return `ベータ版から 正式版へ。外で 戦って 腕を みがこう（${G.hunt||0}/${st.need}）`;
   if(st.k==='gift')return `雲の王に 会う（${L.n}）`;
@@ -3927,7 +3927,7 @@ function storyEvent(k){
        {l:'手でやる。見守っていて',s:'時間はかかるが、手ごたえがある',f:()=>{pickTally('h');sfx('ally');nodeDone()}},
        {l:'いっしょにやろう',s:'得意なところを分けあう',f:()=>{pickTally('c');sfx('ally');nodeDone()}}]);}
   if(k==='merge')return scene('2022年9月','同盟の宣言',
-    talk(sprite('Figma',fig.col[0],fig.col[1]),'Figma　ブラウザの嵐の主','これからは同じ王国の仲間だな。……おまえの居場所が残っていればいいが。')+
+    talk(sprite('フィグム',fig.col[0],fig.col[1]),'フィグム　ブラウザの嵐の主','これからは同じ王国の仲間だな。……おまえの居場所が残っていればいいが。')+
     `<p class="lead">王国が、かつての宿敵と手を組むと決めた。XDはどう動く？</p>`,[
     {l:'同盟を信じて待つ',s:'HPを全回復',f:()=>{G.hp=G.max;sfx('heal');nodeDone()}},
     {l:'自分の道をゆく',s:'攻撃+1（ずっと続く）',f:()=>{G.str++;sfx('skill');nodeDone()}}]);
@@ -3935,7 +3935,7 @@ function storyEvent(k){
     `<p class="lead">XDは保守だけを行う「メンテナンスモード」に入り、新規には単体で手に入らなくなった。最大HPが8下がる。それでも、これまで描いてきた画面は消えない。</p>`,[
     {l:'受け入れる',s:'最大HP-8、エナジードリンクを 1こ もらう',f:()=>{G.max-=8;G.hp=Math.min(G.hp,G.max);G.items.dr++;sfx('junk');nodeDone()}}]);
   if(k==='cancel')return scene('2023年12月','同盟、白紙に',
-    talk(sprite('Figma',fig.col[0],fig.col[1]),'Figma','結局、私たちは別々の道だな。次に会うときは、また敵同士だ。')+
+    talk(sprite('フィグム',fig.col[0],fig.col[1]),'フィグム','結局、私たちは別々の道だな。次に会うときは、また敵同士だ。')+
     `<p class="lead">規制当局の壁で同盟は取りやめになった。XDもひとりで戦う覚悟を決める。</p>`,[
     {l:'旅の支度をする',s:'やくそうを 3こ そろえる',f:()=>{G.items.herb+=3;sfx('ally');nodeDone()}},
     {l:'しっかり休む',s:'HPを15回復',f:()=>{G.hp=Math.min(G.max,G.hp+15);sfx('heal');nodeDone()}}]);
@@ -4617,7 +4617,7 @@ function endText(ek){
     P('「みんなを しあわせに したかった」<br>その ねがいは、うそじゃ なかった。',''),
     ...(fk?[P(`XDが えらんだ こたえは<br>${fk}。`,'')]:[]),
     gp,
-    P('操られていた 嵐の王 Figmaは、<br>ブラウザ大陸に 晴れ間を もどした。','','storm'),
+    P('操られていた 嵐の王 フィグムは、<br>ブラウザ大陸に 晴れ間を もどした。','','storm'),
     gp,
     P('取りもどした 五つの 力。<br>見る・聞く・描く・伝える・考える。','','mac'),
     gp,
@@ -4861,10 +4861,10 @@ const grid=WORLD.map(s=>Array.from(s,Number));
 const LM={
   castle:{x:127,y:17,n:'雲の王都',s:'王国の中心。クラウド王が座す城'},
   village:{x:111,y:20,n:'はじまりの村',s:'彗星の子が めざめた 村'},
-  mac:{x:70,y:19,n:'りんごの島',s:'王Sketchの琥珀の宮殿'},
+  mac:{x:70,y:19,n:'りんごの島',s:'王スケッチャの琥珀の宮殿'},
   tower:{x:103,y:4,n:'眠りの塔',s:'メンテナンスモードのXDが眠る場所'},
-  east:{x:118,y:27,n:'東の国',s:'城下町と東の城。STUDIOとProttの故郷'},
-  storm:{x:24,y:21,n:'ブラウザ大陸',s:'暴君Figmaが待つ雷雲の地'},
+  east:{x:118,y:27,n:'東の国',s:'城下町と東の城。スタディーオとプロトの故郷'},
+  storm:{x:24,y:21,n:'ブラウザ大陸',s:'暴君フィグムが待つ雷雲の地'},
 };
 // 雪の森（塔のまわりは あけておく）
 for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){if(grid[y][x]===5&&R()<.06&&Math.hypot(x-LM.tower.x,y-LM.tower.y)>3)grid[y][x]=2}
