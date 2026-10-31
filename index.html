@@ -3479,7 +3479,7 @@ function dgNPC(n){
   if(n.k==='mob'||n.k==='dgboss'){
     const isB=n.k==='dgboss',tm=MINIONS.find(m=>m.n===n.tn);
     if(isB&&n.boss==='fairyKing'){const pk=t=>{G.pick=G.pick||{t:0,h:0,c:0};G.pick[t]=(G.pick[t]||0)+3;G.fkc=t},KP='sprites/en2_figmax.png',XP='sprites/xd_stand.png',kn='妖精の王',K=t=>[kn,t,KP],X=t=>['XD',t,XP];
-      const go=()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;if(B&&B.won)fl(n.mid);back()};startBattle(BOSSES[n.boss],true,{})};
+      const go=()=>{DGBG='cave'+(TW.pl.ds||0);townOff();CONT=()=>{DGBG=null;const w=B&&B.won;if(w)fl(n.mid);back();if(w)setTimeout(()=>{const c=TW.npcs.find(m=>m.k==='dgchest');townSay([['','王が すわっていた 玉座の 奥で、小さな 光が ゆれている……。']],()=>{if(c)dgNPC(c)})},700)};startBattle(BOSSES[n.boss],true,{})};
       return townSay([K('……来たのね。ここが わたしの 玉座よ。'),...BOSSWHY.fairyKing.map(K),['','玉座の 王は、やさしく ほほえんで いる。ほんとうに、悪意は ないのだ。……XDは、自分の 灯を にぎりしめた。',XP],K('ねえ、XD。取りもどした その 力も、いつかは また 消えて しまうわ。……それでも、あなたは どうするの？')],()=>townChoice('XDの こたえは——',[
         {l:'「自分で 切り開く」',s:'',f:()=>{pk('h');townSay([X('……やさしいんだな、あなたは。でも、つらいのも、まよう のも、ぼくの 仕事だ。'),X('うまく いかない 日も、手が とまる 日も、ぜんぶ ぼくが 選んだ 道だ。……だから、あずけられない。'),K('……どうして？ だれも、きずつかなくて いいのに。'),X('きずついた 分だけ、線に 重みが 宿る。ぼくの 手で、つくる。それが、ぼくだ！')],go)}},
         {l:'「手を 貸してくれ」',s:'',f:()=>{pk('c');townSay([X('……ありがとう。でも、ぜんぶは まかせられない。'),X('ひとりじゃ ないからさ。Fiが いる。仲間が いる。てつだって もらうのは いい。でも、決めるのは ぼくだ。'),K('……それで、つらく ならない？ まよわない？'),X('まよう よ。でも、まよいながら みんなと つくる。それが「考える」って ことだと 思う。いっしょに、行こう！')],go)}},
