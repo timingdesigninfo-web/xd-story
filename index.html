@@ -3458,6 +3458,8 @@ function mkDG(id,o){
   /* 祠・迷宮：うすい 壁は 上の マスまで 壁の 上面を 描くので、そこは 歩けない ように する */
   if(o.map&&(o.ds===1||o.ds===2)){const M=o.map,W_=(x,y)=>y<0||y>=M.length||x<0||x>=M[0].length||M[y][x]==='#';
     for(let y=1;y<M.length-1;y++)for(let x=0;x<M[0].length;x++)if(W_(x,y)&&!W_(x,y+1)&&!W_(x,y-1)&&!'SECB>< '.includes(M[y-1][x]))solidR(p,x,y-1)}
+  /* 出口：両わきに かがり火（すでに 壁なら その内がわ） */
+  if(o.exit){const yy=o.h-2,ok=x=>o.map&&o.map[yy]&&o.map[yy][x]&&o.map[yy][x]!=='#';[o.exit[0]-1,o.exit[1]+1].forEach((x,i)=>{const xx=ok(x)?x:(i?o.exit[1]:o.exit[0]);if(!(o.torch||[]).some(t=>t[0]===xx&&t[1]===yy))prop(p,'torch',xx,yy)})}
   (o.torch||[]).forEach(([x,y])=>prop(p,'torch',x,y));(o.props||[]).forEach(([k,x,y,op])=>prop(p,k,x,y,op||{}));
   const col=nm=>{const m=MINIONS.find(m=>m.n===nm)||BOSSES[nm];return m?m.col:['#999','#444']};
   (o.mobs||[]).forEach(([x,y,nm],i)=>{const mid=id+':m'+i,c=col(nm);npc(p,x,y,{n:'魔物',k:'mob',tn:nm,mid,spr:sprite(nm,c[0],c[1]),h:30,Rw:o.map?1:3,hideIf:()=>!!(G.dg&&G.dg[mid])})});
@@ -3754,6 +3756,13 @@ function drawTown(){
   p.houses.forEach(H=>{const inside=(TP.tx>H.x&&TP.tx<H.x+H.w-1&&TP.ty>H.y&&TP.ty<H.y+H.h-1)||(TP.tx===H.x+H.dc&&TP.ty===H.y+H.h-1);H.a+=((inside?0:1)-H.a)*.2;if(H.a>.02)spr(H,H.a);
     if(H.a<.99){const al=Math.min(1,(1-H.a)/.7);cx.globalAlpha=al;cx.drawImage(H.ic,H.x*TT-camx,H.y*TT-TT-camy);cx.globalAlpha=1}});
   p.bigs.forEach(B=>spr(B,1));
+  /* ダンジョンの 出口：外の 光と「でぐち」 */
+  if(p.exit&&p.ds!=null&&p.tint){const x0=p.exit[0]*TT-camx,x1=(p.exit[1]+1)*TT-camx,yb=p.h*TT-camy,w=x1-x0;
+    const gr=cx.createLinearGradient(0,yb,0,yb-TT*2.2);gr.addColorStop(0,'rgba(255,244,200,.75)');gr.addColorStop(1,'rgba(255,244,200,0)');cx.fillStyle=gr;cx.fillRect(x0,yb-TT*2.2,w,TT*2.2);
+    for(let i=0;i<3;i++){const t=(TW.tick/70+i/3)%1;cx.fillStyle=`rgba(255,250,220,${(1-t)*.8})`;cx.fillRect(Math.round(x0+w*((i*37)%100)/100),Math.round(yb-4-t*TT*1.8),2,2)}
+    const d=Math.abs(TP.tx-(p.exit[0]+p.exit[1])/2)+Math.abs(TP.ty-(p.h-1));
+    if(d<12){const al=Math.min(1,(12-d)/5),bob=Math.round(Math.sin(TW.tick/9)*2),lx=Math.round((x0+x1)/2),ly=yb-TT*1.6+bob;cx.globalAlpha=al;cx.font='bold 11px sans-serif';cx.textAlign='center';cx.lineWidth=3;cx.strokeStyle='#1a1028';cx.strokeText('でぐち',lx,ly);cx.fillStyle='#ffe9a0';cx.fillText('でぐち',lx,ly);
+      cx.beginPath();cx.moveTo(lx-5,ly+4);cx.lineTo(lx+5,ly+4);cx.lineTo(lx,ly+10);cx.closePath();cx.fill();cx.stroke();cx.fill();cx.globalAlpha=1;cx.textAlign='left'}}
   TW.npcs.forEach(n=>objs.push({y:(n.py===undefined?n.y*TT:n.py)+TT,f:()=>{
     const H=n.hh===undefined?(n.hh=hOf(p,n.x,n.y)):n.hh;if(H&&H.a>.97)return;
     const npx=n.px===undefined?n.x*TT:n.px,npy=n.py===undefined?n.y*TT:n.py,x=Math.round(npx+TT/2-camx+(n.ox||0)),y=Math.round(npy+TT-12-camy-(n.oy||0)-(n.mv&&Math.floor(TW.tick/8)%2?1:0));if(H)cx.globalAlpha=Math.min(1,(1-H.a)/.7);drawNpc(cx,n,x,y);cx.globalAlpha=1;
