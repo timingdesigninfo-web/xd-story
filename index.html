@@ -418,8 +418,29 @@ body #efoe .er .chips:empty{display:none}
 .btop .ally .ar{display:flex;align-items:center;gap:4px;padding:0}.btop .ally .ar .mini{flex:1 1 auto;min-width:16px}
 .btop .ally .ar .ah{min-width:0!important;text-align:right;white-space:nowrap}
 .btop .ally .alv{margin-left:4px;font-size:9px;font-weight:400}.btop .ally .ach2{width:auto!important}.btop .ally .chips:empty{display:none}
-/* 仲間も XDと おなじ：1行に バー と 数字 */.btop .ally .ar .ah{font-size:inherit!important;font-weight:400;font-variant-numeric:tabular-nums}/* 3人 以上で せまい ときは バーの 下に 数字（2段） */.btop.n3 .ally .ar{flex-direction:column;align-items:stretch;gap:0}.btop.n3 .ally .ar .ah{font-size:9px;line-height:1.05}.btop.n4 .ally .ar .ah{font-size:8px}.btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .ally .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .ally .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .ally .alv{font-size:7px;margin-left:1px}
-@media (orientation:landscape){.inbt .lcol .info .btop.n3 .ally .wt{font-size:11px}.inbt .lcol .info .btop.n3 .ally{padding-top:7px!important;padding-bottom:2px!important}.inbt .lcol .info .btop.n3 .ally .ar .mini{height:4px}}
+/* 仲間も XDと おなじ：1行に バー と 数字 *//*@*/.btop .ally .ar .ah{font-weight:400;font-variant-numeric:tabular-nums}@media (orientation:portrait){
+/* XDも 仲間も：バーの 下に 数字（2段） */
+.inbt .btop .pw .ar{flex-wrap:wrap;row-gap:0}
+.inbt .btop .pw .ar .mini{flex:1 1 0!important;min-width:0!important}
+.inbt .btop .pw .ar>b{flex:0 0 100%;text-align:right;font-size:9px;line-height:1.05;min-width:0!important;margin:0}
+.inbt .btop #me .ar .an{width:22px!important;font-size:10px}
+.btop.n4 .pw .ar>b{font-size:8px!important}
+.inbt .btop .pw .ar>b{font-size:9px!important}
+/* 幅：仲間は 等分、XDは HPなどの 文字の 分だけ ひろく */
+.inbt .lcol .info .btop #me{flex:1.3 1 0!important;min-width:0!important}
+.inbt .lcol .info .btop .ally{flex:1 1 0!important;min-width:0!important}
+.inbt .lcol .info .btop.n4 #me{flex:1.15 1 0!important}
+}.btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .ally .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .ally .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .ally .alv{font-size:7px;margin-left:1px}
+@media (orientation:landscape){
+ /* 仲間 3人 以上：XDの 下に 仲間を 横ならび。バーの 下に 小さく 数字 */
+ .inbt .lcol .info .btop.n3{display:flex!important;flex-wrap:wrap;gap:8px 3px}
+ .inbt .lcol .info .btop.n3 #me{flex:0 0 100%!important}
+ .inbt .lcol .info .btop.n3 .ally{flex:1 1 0!important;min-width:0!important;margin:0!important;padding:8px 3px 2px!important}
+ .inbt .lcol .info .btop.n3 .ally .ar{flex-direction:column;align-items:stretch;gap:0;font-size:8px;line-height:1.05}
+ .inbt .lcol .info .btop.n3 .ally .ar .ah{font-size:8px!important;text-align:right}
+ .inbt .lcol .info .btop.n3 .ally .wt{font-size:9px!important;padding:0 3px!important;left:3px!important}.inbt .lcol .info .btop.n3 .ally .alv{font-size:7px!important}
+ .inbt .lcol .info .btop.n3 .ally .ach2{display:none!important}
+.inbt .lcol .info .btop.n3 .ally .wt{font-size:11px}.inbt .lcol .info .btop.n3 .ally{padding-top:7px!important;padding-bottom:2px!important}.inbt .lcol .info .btop.n3 .ally .ar .mini{height:4px}}
 .btop .ally.dead{opacity:.55}.stg{display:inline-block;padding:0 3px;font-size:10px;line-height:14px;border-radius:3px;font-weight:700;color:#201000;background:#ffd36a;margin-right:2px;white-space:nowrap}.stg.d{background:#9fe8ff}.stg.m{background:#e2c4ff}#pchips{display:flex;flex-wrap:wrap;gap:2px 0}#allyw .ach2{gap:0!important}
 .esp.ghost{filter:invert(1) brightness(.35) contrast(1.4) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px #ffffffaa);animation:ghg 1.8s ease-in-out infinite}@keyframes ghg{0%,100%{opacity:.8}50%{opacity:1}}.eu:has(.ghost)::before{content:'';position:absolute;left:14%;right:14%;top:10%;bottom:4%;border-radius:45%;background:radial-gradient(ellipse,#ffffff44,#ffffff00 70%);pointer-events:none}.alv{margin-left:5px;padding:0 3px;border-radius:3px;background:#ffd36a;color:#201000;font-size:9px;line-height:12px;font-weight:700;display:inline-block;vertical-align:1px}/* ===== 横画面：ボタンと文字を大きめに、メインの絵は少し狭く ===== */
 @media screen and (orientation:landscape){
