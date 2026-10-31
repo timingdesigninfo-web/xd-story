@@ -884,7 +884,7 @@ const SKILLS=[
   {id:'proto',g:'x_proto',n:'プロトタイプ',lv:1,mp:2,get d(){return G.lv>=10?'人形3体が つながって 連続で なぐる':G.lv>=5?'人形2体が 連続で なぐる':'攻撃を 人形にして とばす（1.6ばい）'},f:()=>{const n=G.lv>=10?3:G.lv>=5?2:1,m=[0,1.6,1.1,.9][n];for(let i=0;i<n;i++)hitF(m,'puppet')}},
   {id:'board',g:'x_pnl0',n:'アートボード',lv:1,mp:2,get d(){return 'わくで かこって バリアを はる'},f:()=>guard(1.4+G.lv*.12)},
   {id:'grid',n:'リピートグリッド',lv:2,mp:4,get d(){return `同じ こうげきを ${Math.min(4,2+Math.floor((G.lv-2)/6))}かい ならべる（1回 ×0.4〜0.7）`},f:()=>{const n=Math.min(4,2+Math.floor((G.lv-2)/6));for(let i=0;i<n;i++)hitF(+(.4+Math.random()*.3).toFixed(2),'grid')}},
-  {id:'guide',n:'スマートガイド',lv:3,mp:3,d:'ほじょ線で ねらいを そろえる（つぎの こうげきが かいしん）',f:()=>Q.push({k:'sure'})},
+  {id:'guide',n:'スマートガイド',lv:3,mp:3,d:'ほじょ線で ねらいを そろえる（つぎの こうげきが 弱点を つく）',f:()=>Q.push({k:'sure'})},
   {id:'history',n:'ドキュメントの履歴',lv:5,mp:5,d:'戦いを 2ターン前に もどす。うけた ダメージや しっぱいを 帳消しに（MPは もどらない）',f:()=>Q.push({k:'rewind'})},
   {id:'spec',n:'デザインスペック',lv:8,mp:7,d:'仕様を みんなに くばって、ぜんいんの まえに バリアを はる',f:()=>guardAll(1.1)},
   {id:'scroll',g:'x_scroll',n:'スクロールグループ',lv:3,mp:4,d:'全体攻撃。てきぜんたいに 1.0ばいの ダメージ',f:()=>hit(1,false,true)},
@@ -899,7 +899,7 @@ const SKILLS=[
   {id:'pen',g:'x_pen',n:'貫通攻撃',lv:5,mp:5,d:'バリアを むしして 1.8ばいの ダメージ',f:()=>hit(1.8,true)},
   {id:'d3',g:'x_d3',n:'ねむりの一撃',lv:9,mp:6,d:'1.3ばいの ダメージ。あいてを ねむらせる',f:()=>{hit(1.3);Q.push({k:'sleep'})}},
   {id:'blend',g:'x_blend',n:'わざアップ',lv:8,mp:5,d:'3ターン、わざの 威力が 5わり 上がる',f:()=>upS(.5,3)},
-  {id:'brand',g:'x_brand',n:'かいしん攻撃',lv:12,mp:7,d:'ひっさつの かいしんの いちげき',f:()=>{Q.push({k:'sure'});hit(1.6)}},
+  {id:'brand',g:'x_brand',n:'弱点攻撃',lv:12,mp:7,d:'かならず あいての 弱点を つく 一撃',f:()=>{Q.push({k:'sure'});hit(1.6)}},
   {id:'voice',g:'x_voice',n:'こうげきアップ',lv:5,mp:4,d:'4ターン、こうげきが 3わり 強くなる',f:()=>upA(.3,4)},
   {id:'auto',g:'x_auto',n:'自動攻撃',lv:6,mp:6,d:'人形が いまと つぎの ターンに じどうで こうげき',f:()=>{hitF(1.6,'puppet');Q.push({k:'autoN',n:1})}},
   {id:'stack',n:'スタック',lv:7,mp:5,d:'全体攻撃。てきぜんたいに 1.3ばいの ダメージ',f:()=>hit(1.3,false,true)},
@@ -933,7 +933,7 @@ const ORDERS=[
   {id:'sup',n:'サポートさせる',d:()=>`こうげき・ぼうぎょの 強化や、敵を 弱らせる（せいこう ${Math.round(supP()*100)}%）`,t:'c'},
   {id:'prot',n:'守らせる',d:()=>`みんなを かいふくして、うける ダメージを へらす`,t:'c'}];
 const FACET={
-  see:{pn:'見抜く力',n:'見抜いて',item:'虫めがね',fn:'見る',t:'t',q:'わ、ぼやけてた ものが くっきり 見える！',d:l=>`${2+l}ターン、よわてんを つく（バリアも むし）`},
+  see:{pn:'見抜く力',fx:'こうげきで あいての 弱点を つく 確率が 上がった。',n:'見抜いて',item:'虫めがね',fn:'見る',t:'t',q:'わ、ぼやけてた ものが くっきり 見える！',d:l=>`${2+l}ターン、よわてんを つく（バリアも むし）`},
   make:{pn:'形にする力',n:'形にして',item:'ペン先',fn:'描く',t:'t',q:'指さきが うずうずする……なにか 描きたい！',d:l=>`${2+l}ターン、こうげきが 大きく のびる`},
   hear:{pn:'聞く力',n:'聞いて',item:'語り部の 声',fn:'聞く',t:'c',q:'みんなの 声が、ちゃんと 聞こえるよ。',d:l=>`${2+l}ターン、うけるダメージ 半分。HPも かいふく`},
   open:{pn:'つなげる力',n:'つなげて',item:'待つ人の 手紙',fn:'伝える',t:'c',q:'だれかに とどけたい。そんな 気もちが わく……！',d:l=>`なかまが すぐに 1かい うごく`},
@@ -1805,7 +1805,7 @@ function showRules(onClose){
 }
 const fiKey=item=>Object.keys(FACET).find(x=>FACET[x].item===item);
 const kimg=item=>{const f=Object.keys(FACET).find(x=>FACET[x].item===item);return f?`<img src="sprites/key_${f}.png" style="height:30px;width:auto;vertical-align:middle;image-rendering:pixelated;margin-right:6px">`:''};
-function keyToast(item){try{const t=document.createElement('div');t.className='ptoast';t.innerHTML=`<small>たいせつな ものを 手に入れた</small><div style="text-align:center">${kimg(item).replace('height:30px','height:56px;display:block;margin:2px auto')}<b>✦ ${item} ✦</b></div>${fiKey(item)?`<small>「${FACET[fiKey(item)].pn}」を 手に入れた</small>`:''}`;(app||document.body).appendChild(t);setTimeout(()=>t.remove(),3200)}catch(e){}}
+function keyToast(item){try{const t=document.createElement('div');t.className='ptoast';t.innerHTML=`<small>たいせつな ものを 手に入れた</small><div style="text-align:center">${kimg(item).replace('height:30px','height:56px;display:block;margin:2px auto')}<b>✦ ${item} ✦</b></div>${fiKey(item)?`<small>「${FACET[fiKey(item)].pn}」を 手に入れた${FACET[fiKey(item)].fx?'<br>'+FACET[fiKey(item)].fx:''}</small>`:''}`;(app||document.body).appendChild(t);setTimeout(()=>t.remove(),3200)}catch(e){}}
 function fiGive(item,cb){
   const k=fiKey(item);if(!k||!G.fairy){cb&&cb();return}
   const F=FACET[k];G.fi=G.fi||{};G.fi[k]=Math.max(1,G.fi[k]||0);G.keys=(G.keys||[]).filter(x=>x!==item);sfx('lvup');
@@ -1814,7 +1814,7 @@ function fiGive(item,cb){
 }
 function showBag(){
   const rows=Object.keys(ITEMS).map(k=>`<button class="opt bagrow" data-k="${k}" ${G.items[k]&&G.hp<G.max?'':'disabled'}><b>${ITEMS[k].n} ×${G.items[k]||0}</b><span class="mute">${ITEMS[k].d}</span></button>`).join('');
-  overlay(`<h2>どうぐ</h2><p class="mute" style="margin:0">HP ${G.hp}/${G.max}</p><div class="opts">${rows}</div><h2 style="margin-top:10px">たいせつなもの</h2><div class="opts">${(G.keys||[]).map(k=>{const f=fiKey(k);return f?`<div class="opt" style="cursor:default"><b>${kimg(k)}${k}</b><span class="mute">「${FACET[f].pn}」を 手に入れた</span></div>`:`<div class="opt" style="pointer-events:none"><b>${kimg(k)}${k}</b><span class="mute">届けものを あずかっている</span></div>`}).join('')||'<p class="mute" style="margin:0">なし</p>'}</div>`);
+  overlay(`<h2>どうぐ</h2><p class="mute" style="margin:0">HP ${G.hp}/${G.max}</p><div class="opts">${rows}</div><h2 style="margin-top:10px">たいせつなもの</h2><div class="opts">${(G.keys||[]).map(k=>{const f=fiKey(k);return f?`<div class="opt" style="cursor:default"><b>${kimg(k)}${k}</b><span class="mute">「${FACET[f].pn}」を 手に入れた${FACET[f].fx?"　"+FACET[f].fx:""}</span></div>`:`<div class="opt" style="pointer-events:none"><b>${kimg(k)}${k}</b><span class="mute">届けものを あずかっている</span></div>`}).join('')||'<p class="mute" style="margin:0">なし</p>'}</div>`);
   $('#ovin').querySelectorAll('.fikey').forEach(b=>b.onclick=()=>{const c=$('#ovclose');if(c)c.click();fiGive(b.dataset.k)});
   $('#ovin').querySelectorAll('.bagrow').forEach(b=>b.onclick=()=>{
     const k=b.dataset.k;if(!G.items[k]||G.hp>=G.max)return;
@@ -3359,7 +3359,7 @@ function dgNPC(n){
     if(!(st&&st.type==='dungeon'&&st.at===qid))return townSay([['','宝箱は かたく 閉じている。']]);
     sfx('lvup');n.spr='sprites/dg_chest_open.png';n.h=36;return townSay([['','宝箱を 開けた！'],['',`✦ ${F.n} を 手に入れた ✦`],['',F.d]],()=>{G.dgdone=G.dgdone||{};G.dgdone[qid]=1;G.keys=G.keys||[];if(!G.keys.includes(F.item))G.keys.push(F.item);sfx('ally');
       const adv=()=>{if(G.stop+1<CH[G.ch].stops.length){G.stop++;G.hunt=0;townSay([['','洞窟を 出て、旅を つづけよう。']])}else{LASTPL=null;CONT=stopDone;townFin(()=>CONT&&CONT())}};
-      const fk=fiKey(F.item);if(fk){sfx('lvup');townSay([['',`XDは「<b>${FACET[fk].pn}</b>」を 手に入れた！`]],adv)}else adv()})}
+      const fk=fiKey(F.item);if(fk){sfx('lvup');townSay([['',`XDは「<b>${FACET[fk].pn}</b>」を 手に入れた！${FACET[fk].fx?'<br>'+FACET[fk].fx:''}`]],adv)}else adv()})}
 }
 mkDG('dg_see',{ds:0,name:'かすみの洞窟',sub:'ぼやけた 霧の たちこめる 洞窟',tint:'#9aa6c818',map:["############################################", "#####################C######################", "###########..#####..#B#.....##########..####", "##########.....##...#.#......########....###", "#########....................#######.....###", "#########.....................#####......###", "########.......................###........##", "#######..M...............IK...............##", "########..................................##", "########....KO...O.......O...............###", "###..........................M.....#########", "##...M.....OH..........M...........#########", "##............M..........O....I....#########", "##..I..................O............########", "##......................H...........########", "##.........R.......MO..K........M...########", "##.........................M........##...###", "##...H.............O.........#............##", "##.....................I...###............##", "##.........................##.........O...##", "##........O......H.........##.............##", "##...O.M.......O...........##....I........##", "##...........KO............##.............##", "##.........................##.............##", "###........O......................###.....##", "####.....H....................I..####.....##", "######...............S.....##...#####...M.##", "#######....................###.#######....##", "#################..........#################", "####################EEEE####################"],mobs:["ホウチ虫", "サーシラン", "メンドウ"],boss:'gd_see'});
 mkDG('dg_make',{ds:1,name:'らくがきの祠',sub:'守り人が 眠る 広い 祠',tint:'#2a104414',map:["############################################", "#####################C######################", "#####################.######################", "#####################B######################", "#####################.######################", "#####################.######################", "###.T..................................T.###", "###.......U............U...HM......M..U..###", "###......................................###", "###...################################.M.###", "###.M.#T.....##################.....T#...###", "###..........##################..........###", "###......H...##P............P##..........###", "###.....M..U.##.......Q......##..Q.......###", "###...#......##..............##......#...###", "###.H.#########...........M..#########...###", "###...#########......R.......#########...###", "###...#########..........U...#########...###", "###...#......##..............##......#.M.###", "###..........##.H............##..........###", "###..........##P............P##....M.....###", "###..........#######...########..........###", "###...#......#######...########......#...###", "###...##############...###############...###", "###......................................###", "###....................H.......M.......Q.###", "###.T..................................T.###", "####################...#####################", "####################...#####################", "#################.T......T.#################", "#################..........#################", "#################....S.....#################", "#################..........#################", "#################...EEEE...#################"],mobs:["シタガッキー", "ケシゴムシ"],boss:'gd_make'});
@@ -4261,7 +4261,7 @@ async function runQ(){
     const e=a.tid!==undefined?B.es[a.tid]:B.e;
     if(a.k==='hit'){
       let pierce=a.pierce,d;
-      const isX=!a.who||a.who==='xd',crit=(B.sure&&isX)||Math.random()<1/16;if(crit&&B.sure&&isX)B.sure=false;
+      const isX=!a.who||a.who==='xd',crit=(B.sure&&isX)||Math.random()<(isX&&fiLv('see')>0?.16+.04*Math.min(3,fiLv('see')):1/16);if(crit&&B.sure&&isX)B.sure=false;
       {const w=a.who&&a.who!=='xd'?a.who:'',fx=a.fx||(a.m>=2?'burst:'+w:(w&&AP[w]&&AP[w].fx?AP[w].fx+':'+w:'slash:'+w));await fxRun(fx,e)}
       let om=1;if(isX&&B.up){om*=1+(B.up.a?B.up.a.m:0)+(B.inSkill&&B.up.s?B.up.s.m:0)}
       if(!isX&&a.who!=='fi'&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
@@ -4270,7 +4270,7 @@ async function runQ(){
       if(B.fkc){const fk=B.fkc;if(isX)om*=({h:1.3,c:1.1,f:.8,t:B.awk?1.4:.5})[fk]||1;else if(fk==='c')om*=1.15}
       if(crit){pierce=true;d=Math.round(base*a.m*1.9*om)}
       else d=Math.max(1,Math.round(base*a.m*om*(.9+Math.random()*.2)));
-      if(crit){say('<b>かいしんの いちげき！</b>');sfx('crit');jolt('#foe','shake');await wait(520)}
+      if(crit){say('<b>弱点を ついた！</b>');sfx('crit');jolt('#foe','shake');await wait(520)}
       let fully=false;
       if(e.blur&&!hasPw('see')&&d>0){d=Math.max(1,Math.ceil(d*.25));say('ぼやけて、ねらいが さだまらない！');await wait(420)}
       if(!pierce){const b=Math.min(e.block,d);e.block-=b;d-=b;fully=b>0&&d===0}
@@ -4307,7 +4307,7 @@ async function runQ(){
     }else if(a.k==='sleep'){
       if(e.hp>0&&!e.sleep){e.sleep=true;sfx('skill');pop('#foe','ねむり','pw',e.id);render();say(`${e.n}は ねむってしまった！`);await wait(560)}
     }else if(a.k==='sure'){
-      B.sure=true;sfx('skill');pop('#me','ねらい','pw');render();say('ほじょ線が そろった！ つぎの こうげきは かいしんに なる！');await wait(560);
+      B.sure=true;sfx('skill');pop('#me','ねらい','pw');render();say('ほじょ線が そろった！ つぎの こうげきは 弱点を つく！');await wait(560);
     }else if(a.k==='free'){
       B.free=true;sfx('skill');pop('#me','型を とうろく','pw');render();say('つぎの わざは MPを つかわずに だせる！');await wait(560);
     }else if(a.k==='herb'){
