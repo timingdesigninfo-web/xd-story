@@ -1049,6 +1049,7 @@ function pickEnemyFor(a){const al=aliveEs();return (G.tac||'min')==='gan'?[...al
 async function alliesAct(){
   for(const a of B.allies){
     if(a.hp<=0||!aliveEs().length)continue;
+    if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);continue} /* 起こされた ばかり */
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
     if(ch){a.mp-=ch.mp;say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
     else{const P=AP[a.k]||{an:'こうげき',am:1,ah:1};say(`<b>${a.n}</b>の <b>${P.an}</b>！`);sfx('swing');for(let q=0;q<P.ah;q++)hit(P.am);a.mp=Math.min(a.mpm,a.mp+1)}
@@ -4517,7 +4518,11 @@ async function fiFight(){
   if(gen){say('Fiの <b>生成攻撃</b>！<br>光が 敵ぜんたいに ふりそそぐ！');sfx('skill');await wait(500);hitF(.95+.04*P,'burst:',true)}
   else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
   await runQ();ACT='xd'}
+function itemWho(k){ /* やくそうを だれに？ */
+  const ms=partyAll().map((m,i)=>({m,i}));
+  menuOv(`${ITEMS[k].n}を だれに つかう？`,ms.map(o=>({l:o.m.n,s:o.m.hp<=0?'うごけない　つかうと 起きあがる（1ターン やすんでから うごく）':`HP ${o.m.hp}/${o.m.max}${o.m.hp>=o.m.max?'　まんたん':''}`,f:()=>{if(o.m.hp>=o.m.max){sfx('junk');return itemWho(k)}B.t=B.es.indexOf(B.e);go('item',k+':'+o.i)}})))}
 function chooseTarget(m,k){
+  if(m==='item'&&B.allies.length)return itemWho(k);
   if(m==='ai')return giveOrder(k);
   if(m==='tac')return setTactic(k);
   if(needsTarget(m,k)){B.pend={m,k,from:B.pane};B.pane='tgt';B.t=B.es.indexOf(B.e);sfx('tap');say('');render();return}
@@ -4552,8 +4557,11 @@ async function act(m,k){
     B.mp-=skCost(s);B.free=false;B.inSkill=true;say(`XDの <b>${s.n}</b>！`);sfx('skill');if(s.id!=='comp')B.lastSk=s;s.f();
   }else if(m==='item'){
     {
-    if(!G.items[k]){B.busy=false;return}
-    G.items[k]--;say(`XDは <b>${ITEMS[k].n}</b>を つかった！`);sfx('tap');heal(ITEMS[k].h)}
+    const [ik,ti]=String(k).split(':'),tg=ti===undefined?XDM:partyAll()[+ti];
+    if(!G.items[ik]||!tg||(tg.k==='xd'&&tg.hp<=0)){B.busy=false;return}
+    G.items[ik]--;sfx('tap');
+    if(tg.k==='xd'){say(`XDは <b>${ITEMS[ik].n}</b>を つかった！`);heal(ITEMS[ik].h)}
+    else{const down=tg.hp<=0,h=Math.min(ITEMS[ik].h,tg.max-tg.hp);tg.hp+=h;if(down)tg.rest=2;sfx('heal');pop(tg.sel,'+'+h,'hp');render();say(down?`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}が 起きあがった！（HP <b>${h}</b>。1ターン やすんでから うごく）`:`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}の HPが <b>${h}</b> かいふく した！`)}}
   }
   B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';render();
   await wait(560);
