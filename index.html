@@ -1787,10 +1787,23 @@ function migrateG(g){const d={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,m
   if(typeof g.items!=='object')g.items={};for(const k in d.items)if(typeof g.items[k]!=='number')g.items[k]=0;
   if(!Array.isArray(g.allies))g.allies=[];if(!Array.isArray(g.pw))g.pw=[];
   if(Array.isArray(g.keys))g.keys=g.keys.map(k=>k==='王国の 船'?'雲の王国の 船':k); /* 名前を かえた 大事なもの */
+  if((g.ch|0)>=CH.length){g.clear=1;g.ch=CH.length-1;g.stop=CH[CH.length-1].stops.length-1}
   g.ch=Math.max(0,Math.min(CH.length-1,g.ch|0));g.stop=Math.max(0,g.stop|0);
   /* ここに「v<2 なら〜を補う」のような移行処理を足していく */
   g.sv=SAVE_VER;return g}
-function resumeSave(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const au=G.auto&&PLACES[G.auto.id]?G.auto:null;const pr=au||(G.pray&&PLACES[G.pray.id]?G.pray:null);const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(au)placeScreen(au.id);else if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
+/* クリア後の 記録：エンディング・診断・クリア後の 世界 から えらぶ */
+function resumeSave(sv){const g=sv&&sv.g;if(g&&((g.ch|0)>=CH.length||g.clear||g.endSeen)&&!sv._walk){audioInit();G=migrateG(g);G.clear=1;SNAP=clone(G);music('ending');
+    shell(`<div class="scroll cs" style="display:flex;flex-direction:column;gap:12px"><p class="kicker" style="margin:0">クリアずみの 記録</p>
+      <div class="hero-stage"><h1 class="logo"><img src="sprites/logo_s.png" alt="XD戦記"></h1></div>
+      <p class="lead" style="margin:0">${vname()}・勝利 ${G.wins||0}回。旅は いちど おわりを むかえた。</p>
+      <div class="row" style="margin:0;flex-direction:column;gap:8px"><button class="btn" id="clEnd">エンディングを もう一度 見る</button><button class="btn ghost" id="clDx">クリエイター診断</button><button class="btn ghost" id="clWalk">クリア後の 世界を 歩く</button></div></div>`,{al:'えらぶ'});
+    const back=()=>resumeSave(sv);
+    $('#clEnd').onclick=()=>{sfx('tap');G.endSeen=0;ending()};
+    $('#clDx').onclick=()=>{sfx('tap');showDiagnosis(back)};
+    $('#clWalk').onclick=()=>{sfx('tap');G.auto=null;if(!(G.pray&&PLACES[G.pray.id])||PLACES[G.pray.id].ds!=null)G.pray={id:'village',tx:11,ty:18};resumeSave({...sv,g:clone(G),_walk:1})};
+    return}
+  return resumeSave0(sv)}
+function resumeSave0(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const au=G.auto&&PLACES[G.auto.id]?G.auto:null;const pr=au||(G.pray&&PLACES[G.pray.id]?G.pray:null);const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(au)placeScreen(au.id);else if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
 function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old.remove();return}
   const o=document.createElement('div');o.id='contdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
   const bs='display:block;width:100%;box-sizing:border-box;font-family:var(--display);font-size:17px;letter-spacing:.25em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:5px;padding:12px 8px;margin:10px 0 2px;box-shadow:0 0 12px rgba(255,160,220,.7);cursor:pointer';
@@ -4937,7 +4950,7 @@ function showDiagnosis(back){
 const FKC={f:'「妖精の 解放」を えらび、Fiの 力に 頼って 王を 止めた（強い 力は 得たが、決めるのを 妖精に ゆだねた）',h:'「自分で 切り開く」と こたえた',c:'「手を 貸してくれ」と こたえた',t:'「すべてを ゆだねる」と 心が ゆれた。それでも 目を さました'};
 const fkcLine=()=>G.fkc&&FKC[G.fkc]?`<p class="mute" style="margin:0">妖精の王への 最後の こたえ　XDは ${FKC[G.fkc]}。</p>`:'';
 function ending(){
-  if(!G.endSeen){G.endSeen=1;save();const ek0=endingKind();return openingLong(endingHub,'スキップ ▶',{ending:1,text:endText(ek0),mus:'ending',small:'おわり',btn:'つづく'})}
+  G.clear=1;if(!G.endSeen){G.endSeen=1;save();const ek0=endingKind();return openingLong(endingHub,'スキップ ▶',{ending:1,text:endText(ek0),mus:'ending',small:'おわり',btn:'つづく'})}
   return endingHub()}
 let CREDIT_NAMES=[];try{fetch('data/credits.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&Array.isArray(j.names))CREDIT_NAMES=j.names.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim().slice(0,24))}).catch(()=>{})}catch(e){}
 const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
