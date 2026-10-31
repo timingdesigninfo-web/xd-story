@@ -405,6 +405,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #allyw .ar .ah{min-width:26px!important}#allyw .am .ah{min-width:44px!important}#allyw .ach2 .chip{padding:0 2px!important}
 #allyw .ar .an.wide{width:46px!important;min-width:46px}#allyw .ach2{display:flex!important;width:46px!important}#allyw .ach2 .chip{font-size:9px!important;padding:0 2px!important;white-space:nowrap}
 .fimode{font-size:.82em;color:#ffe27a}
+.btop .ally.lvup{animation:alup 1.6s ease-out}@keyframes alup{0%{box-shadow:0 0 0 0 #ffe27a;filter:brightness(1)}15%{box-shadow:0 0 14px 4px #ffe27a;filter:brightness(1.8)}100%{box-shadow:0 0 0 0 #ffe27a00;filter:brightness(1)}}
   /* 敵は 横ならび（こちらと おなじ）。横画面の 右の 欄では 縦 */
 body #efoe{display:grid;grid-template-columns:repeat(var(--n,1),minmax(0,1fr));column-gap:8px}
 body #efoe>.wt{grid-column:1/-1}
@@ -417,7 +418,7 @@ body #efoe .er .chips:empty{display:none}
 .btop .ally .ar{display:flex;align-items:center;gap:4px;padding:0}.btop .ally .ar .mini{flex:1 1 auto;min-width:16px}
 .btop .ally .ar .ah{min-width:0!important;text-align:right;white-space:nowrap}
 .btop .ally .alv{margin-left:4px;font-size:9px;font-weight:400}.btop .ally .ach2{width:auto!important}.btop .ally .chips:empty{display:none}
-/* 仲間も XDと おなじ：1行に バー と 数字 */.btop .ally .ar .ah{font-size:inherit!important;font-weight:400;font-variant-numeric:tabular-nums}.btop.n3 .ally .ar{font-size:10px}.btop.n4 .ally .ar{font-size:8px;gap:2px;letter-spacing:-.05em}.btop.n4 .ally .ar .mini{min-width:6px}.btop.n4 .ally{padding-left:4px!important;padding-right:4px!important}.btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .ally .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .ally .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .ally .alv{font-size:7px;margin-left:1px}
+/* 仲間も XDと おなじ：1行に バー と 数字 */.btop .ally .ar .ah{font-size:inherit!important;font-weight:400;font-variant-numeric:tabular-nums}/* 3人 以上で せまい ときは バーの 下に 数字（2段） */.btop.n3 .ally .ar{flex-direction:column;align-items:stretch;gap:0}.btop.n3 .ally .ar .ah{font-size:9px;line-height:1.05}.btop.n4 .ally .ar .ah{font-size:8px}.btop.n3 .ally .wt{font-size:10px!important;padding:0 4px!important;left:4px!important;letter-spacing:-.02em}.btop.n3 .ally .alv{font-size:8px;margin-left:2px;padding:0 2px}.btop.n4 .ally .wt{font-size:9px!important;padding:0 3px!important}.btop.n4 .ally .alv{font-size:7px;margin-left:1px}
 @media (orientation:landscape){.inbt .lcol .info .btop.n3 .ally .wt{font-size:11px}.inbt .lcol .info .btop.n3 .ally{padding-top:7px!important;padding-bottom:2px!important}.inbt .lcol .info .btop.n3 .ally .ar .mini{height:4px}}
 .btop .ally.dead{opacity:.55}.stg{display:inline-block;padding:0 3px;font-size:10px;line-height:14px;border-radius:3px;font-weight:700;color:#201000;background:#ffd36a;margin-right:2px;white-space:nowrap}.stg.d{background:#9fe8ff}.stg.m{background:#e2c4ff}#pchips{display:flex;flex-wrap:wrap;gap:2px 0}#allyw .ach2{gap:0!important}
 .esp.ghost{filter:invert(1) brightness(.35) contrast(1.4) drop-shadow(0 0 1px #fff) drop-shadow(0 0 5px #ffffffaa);animation:ghg 1.8s ease-in-out infinite}@keyframes ghg{0%,100%{opacity:.8}50%{opacity:1}}.eu:has(.ghost)::before{content:'';position:absolute;left:14%;right:14%;top:10%;bottom:4%;border-radius:45%;background:radial-gradient(ellipse,#ffffff44,#ffffff00 70%);pointer-events:none}.alv{margin-left:5px;padding:0 3px;border-radius:3px;background:#ffd36a;color:#201000;font-size:9px;line-height:12px;font-weight:700;display:inline-block;vertical-align:1px}/* ===== 横画面：ボタンと文字を大きめに、メインの絵は少し狭く ===== */
@@ -1032,7 +1033,7 @@ function allyGain(xp){const ms=[];if(xp<=0)return ms;
     o.xp+=Math.round(xp*(o.lv<G.lv?1.3:1));
     while(o.lv<LVCAP&&o.xp>=need(o.lv)){const b=[allyMax(k),allyMp(k),allyAtk(k)];o.xp-=need(o.lv);o.lv++;
       const a=[allyMax(k)-b[0],allyMp(k)-b[1],Math.round((allyAtk(k)-b[2])*10)/10],nk=(ASK[k]||[]).filter(x=>x.lv===o.lv&&!x.g).map(x=>x.n);
-      ms.push(`<b>${SNM[k]||dn(ALLIES[k])}</b>が <b>${vname(o.lv)}</b> に バージョンアップ！　HP+${a[0]}　MP+${a[1]}　こうげき+${a[2]}`+(nk.length?`　あたらしい わざ：<b>${nk.join('、')}</b>`:''))}}
+      ms.push({k,lv:o.lv,h:`<b>${SNM[k]||dn(ALLIES[k])}</b>が <b>${vname(o.lv)}</b> に バージョンアップ！　HP+${a[0]}　MP+${a[1]}　こうげき+${a[2]}`+(nk.length?`<br>あたらしい わざ：<b>${nk.join('、')}</b>`:'')})}}
   return ms}
 const ASK={
   dw:[{lv:4,n:'インスペクタ',mp:3,role:'atk',d:'バリアを むしして 1.8ばい',f:()=>hit(1.8,true)},{lv:12,n:'マルチデバイス',mp:5,role:'aoe',d:'てきぜんたいに 1.3ばいの ダメージ',f:()=>hitF(1.3,'bolt:dw',true)},{lv:20,n:'サイト管理',mp:6,role:'guard',d:'みんなに バリア',f:()=>guardAll(1.3)},{lv:28,n:'ワンクリック公開',mp:12,role:'aoe',d:'てきぜんたいに 2.6ばいの ダメージ',f:()=>hitF(2.6,'bolt:dw',true)},{lv:1,n:'ライブプレビュー',mp:2,role:'atk',d:'1.5ばいの ダメージ',f:()=>hitF(1.5,'bolt:dw')},{lv:1,n:'コードビュー',mp:0,role:'mp',d:'XDの MPを 6 かいふく',f:()=>mpUp(6)},{lv:8,n:'ライブラリ同期',mp:0,role:'mp',d:'XDの MPを 9 かいふく',f:()=>mpUp(9)},{lv:16,n:'コード書きだし',mp:6,role:'atk',d:'2.4ばいの ダメージ',f:()=>hitF(2.4,'bolt:dw')},{lv:24,n:'ホットリロード',mp:9,role:'atk',d:'3.4ばいの ダメージ',f:()=>hitF(3.4,'bolt:dw')},],
@@ -4658,7 +4659,13 @@ async function winBattle(survived){saveAllyHP();
   else if(Math.random()<.35){G.items.herb++;msgs.push('やくそうを <b>1こ</b> てにいれた！')}
   {const cg=B.boss?100+G.ch*50:B.es.reduce((t,e)=>t+Math.round((e.max||20)*.5)+G.ch*4,0);crAdd(cg);msgs.push(`クレジットを <b>${cg}</b> かくとく！`)}
   {const am=allyGain(capped?0:xp);msgs.push(...am)}
-  for(const m of msgs){say(m);await wait(1100)}
+  for(const m of msgs){
+    if(typeof m==='string'){say(m);await wait(1100);continue}
+    /* 仲間の バージョンアップ：その 仲間の 欄を 光らせて、タブの 表示も かえる */
+    const box=document.getElementById('al_'+m.k);sfx('verup');
+    if(box){const lv=box.querySelector('.alv');if(lv)lv.textContent=(B.allies.length>=4?vshort(m.lv).replace(/\.0$/,''):vshort(m.lv));
+      box.classList.remove('lvup');void box.offsetWidth;box.classList.add('lvup');pop('#al_'+m.k,'UP!','pw')}
+    say(m.h);await wait(1900)}
   music(fieldTrack());
   gainXP(capped?0:xp,B.boss?updateNode:nodeDone,true);
 }
