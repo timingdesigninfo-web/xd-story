@@ -908,7 +908,7 @@ const SKILLS=[
   {id:'assetsx',n:'アセットの 一斉ほうしゅつ',lv:18,mp:16,d:'全体攻撃。バリアを むしして 2.6ばいの ダメージ',f:()=>hit(2.6,true,true)},
   {id:'dsys',n:'デザインシステム',lv:22,mp:14,d:'4ターン こうげき 5わり アップ。みんなの まえに バリアも はる',f:()=>{upA(.5,4);guardAll(1.2)}},
   {id:'rain',n:'コンポーネントの雨',lv:25,mp:18,d:'全体攻撃。てきぜんたいに 3.0ばいの ダメージ',f:()=>hit(3,false,true)},
-  {id:'handoff',n:'ハンドオフ',lv:28,mp:20,d:'みんなに 大きな バリアを はり、あいての こうげきりょくを さげる',f:()=>{guardAll(2+G.lv*.05);Q.push({k:'weak',n:3})}},
+  {id:'handoff',n:'ハンドオフ',lv:28,mp:20,d:'みんなに 大きな バリアを はり、3ターン こうげきも 4わり アップ',f:()=>{guardAll(2+G.lv*.05);upA(.4,3)}},
   {id:'final',n:'完全版',lv:30,mp:26,d:'ひっさつ。バリアを むしして 全体に 5.5ばいの ダメージ',f:()=>hit(5.5,true,true)},
   {id:'lantern',n:'十年目の灯',lv:20,mp:20,d:'ひっさつ。バリアを むしして 全体に 4ばい。3ターン こうげきも 5わり アップ',f:()=>{hit(4,true,true);upA(.5,3)}},
   {id:'sync',g:'x_sync',n:'ライブラリの盾',lv:9,mp:6,d:'みんなの まえに バリアを はる',f:()=>guardAll(1.3)},
@@ -929,7 +929,7 @@ const ordM=()=>(1.5+.03*Math.max(1,G&&G.lv||1))*(fkb()?2:1);
    戦いを任せる＝任せる(t)、サポートさせる・守らせる＝いっしょに(c)。指示しない 人は XDの こうげきで「手でやる」が たまる */
 const ORDERS=[
   {id:'fight',n:'戦いを 任せる',d:()=>`Fiが 自分で 敵を こうげき。ときどき 敵ぜんたいに 生成攻撃`,t:'t'},
-  {id:'sup',n:'サポートさせる',d:()=>`こうげき・ぼうぎょ などの 強化を かける（せいこう ${Math.round(supP()*100)}%）`,t:'c'},
+  {id:'sup',n:'サポートさせる',d:()=>`こうげき・ぼうぎょの 強化や、敵を 弱らせる（せいこう ${Math.round(supP()*100)}%）`,t:'c'},
   {id:'prot',n:'守らせる',d:()=>`みんなを かいふくして、うける ダメージを へらす`,t:'c'}];
 const FACET={
   see:{n:'見抜いて',item:'虫めがね',fn:'見る',t:'t',q:'わ、ぼやけてた ものが くっきり 見える！',d:l=>`${2+l}ターン、よわてんを つく（バリアも むし）`},
@@ -4401,9 +4401,10 @@ async function giveOrder(k){
   }else if(k==='sup'){ /* いっしょに：強化（成功率・効果は Fiの レベルしだい） */
     say('XDは Fiに <b>サポート</b>を たのんだ。<br>「力を かして！」');await wait(750);
     if(Math.random()>supP()){sfx('junk');say('Fiは がんばったけど、うまく いかなかった……<br><small>（Fiの 力が 育つと、せいこうしやすく なる）</small>');await wait(900)}
-    else{await ordFx(true);const T=2+Math.floor(P/5),pool=['atk','def'].concat(own.filter(x=>x==='see'||x==='make'||x==='open'||x==='choose'));const e=pool[Math.floor(Math.random()*pool.length)];let m='',gr='';
+    else{await ordFx(true);const T=2+Math.floor(P/5),pool=['atk','def','weak'].concat(own.filter(x=>x==='see'||x==='make'||x==='open'||x==='choose'));const e=pool[Math.floor(Math.random()*pool.length)];let m='',gr='';
       if(e==='atk'){B.ord.atk=T;B.ord.m=1.2+.05*P;B.ord.pr=false;B.bad=false;m=`みんなの こうげきが 上がった！（<b>${T}ターン</b>）`}
       else if(e==='def'){B.ord.grd=T;B.ord.half=false;m=`光の かべが みんなを つつんだ！（<b>${T}ターン</b>）`}
+      else if(e==='weak'){aliveEs().forEach(x=>{x.weak=Math.max(x.weak||0,T);pop('#foe','弱体','pw',x.id)});m=`敵ぜんたいの こうげきりょくが さがった！（<b>${T}ターン</b>）`}
       else if(e==='see'){B.ord.atk=T;B.ord.m=1.2+.04*P;B.ord.pr=true;B.ord.nb=true;B.bad=false;m=`弱点を 見ぬいた！ バリアを むしして つく（<b>${T}ターン</b>）`;gr=grow('see')}
       else if(e==='make'){B.ord.atk=T;B.ord.m=1.4+.06*P;B.ord.pr=false;B.ord.nb=true;B.bad=false;m=`かたちに なった！ こうげきが ぐんと 大きく（<b>${T}ターン</b>）`;gr=grow('make')}
       else if(e==='open'){say('Fiが みんなに つなげた！<br>なかまが すぐに うごく！');render();await wait(700);gr=grow('open');await alliesAct();if(B.over)return;m='みんなが つながった！'}
