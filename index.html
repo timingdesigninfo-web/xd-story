@@ -430,6 +430,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .lcol,.rcol{display:contents}
   .rcol .info .qm{display:none}
   .lcol .info{grid-area:1/1/2/4;flex-direction:column;gap:2px;max-height:64px;overflow:hidden;font-size:12px}
+  .lcol .info:has(#fbn){min-height:100px;max-height:none}
   .lcol .info .hud{flex-wrap:nowrap;gap:8px;align-items:baseline}
   .lcol .info .hud .ct{flex:1 1 auto;font-size:11px;text-align:right}
   .lcol .info .stat{flex-direction:row;flex-wrap:wrap;align-items:center;gap:0 10px}
@@ -3153,9 +3154,14 @@ function selMove(d){
 function inBattle(){return !!(B&&!B.over&&$('#cmdw'))}
 function fitView(cv){
   const m=cv&&cv.closest('.mid');if(!m)return;
-  const w=m.clientWidth,h=m.clientHeight;if(w<80||h<60)return;
-  const z=Math.max(1.2,w/384);VW=Math.round(w/z);VH=Math.round(h/z);
-  cv.width=VW;cv.height=VH;cv.style.width=w+'px';cv.style.height=h+'px';
+  const fit=()=>{const w=m.clientWidth,h=m.clientHeight;if(w<80||h<60)return;
+    const z=Math.max(1.2,w/384),nw=Math.round(w/z),nh=Math.round(h/z);
+    if(cv.width===nw&&cv.height===nh&&cv.style.width===w+'px'&&cv.style.height===h+'px')return;
+    VW=nw;VH=nh;cv.width=VW;cv.height=VH;cv.style.width=w+'px';cv.style.height=h+'px'};
+  cv.style.setProperty('max-width','100%','important');cv.style.setProperty('max-height','100%','important');
+  fit();
+  /* あとから画面の高さが変わっても（ブラウザのバー・上の表示の増減など）、絵が下の欄にはみ出さないよう追従する */
+  if(!m._ro){try{m._ro=new ResizeObserver(()=>{if(document.body.contains(cv))fit()});m._ro.observe(m)}catch(e){}}
 }
 addEventListener('selectstart',e=>e.preventDefault());addEventListener('contextmenu',e=>e.preventDefault());addEventListener('dragstart',e=>e.preventDefault());
 function pressA(){
