@@ -3449,6 +3449,9 @@ function dgIcon(k){if(DGI[k])return DGI[k];const c=document.createElement('canva
   else if(k==='rest'){r(6,24,20,5,'#2a3a5a');r(8,22,16,3,'#5a7aaa');r(11,12,10,11,'#6ad0ff');r(13,8,6,6,'#b8ecff');r(15,3,2,6,'#e8fbff');r(13,14,2,6,'#e8fbff');r(10,25,12,1,'#9ac0e8')}
   return DGI[k]=c.toDataURL()}
 function mkDG(id,o){
+  /* 出口の 両がわを 壁で はさんで、出る 道を わかりやすく */
+  if(o.map){const M=o.map.slice(),H=M.length,last=M[H-1],xs=[...last].map((c,i)=>c==='E'?i:-1).filter(i=>i>=0);
+    if(xs.length){const e0=Math.min(...xs),e1=Math.max(...xs),r=[...M[H-2]];for(let k=1;k<=3;k++){[e0-k,e1+k].forEach(x=>{if(r[x]==='.')r[x]='#'})}M[H-2]=r.join('');o=Object.assign({},o,{map:M})}}
   if(o.map){const M=o.map,mb=[],hb=[],ex=[];let sp=null,bo=null,ch=null,rs=null,sdn=null,sup=null;const rc=[],tc=[],pc=[];
     M.forEach((row,y)=>{for(let x=0;x<row.length;x++){const c=row[x];if(c==='#')continue;rc.push([x,y,1,1]);
       if(c==='S')sp=[x,y];else if(c==='E')ex.push(x);else if(c==='M')mb.push([x,y]);else if(c==='H')hb.push([x,y]);else if(c==='B')bo=[x,y];else if(c==='C')ch=[x,y];else if(c==='R')rs=[x,y];else if(c==='T')tc.push([x,y]);else if(c==='>')sdn=[x,y];else if(c==='<')sup=[x,y];else if(c==='P')pc.push([(o.ds||0)>0?['dg5_pil1_','dg5_pil2_','dg5_ped1_','dg5_ped2_'][hsh(x,y)%10<3?0:hsh(x,y)%10<6?1:hsh(x,y)%10<8?2:3]+o.ds:'dg_statue',x,y]);else if(c==='U')pc.push(['dg_pots',x,y]);else if(c==='Q')pc.push([(o.ds||0)>0?'dg5_rub_'+o.ds:'dg_rubble',x,y]);else if(c==='O')pc.push(['dg_cv_rock'+(1+hsh(x,y)%2),x,y]);else if(c==='I')pc.push(['dg_cv_stal'+(1+hsh(x,y)%2),x,y]);else if(c==='K')pc.push(['dg_cv_cry'+(1+hsh(x,y)%2),x,y])}});
@@ -3458,8 +3461,6 @@ function mkDG(id,o){
   /* 祠・迷宮：うすい 壁は 上の マスまで 壁の 上面を 描くので、そこは 歩けない ように する */
   if(o.map&&(o.ds===1||o.ds===2)){const M=o.map,W_=(x,y)=>y<0||y>=M.length||x<0||x>=M[0].length||M[y][x]==='#';
     for(let y=1;y<M.length-1;y++)for(let x=0;x<M[0].length;x++)if(W_(x,y)&&!W_(x,y+1)&&!W_(x,y-1)&&!'SECB>< '.includes(M[y-1][x]))solidR(p,x,y-1)}
-  /* 出口：両わきに かがり火（すでに 壁なら その内がわ） */
-  if(o.exit){const yy=o.h-2,ok=x=>o.map&&o.map[yy]&&o.map[yy][x]&&o.map[yy][x]!=='#';[o.exit[0]-1,o.exit[1]+1].forEach((x,i)=>{const xx=ok(x)?x:(i?o.exit[1]:o.exit[0]);if(!(o.torch||[]).some(t=>t[0]===xx&&t[1]===yy))prop(p,'torch',xx,yy)})}
   (o.torch||[]).forEach(([x,y])=>prop(p,'torch',x,y));(o.props||[]).forEach(([k,x,y,op])=>prop(p,k,x,y,op||{}));
   const col=nm=>{const m=MINIONS.find(m=>m.n===nm)||BOSSES[nm];return m?m.col:['#999','#444']};
   (o.mobs||[]).forEach(([x,y,nm],i)=>{const mid=id+':m'+i,c=col(nm);npc(p,x,y,{n:'魔物',k:'mob',tn:nm,mid,spr:sprite(nm,c[0],c[1]),h:30,Rw:o.map?1:3,hideIf:()=>!!(G.dg&&G.dg[mid])})});
@@ -3760,9 +3761,7 @@ function drawTown(){
   if(p.exit&&p.ds!=null&&p.tint){const x0=p.exit[0]*TT-camx,x1=(p.exit[1]+1)*TT-camx,yb=p.h*TT-camy,w=x1-x0;
     const gr=cx.createLinearGradient(0,yb,0,yb-TT*2.2);gr.addColorStop(0,'rgba(255,244,200,.75)');gr.addColorStop(1,'rgba(255,244,200,0)');cx.fillStyle=gr;cx.fillRect(x0,yb-TT*2.2,w,TT*2.2);
     for(let i=0;i<3;i++){const t=(TW.tick/70+i/3)%1;cx.fillStyle=`rgba(255,250,220,${(1-t)*.8})`;cx.fillRect(Math.round(x0+w*((i*37)%100)/100),Math.round(yb-4-t*TT*1.8),2,2)}
-    const d=Math.abs(TP.tx-(p.exit[0]+p.exit[1])/2)+Math.abs(TP.ty-(p.h-1));
-    if(d<12){const al=Math.min(1,(12-d)/5),bob=Math.round(Math.sin(TW.tick/9)*2),lx=Math.round((x0+x1)/2),ly=yb-TT*1.6+bob;cx.globalAlpha=al;cx.font='bold 11px sans-serif';cx.textAlign='center';cx.lineWidth=3;cx.strokeStyle='#1a1028';cx.strokeText('でぐち',lx,ly);cx.fillStyle='#ffe9a0';cx.fillText('でぐち',lx,ly);
-      cx.beginPath();cx.moveTo(lx-5,ly+4);cx.lineTo(lx+5,ly+4);cx.lineTo(lx,ly+10);cx.closePath();cx.fill();cx.stroke();cx.fill();cx.globalAlpha=1;cx.textAlign='left'}}
+}
   TW.npcs.forEach(n=>objs.push({y:(n.py===undefined?n.y*TT:n.py)+TT,f:()=>{
     const H=n.hh===undefined?(n.hh=hOf(p,n.x,n.y)):n.hh;if(H&&H.a>.97)return;
     const npx=n.px===undefined?n.x*TT:n.px,npy=n.py===undefined?n.y*TT:n.py,x=Math.round(npx+TT/2-camx+(n.ox||0)),y=Math.round(npy+TT-12-camy-(n.oy||0)-(n.mv&&Math.floor(TW.tick/8)%2?1:0));if(H)cx.globalAlpha=Math.min(1,(1-H.a)/.7);drawNpc(cx,n,x,y);cx.globalAlpha=1;
