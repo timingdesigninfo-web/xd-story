@@ -924,7 +924,7 @@ const hasPw=k=>(G.pw||[]).includes(k);
 const crOf=()=>G.cr===undefined?80:G.cr;
 const crAdd=n=>{G.cr=Math.max(0,crOf()+n)};
 const fkb=()=>!!(typeof B!=='undefined'&&B&&B.fkb);
-const ordCost=()=>{const l=Math.max(1,G&&G.lv||1);return Math.round((3+1.5*l+Math.floor(l*l/14))*(fkb()?.5:1))}; /* Lv1=5 Lv5=12 Lv10=25 Lv20=61 */
+const ordCost=()=>{const l=Math.max(1,G&&G.lv||1);return Math.max(1,Math.round((3+1.5*l+Math.floor(l*l/14))*(fkb()?.5:1)*(1-.12*Math.min(3,fiLv('choose')))))}; /* Lv1=5 Lv5=12 Lv10=25 Lv20=61 */
 const ordM=()=>(1.5+.03*Math.max(1,G&&G.lv||1))*(fkb()?2:1);
 /* 妖精への 指示。指示しなければ Fiは なにも しない
    戦いを任せる＝任せる(t)、サポートさせる・守らせる＝いっしょに(c)。指示しない 人は XDの こうげきで「手でやる」が たまる */
@@ -934,15 +934,15 @@ const ORDERS=[
   {id:'prot',n:'守らせる',d:()=>`みんなを かいふくして、うける ダメージを へらす`,t:'c'}];
 const FACET={
   see:{pn:'見抜く力',fx:'こうげきで あいての 弱点を つく 確率が 上がった。',n:'見抜いて',item:'虫めがね',fn:'見る',t:'t',q:'わ、ぼやけてた ものが くっきり 見える！',d:l=>`${2+l}ターン、よわてんを つく（バリアも むし）`},
-  make:{pn:'形にする力',n:'形にして',item:'ペン先',fn:'描く',t:'t',q:'指さきが うずうずする……なにか 描きたい！',d:l=>`${2+l}ターン、こうげきが 大きく のびる`},
-  hear:{pn:'聞く力',n:'聞いて',item:'語り部の 声',fn:'聞く',t:'c',q:'みんなの 声が、ちゃんと 聞こえるよ。',d:l=>`${2+l}ターン、うけるダメージ 半分。HPも かいふく`},
-  open:{pn:'つなげる力',n:'つなげて',item:'待つ人の 手紙',fn:'伝える',t:'c',q:'だれかに とどけたい。そんな 気もちが わく……！',d:l=>`なかまが すぐに 1かい うごく`},
-  choose:{pn:'考える力',n:'考えて',item:'羅針盤',fn:'考える',t:'c',q:'どっちへ いけば いいか、わかる 気がする。',d:l=>`つぎの わざが MP0。MP+${2+l*2}`}};
+  make:{pn:'形にする力',fx:'わざの 威力が 上がった。',n:'形にして',item:'ペン先',fn:'描く',t:'t',q:'指さきが うずうずする……なにか 描きたい！',d:l=>`${2+l}ターン、こうげきが 大きく のびる`},
+  hear:{pn:'聞く力',fx:'あいての こうげきを かわしやすく なった。',n:'聞いて',item:'語り部の 声',fn:'聞く',t:'c',q:'みんなの 声が、ちゃんと 聞こえるよ。',d:l=>`${2+l}ターン、うけるダメージ 半分。HPも かいふく`},
+  open:{pn:'伝える力',fx:'妖精への 指示が うまく 伝わり、せいこうしやすく なった。',n:'つなげて',item:'待つ人の 手紙',fn:'伝える',t:'c',q:'だれかに とどけたい。そんな 気もちが わく……！',d:l=>`なかまが すぐに 1かい うごく`},
+  choose:{pn:'考える力',fx:'ムダを 考えて へらし、クレジットと MPの 消費が へった。',n:'考えて',item:'羅針盤',fn:'考える',t:'c',q:'どっちへ いけば いいか、わかる 気がする。',d:l=>`つぎの わざが MP0。MP+${2+l*2}`}};
 const fiLv=k=>{const v=(G.fi&&G.fi[k])||((G.keys||[]).includes(FACET[k].item)?1:0);return v>0&&fkb()?v+2:v};
 const fiN=()=>Object.keys(FACET).filter(k=>fiLv(k)>0).length;
-const badP=()=>fkb()?0:Math.max(0,.3-.07*fiN());
+const badP=()=>fkb()?0:Math.max(0,.3-.07*fiN()-.05*fiLv('open'));
 const fiPow=()=>1+Object.keys(FACET).reduce((t,k)=>t+fiLv(k),0); /* Fiの レベル：取りもどした 力の Lvの 合計＋1 */
-const supP=()=>fkb()?1:Math.min(.97,.7+.05*fiPow());
+const supP=()=>fkb()?1:Math.min(.97,.7+.05*fiPow()+.06*fiLv('open')); /* 伝える力で 上がる */
 function healParty(f){const h=Math.min(Math.round(G.max*f),G.max-G.hp);if(h>0){G.hp+=h;pop('#me','+'+h,'hp')}B.allies.forEach(a=>{if(a.hp>0){const v=Math.min(Math.round(a.max*f),a.max-a.hp);if(v>0){a.hp+=v;pop(a.sel,'+'+v,'hp')}}})}
 async function fiAuto(){
   if(!G.fairy||B.over||B.turn<=1)return;
@@ -967,7 +967,7 @@ function aiCmds(){return ORDERS.map(o=>({...o,n:o.n+(o.id==='fight'?'':'')}))}
 const ordAct=id=>false;
 const ordOn=()=>B&&B.ord&&((B.ord.atk||0)>0||(B.ord.grd||0)>0);
 const skCost=sk=>{const c=skCost0(sk);return B&&B.fkc==='h'&&c>0?Math.max(1,Math.ceil(c/2)):c};
-const skCost0=sk=>{if(B&&B.free)return 0;const c=hasPw('choose')&&sk.mp>0?Math.max(1,Math.floor(sk.mp*.8)):sk.mp;return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
+const skCost0=sk=>{if(B&&B.free)return 0;const cl=fiLv('choose'),c=(hasPw('choose')||cl>0)&&sk.mp>0?Math.max(1,Math.floor(sk.mp*(1-.1*Math.max(2,Math.min(3,cl+1))))):sk.mp; /* 考える力：Lv1=-20% Lv2=-30% */return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
 const TACTICS=[
   {id:'gan',n:'ぜんぶ出しきる',d:'MPを おしまず ぜんりょくで こうげき'},
   {id:'min',n:'ほどよく進める',d:'こうげきと かいふくを バランスよく'},
@@ -4261,9 +4261,10 @@ async function runQ(){
     const e=a.tid!==undefined?B.es[a.tid]:B.e;
     if(a.k==='hit'){
       let pierce=a.pierce,d;
-      const isX=!a.who||a.who==='xd',crit=(B.sure&&isX)||Math.random()<(isX&&fiLv('see')>0?.16+.04*Math.min(3,fiLv('see')):1/16);if(crit&&B.sure&&isX)B.sure=false;
+      const isX=!a.who||a.who==='xd',crit=(B.sure&&isX)||Math.random()<(isX&&fiLv('see')>0?.07+.03*Math.min(3,fiLv('see')):1/16); /* 見抜く力：Lv1=10% Lv2=13% Lv3=16%（ふだん 約6%） */if(crit&&B.sure&&isX)B.sure=false;
       {const w=a.who&&a.who!=='xd'?a.who:'',fx=a.fx||(a.m>=2?'burst:'+w:(w&&AP[w]&&AP[w].fx?AP[w].fx+':'+w:'slash:'+w));await fxRun(fx,e)}
       let om=1;if(isX&&B.up){om*=1+(B.up.a?B.up.a.m:0)+(B.inSkill&&B.up.s?B.up.s.m:0)}
+      if(isX&&B.inSkill&&fiLv('make')>0)om*=1+.1*fiLv('make'); /* 形にする力 */
       if(!isX&&a.who!=='fi'&&B.ord&&B.ord.atk>0&&!B.bad)om*=(B.ord.m||ordM());
       if(isX&&B.ord&&B.ord.atk>0){if(B.bad){om*=.5;if(!B.badSaid){B.badSaid=1;say('……妖精の光が ぼうそうした！');await wait(520)}}else{om*=B.inSkill?ordM()+.4:(B.ord.m||ordM());if(B.ord.pr)pierce=true}}
       if(B.fiDown>0&&a.who!=='fi')om*=.75; /* Fiの 暴走で 弱まった */
@@ -4530,6 +4531,7 @@ async function enemyAct(e){
       for(let k=0;k<times;k++){
         const al=partyAlive();if(!al.length)break;
         const m=al[Math.floor(Math.random()*al.length)];
+        if(m.k==='xd'&&fiLv('hear')>0&&Math.random()<.08+.04*fiLv('hear')){sfx('block');pop(m.sel,'よけた','blk');say('XDは あいての うごきを 聞きわけて、ひらりと かわした！');await wait(800);continue} /* 聞く力 */
         if(m.k==='xd'){const hs=eqHas('xd','x_state'),hl=eqHas('xd','x_layer');if((hs||hl)&&Math.random()<(hs?.25:0)+(hl?.2:0)){sfx('block');pop(m.sel,hs?'うけながし':'よけた','blk');say(hs?'<b>ステートの盾</b>で こうげきを うけながした！':'<b>スマートガイドの靴</b>で ひらりと よけた！');await wait(800);continue}}
         let d=Math.round((mv.v+e.str)*(e.weak?.75:1)*(e.chg?2:1));
         if(m.k==='xd'&&B.defend)d=Math.ceil(d/2);if(m.k==='xd'&&B.stance==='def')d=Math.ceil(d*.6);if(B.ord&&B.ord.grd>0)d=Math.ceil(d*(B.ord.half?.4:.65));
