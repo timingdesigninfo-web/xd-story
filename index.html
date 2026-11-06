@@ -397,7 +397,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .kpaper small{display:block;font-size:11px;letter-spacing:.3em;border-bottom:1px solid #1a1208;margin-bottom:8px;padding-bottom:4px}
 .kpaper b{display:block;font-size:clamp(22px,8vw,38px);letter-spacing:.06em;animation:kink .7s ease-out}@keyframes kink{from{opacity:0;filter:blur(4px)}to{opacity:1;filter:none}}
 .uksv{width:100%;height:auto;border:2px solid #f4f4f4;border-radius:6px;display:block}
-.ukal{position:relative;height:22px;background:#f3ead6;border-radius:4px}.ukal i{position:absolute;top:3px;left:50%;width:16px;height:16px;margin-left:-8px;border-left:3px solid #111;border-bottom:3px solid #111}.ukal .ukp{border-color:#d8452f}
+.ukal{position:relative;height:44px;background:#f3ead6;border-radius:4px}.ukal i{position:absolute;top:8px;left:50%;width:26px;height:26px;margin-left:-13px;border-left:4px solid #111;border-bottom:4px solid #111}.ukal .ukp{border-color:#d8452f;opacity:.85}.ukal em{position:absolute;top:12px;font-style:normal;font-size:11px;color:#8a7350}.ukpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ukpick .mgbtn{padding:14px 6px;font-size:15px}.mgbtn.big{display:block;width:100%;font-size:22px;padding:16px;letter-spacing:.3em}
 .monn{text-align:center;margin:0;font-size:18px;color:#ffe27a;font-family:serif}
 .fsw{background:linear-gradient(#9cc8e8 0 55%,#7cb35a 55%);border-radius:6px;display:flex;justify-content:center;align-items:center;overflow:hidden;height:150px}
 .fsign{background:linear-gradient(#c89458,#8d5f2e);border:5px solid #4a2e14;border-radius:4px;padding:14px 18px;color:#1a0d04;font-size:34px;line-height:1.2;transition:transform .35s,filter .35s;white-space:nowrap}
@@ -4075,15 +4075,15 @@ function ukiyoTalk(){const W='摺り師';
   if(EVF('ukiyo'))return townSay([[W,'あんたの 摺った 一枚、店先に はってあるよ。'],[W,'もう 一枚、摺って いくかい？']],()=>townChoice('',[{l:'摺る',s:'',f:()=>ukiyoGame(W)},{l:'やめる',s:'',f:()=>{}}]));
   townSay([[W,'一枚の 絵に、版木は 何枚も ある。色ごとに 一枚ずつ だ。'],[W,'紙の はしの「見当」に ぴたりと あわせて 摺る。ずれたら おしまい。……やって みるかい。']],()=>ukiyoGame(W))}
 function ukiyoGame(W){
-  mgOpen('多色摺り　版を かさねる','つぎに 摺る 版を えらぼう。',(b,close,lead)=>{
+  mgOpen('多色摺り　版を かさねる','',(b,close,lead)=>{
     const done=[],off={};let sun='紅',raf=0;
     const pick=()=>{cancelAnimationFrame(raf);const rest=UKV.filter(v=>!done.includes(v.k));
-      if(!rest.length)return fin();lead(done.length?'つぎに 摺る 版を えらぼう。':'つぎに 摺る 版を えらぼう。<br>日の 色は 好きに きめて いい。');
-      b.innerHTML=ukSvg(done,off,sun)+`<div class="mgrow"><span>日の 色</span>${Object.keys(UKSUN).map(s=>mgB(s,sun===s?'on':'',`data-s="${s}"`+(done.includes('hi')?' disabled':''))).join('')}</div><div class="mgrow">${rest.map(v=>mgB(v.n,'','data-v="'+v.k+'"')).join('')}</div>`;
+      if(!rest.length)return fin();lead(done.length?`${done.length}枚 摺れた。つぎに 摺る 版を えらぼう（のこり ${rest.length}枚）。`:'この 絵は、色ごとに 版木が 1枚ずつ、ぜんぶで 4枚。<br>1枚ずつ 紙に かさねて 摺って、1枚の 絵に しあげよう。<br>まずは どの 版から 摺る？ 日の 色も えらべるよ。');
+      b.innerHTML=ukSvg(done,off,sun)+`<div class="mgrow"><span>日の 色</span>${Object.keys(UKSUN).map(s=>mgB(s,sun===s?'on':'',`data-s="${s}"`+(done.includes('hi')?' disabled':''))).join('')}</div><div class="ukpick">${rest.map(v=>mgB(v.n,'go','data-v="'+v.k+'"')).join('')}</div>`;
       b.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>{sun=x.dataset.s;sfx('tap');pick()});
       b.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{sfx('tap');align(x.dataset.v)})};
-    const align=k=>{lead('紙が 左右に ゆれている。見当の しるしが かさなった ときに「摺る」！');
-      b.innerHTML=`<div class="ukal"><i class="ukm"></i><i class="ukp" id="ukp"></i></div>`+ukSvg(done,off,sun)+`<div class="mgrow">${mgB('摺る','go','id="uks"')}</div>`;
+    const align=k=>{lead(`<b>${UKV.find(v=>v.k===k).n}</b>を 摺る。<br>赤い かぎ（紙の しるし）が 左右に ゆれている。<br>黒い かぎ（版の しるし）と <b>ぴったり かさなった 瞬間</b>に「摺る」を おそう。ずれると 色も ずれて 刷られるよ。`);
+      b.innerHTML=ukSvg(done,off,sun)+`<div class="ukal"><i class="ukm"></i><i class="ukp" id="ukp"></i><em style="left:8px"><b style="color:#d8452f">赤</b>＝紙</em><em style="right:8px"><b style="color:#111">黒</b>＝版</em></div>`+mgB('摺る','go big','id="uks"');
       const pp=b.querySelector('#ukp'),t0=performance.now(),sp=.0022+done.length*.0006;let cur=0;
       const tick=t=>{cur=Math.round(Math.sin((t-t0)*sp)*24);pp.style.transform=`translateX(${cur*2}px)`;raf=requestAnimationFrame(tick)};raf=requestAnimationFrame(tick);
       b.querySelector('#uks').onclick=()=>{cancelAnimationFrame(raf);off[k]=cur;done.push(k);sfx(Math.abs(cur)<=4?'lvup':'swing');setTimeout(pick,250)}};
