@@ -1537,25 +1537,32 @@ function tmain(){
 }
 function tmMap(){
   const old=document.getElementById('wmapov');if(old)old.remove();
-  const S=.25,c=document.createElement('canvas');c.width=Math.round(MW*TS*S);c.height=Math.round(MH*TS*S);
+  const S=.5,c=document.createElement('canvas');c.width=Math.round(MW*TS*S);c.height=Math.round(MH*TS*S);
   /* いる 場所を 左右の まんなかに：東西は つながって いるので ずらして 描く */
   const SH=Math.round((G.tx||0)+.5-MW/2),WX=x=>((x-SH)%MW+MW)%MW;
   const g=c.getContext('2d');g.imageSmoothingEnabled=false;
   {const k=((SH%MW)+MW)%MW,a=(MW-k)*TS;g.drawImage(MAP,k*TS,0,a,MH*TS,0,0,a*S,c.height);if(k)g.drawImage(MAP,0,0,k*TS,MH*TS,a*S,0,k*TS*S,c.height)}
-  g.font='bold 13px sans-serif';g.textAlign='center';
-  const lab=(x,y,n,col,dn)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S,ty=dn?py+18:py-8;g.fillStyle=col;g.beginPath();g.arc(px,py,4,0,7);g.fill();g.lineWidth=1.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=3.5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,ty);g.fillStyle='#fff';g.fillText(n,px,ty)};
-  {g.save();g.font='bold italic 17px serif';g.globalAlpha=.85;[...REGIONS.filter(r=>r.lx!=null),SNOWN].forEach(r=>{const py=(r.ly+.5)*TS*S,hw=g.measureText(r.n).width/2+4;let best=null;[-1,0,1].forEach(m=>{const raw=(WX(r.lx)+.5+m*MW)*TS*S,cl=Math.max(hw,Math.min(c.width-hw,raw));if(best==null||Math.abs(cl-raw)<best[1])best=[cl,Math.abs(cl-raw)]});{const px=best[0];g.lineWidth=4;g.strokeStyle='rgba(20,10,30,.75)';g.strokeText(r.n,px,py);g.fillStyle='#ffe9a8';g.fillText(r.n,px,py)}});g.restore();g.font='bold 13px sans-serif';g.textAlign='center'}
+  g.font='bold 22px sans-serif';g.textAlign='center';
+  const lab=(x,y,n,col,dn)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S,ty=dn?py+30:py-13;g.fillStyle=col;g.beginPath();g.arc(px,py,7,0,7);g.fill();g.lineWidth=2.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,ty);g.fillStyle='#fff';g.fillText(n,px,ty)};
+  {g.save();g.font='bold italic 30px serif';g.globalAlpha=.85;[...REGIONS.filter(r=>r.lx!=null),SNOWN].forEach(r=>{const py=(r.ly+.5)*TS*S,hw=g.measureText(r.n).width/2+4;let best=null;[-1,0,1].forEach(m=>{const raw=(WX(r.lx)+.5+m*MW)*TS*S,cl=Math.max(hw,Math.min(c.width-hw,raw));if(best==null||Math.abs(cl-raw)<best[1])best=[cl,Math.abs(cl-raw)]});{const px=best[0];g.lineWidth=4;g.strokeStyle='rgba(20,10,30,.75)';g.strokeText(r.n,px,py);g.fillStyle='#ffe9a8';g.fillText(r.n,px,py)}});g.restore();g.font='bold 22px sans-serif';g.textAlign='center'}
   for(const k in LM)if(k!=='storm')lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
   for(const k of ['rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
-  const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:absolute;inset:0;z-index:90;background:#000d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px';
-  c.style.cssText='max-width:100%;max-height:84%;min-height:0;border:2px solid #fff6;border-radius:6px;image-rendering:pixelated';
-  const t=document.createElement('div');t.style.cssText='color:#fff;font-size:13px';t.textContent='せかいちず　（タップで とじる）　赤い点＝いまの いち　左右の はしは つながっている';
-  o.append(c,t);
-  const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{e.stopPropagation();e.preventDefault();close()};
-  o.onclick=close;document.addEventListener('keydown',kd,true);(app||document.body).appendChild(o);
+  const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:absolute;inset:0;z-index:90;background:#000e;display:flex;flex-direction:column';
+  const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;color:#fff;font-size:12px;flex:none';
+  top.innerHTML='<span>せかいちず　<span style="opacity:.75">指で うごかせる・赤い点＝いまの いち・左右の はしは つながっている</span></span><button id="wmapx" style="flex:none;padding:6px 14px;border-radius:6px;border:1px solid #fff8;background:#26308f;color:#fff;font-weight:700">とじる</button>';
+  const vp=document.createElement('div');vp.style.cssText='flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;border-top:1px solid #fff3';
+  c.style.cssText=`display:block;width:${c.width/2}px;height:${c.height/2}px;image-rendering:pixelated;max-width:none`;
+  vp.appendChild(c);o.append(top,vp);
+  const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{if(['Escape','x','X','b','B','Backspace'].includes(e.key)){e.stopPropagation();e.preventDefault();close()}else if(/^Arrow/.test(e.key)){e.preventDefault();const d=60;vp.scrollBy({left:e.key==='ArrowLeft'?-d:e.key==='ArrowRight'?d:0,top:e.key==='ArrowUp'?-d:e.key==='ArrowDown'?d:0})}};
+  o.querySelector('#wmapx').onclick=e=>{e.stopPropagation();sfx('tap');close()};document.addEventListener('keydown',kd,true);(app||document.body).appendChild(o);
+  /* マウスでも ドラッグで うごかす */
+  {let dr=null;vp.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;dr={x:e.clientX,y:e.clientY,l:vp.scrollLeft,t:vp.scrollTop};vp.style.cursor='grabbing'});
+   addEventListener('pointermove',e=>{if(!dr)return;vp.scrollLeft=dr.l-(e.clientX-dr.x);vp.scrollTop=dr.t-(e.clientY-dr.y)});addEventListener('pointerup',()=>{dr=null;vp.style.cursor='grab'})}
+  /* はじめは いまの いちが まんなか */
+  requestAnimationFrame(()=>{const px=(WX(G.tx)+.5)*TS*S/2,py=(G.ty+.5)*TS*S/2;vp.scrollLeft=px-vp.clientWidth/2;vp.scrollTop=py-vp.clientHeight/2});
   let on=true;const blink=()=>{if(!document.getElementById('wmapov'))return;const px=(WX(G.tx)+.5)*TS*S,py=(G.ty+.5)*TS*S,cx=c.getContext('2d');on=!on;
-    if(!c._base){c._base=cx.getImageData(0,0,c.width,c.height)}cx.putImageData(c._base,0,0);if(on){cx.fillStyle='#ff2020';cx.beginPath();cx.arc(px,py,5,0,7);cx.fill();cx.lineWidth=2;cx.strokeStyle='#fff';cx.stroke()}setTimeout(blink,450)};blink();
+    if(!c._base){c._base=cx.getImageData(0,0,c.width,c.height)}cx.putImageData(c._base,0,0);if(on){cx.fillStyle='#ff2020';cx.beginPath();cx.arc(px,py,9,0,7);cx.fill();cx.lineWidth=3;cx.strokeStyle='#fff';cx.stroke()}setTimeout(blink,450)};blink();
 }
 /* 仲間の HPは 戦闘の あとも のこる（G.ahp）。宿・教会などで 全回復 */
 const aHp=k=>{const m=allyMax(k),v=G.ahp&&G.ahp[k];return v===undefined?m:Math.max(0,Math.min(m,v))};
