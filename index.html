@@ -380,6 +380,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .rcol .abtns button+button{margin-bottom:0}
   .rcol .ab small{font-size:10px;color:var(--mute);text-align:center;line-height:1.2;white-space:nowrap}
 }
+.askp{animation:askp .5s ease-out}@keyframes askp{0%{filter:brightness(1.8)}100%{filter:none}}
 .mgov{position:fixed;inset:0;z-index:99980;background:#05040cf2;display:flex;justify-content:center;overflow:auto;padding:max(10px,env(safe-area-inset-top)) 10px 18px;color:#fff;font-size:14px;line-height:1.5}
 .mgin{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;height:max-content}
 .mgh{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:6px;padding:6px 10px;box-shadow:0 0 0 2px #000}
@@ -5178,13 +5179,17 @@ async function runPhase(fast){if(!B.uo)buildOrder();for(const u of B.uo){if(fast
 function startTurn(){B.uo=null;B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;histSnap();B.supN=0;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
   if(G.hp<=0){B.busy=true;render();autoRound();return}
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
-  B.busy=false;render()}
-async function autoAnim(){ACT='xd';Q=[];say('人形が じどうで こうげき！');B.t=B.es.indexOf(B.e);await wait(500);hitF(1.6,'puppet');await runQ();if(B.over)return;if(!aliveEs().length)return defeatEnemy();B.busy=false;render()}
+  B.busy=false;askTurn();render()}
+/* ひととおり 動きおわったら、かならず「どうする？」に もどす（つぎの 入力の 合図） */
+function askTurn(){if(!B||B.over)return;const L=$('#log'),q='<b>XD</b>は どうする？';if(!L)return;
+  if(B.turn<=1&&L.innerHTML&&!/どうする/.test(L.innerHTML))L.innerHTML+='<br>'+q;else L.innerHTML=q;
+  L.classList.remove('askp');void L.offsetWidth;L.classList.add('askp')}
+async function autoAnim(){ACT='xd';Q=[];say('人形が じどうで こうげき！');B.t=B.es.indexOf(B.e);await wait(500);hitF(1.6,'puppet');await runQ();if(B.over)return;if(!aliveEs().length)return defeatEnemy();B.busy=false;askTurn();render()}
 async function autoRound(){say('XDは たおれている……');await wait(900);await afterXD()}
 async function afterXD(){
   if(!aliveEs().length)return defeatEnemy();
   if(B.extra2)B.extra2=0;
-  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;render();return}
+  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;say('<b>XD</b>は もういちど どうする？');render();return}
   await runPhase(false);if(B.over)return;
   if(!aliveEs().length)return defeatEnemy();
   B.preDone=0;return roundEnd();
