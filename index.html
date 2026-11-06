@@ -5808,9 +5808,9 @@ const KC={g:'grass',s:'sand',n:'snow',t:'storm',c:'cloud'};
 const grid=WORLD.map(s=>Array.from(s,Number));
 const LM={
   castle:{x:124,y:14,n:'雲の王都',s:'雲の王国の中心。クラウド王が座す城'},
-  village:{x:105,y:7,n:'はじまりの村',s:'彗星の子が めざめた 村'},
+  village:{x:112,y:8,n:'はじまりの村',s:'彗星の子が めざめた 村'},
   mac:{x:96,y:18,n:'りんごの島',s:'王スケットの琥珀の宮殿'},
-  tower:{x:103,y:4,n:'眠りの塔',s:'メンテナンスモードのXDが眠る場所'},
+  tower:{x:109,y:5,n:'眠りの塔',s:'メンテナンスモードのXDが眠る場所'},
   east:{x:116,y:28,n:'東の国',s:'城下町と東の城。スタティオとプロトの故郷'},
   storm:{x:24,y:21,n:'ブラウザ大陸',s:'暴君フィグムが待つ雷雲の地'},
 };
@@ -6233,6 +6233,12 @@ function blitKey(c,r,ox,oy){
 }
 function bake(){
   if(!(GRI.complete&&GRI.naturalWidth&&FEI.complete&&FEI.naturalWidth)){setTimeout(bake,100);return}
+  /* 雲は 大地では ない：下は 海として 描き（海岸線なし）、あとから 雲を 上に かける */
+  const C9=[];for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(grid[y][x]===9){C9.push([x,y]);grid[y][x]=0}
+  try{bakeIn()}finally{C9.forEach(([x,y])=>grid[y][x]=9)}
+  cloudRing();
+}
+function bakeIn(){
   NOSEA=true;mg.clearRect(0,0,MAP.width,MAP.height);drawBiomes();
   {const W=MAP.width,H=MAP.height,im=mg.getImageData(0,0,W,H),d=im.data;
     const cp=(a,b)=>{d[a]=d[b];d[a+1]=d[b+1];d[a+2]=d[b+2]};
@@ -6328,14 +6334,19 @@ function bake(){
       }
     }
   }
-  NOSEA=false;drawCoast();drawRoads();drawBridges();drawTrees();cloudRing();
+  NOSEA=false;drawCoast();drawRoads();drawBridges();drawTrees();
 }
 const CLDG=new Image(),CMG={"floor": [0, 0, 94, 82], "isl1": [96, 0, 102, 96], "isl2": [200, 0, 84, 88], "isl3": [286, 0, 83, 83], "isl4": [371, 0, 86, 87], "puff1": [459, 0, 96, 90], "puff2": [557, 0, 96, 78], "shrine": [655, 0, 98, 97], "mtn1": [755, 0, 98, 98], "mtn2": [855, 0, 99, 96], "castle": [956, 0, 99, 103], "bridge": [1057, 0, 94, 94]};
 const CLT=document.createElement('canvas');CLT.width=MW*TS;CLT.height=MH*TS;const clg=CLT.getContext('2d');
 function cloudRing(){
   clg.clearRect(0,0,CLT.width,CLT.height);
   if(!(CLDG.complete&&CLDG.naturalWidth))return;
-  const isC=(x,y)=>y>=0&&x>=0&&y<MH&&x<MW&&grid[y][x]!==0&&regionKind(x,y)==='cloud';
+  const isC=(x,y)=>y>=0&&x>=0&&y<MH&&x<MW&&grid[y][x]===9;
+  /* 雲の 中身：ふんわりした 白い かたまりで おおう（陸の はしにも 少し かかる） */
+  {const T=TS;for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){if(!isC(x,y))continue;const h=hsh(x,y),cx=x*T+T/2,cy=y*T+T/2,r=T*(.95+(h%5)*.06);
+      const gr=mg.createRadialGradient(cx,cy,r*.2,cx,cy,r);gr.addColorStop(0,'rgba(250,248,255,.98)');gr.addColorStop(.7,'rgba(238,234,250,.92)');gr.addColorStop(1,'rgba(232,228,248,0)');mg.fillStyle=gr;mg.beginPath();mg.arc(cx,cy,r,0,7);mg.fill()}
+    for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){if(!isC(x,y))continue;const h=hsh(x*3+1,y*5+2);if(h%3)continue;const m=CMG[h%2?'puff1':'puff2'],sc=.42+(h%4)*.04;
+      mg.drawImage(CLDG,m[0],m[1],m[2],m[3],Math.round(x*T+T/2-m[2]*sc/2+(h%7)-3),Math.round(y*T+T/2-m[3]*sc*.6),Math.round(m[2]*sc),Math.round(m[3]*sc))}}
   const cl=(k,x,y,sc)=>{const m=CMG[k];{const a=[CLDG,m[0],m[1],m[2],m[3],Math.round(x-m[2]*sc/2),Math.round(y-m[3]*sc*.6),Math.round(m[2]*sc),Math.round(m[3]*sc)];clg.drawImage(...a);mg.drawImage(...a)}};
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
     if(!isC(x,y))continue;
