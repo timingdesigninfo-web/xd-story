@@ -3704,14 +3704,13 @@ function doFind(f){
   G.found[f.key]=1;sfx('lvup');
   const it=f.it,dup=!!G.got[it.id];G.got[it.id]=1;
   let ex='';if(!dup){if(it.cr){crAdd(it.cr);ex=`<br>クレジットが <b>${it.cr}</b> ふえた！`}if(it.hp&&G.hp<G.max){G.hp=Math.min(G.max,G.hp+it.hp);ex+=`<br>HPが すこし かいふくした。`}updHud()}
-  {const n=gotN(),nx=!G.learn||!G.learn.fl?(n<3?`<br><small>むかしの かけら ${n}/${FINDS.length}　（あと ${3-n}こで Flが わざを おしえてくれる）</small>`:`<br><small>むかしの かけら ${n}/${FINDS.length}</small>`):!G.learn.fw&&n<6?`<br><small>むかしの かけら ${n}/${FINDS.length}　（あと ${6-n}こで Fwが わざを おしえてくれる）</small>`:`<br><small>むかしの かけら ${n}/${FINDS.length}</small>`;
+  {const n=gotN(),nx=`<br><small>むかしの かけら ${n}/${FINDS.length}</small>`;
   townSay([['',`${f.nm}を しらべた！`],['',dup?`<b>${it.n}</b>を みつけた。……おなじ ものを もう もっている。`:`むかしの かけら「<b>${it.n}</b>」を みつけた！<br><small>${it.d}</small>${ex}${nx}`]])}
 }
 /* むかしの かけら：見つけたものは 名前、まだの ものは ？？？。Fl・Fwの わざまで あと いくつか */
 function tmFound(){
   G.got=G.got||{};G.learn=G.learn||{};const n=gotN(),T=FINDS.length;
-  const goal=(w,need,nm)=>G.learn[w]?`✓ ${nm}（${w==='fl'?'Fl':'Fw'}から おそわった）`:n>=need?`★ ${need}こ あつまった！ ${w==='fl'?'Fl（眠りの塔の 店）':'Fw（りんごの島）'}に はなしかけよう`:`あと ${need-n}こで ${w==='fl'?'Flが':'Fwが'} ${nm}を おしえてくれる`;
-  const head=[{l:`あつめた かけら　${n} / ${T}`,s:goal('fl',3,'フラッシュ')+'<br>'+goal('fw',6,'はなび'),f:()=>tmFound()}];
+  const head=[{l:`あつめた かけら　${n} / ${T}`,s:'家の たなや つぼを しらべると 見つかる',f:()=>tmFound()}];
   const rows=FINDS.map(f=>G.got[f.id]?{l:f.n,s:f.d,f:()=>tmFound()}:{l:'？？？',s:'まだ 見つけていない',f:()=>tmFound()});
   tmChoose([...head,...rows,{l:'もどる',s:'',f:()=>tmain()}],`メニュー ＞ むかしの かけら`,tmain);
 }
