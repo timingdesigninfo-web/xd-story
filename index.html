@@ -1084,8 +1084,8 @@ const skCost0=sk=>{if(B&&B.free)return 0;const cl=fiLv('choose'),m0=skBase(sk),c
 const TACTICS=[
   {id:'gan',n:'ぜんぶ出しきる',d:'MPを おしまず ぜんりょくで こうげき'},
   {id:'min',n:'ほどよく進める',d:'こうげきと かいふくを バランスよく'},
-  {id:'ino',n:'まもりを固める',d:'かいふくと まもりを さいゆうせん'},
-  {id:'mp0',n:'わざは温存',d:'わざを つかわず ふつうに こうげき'},
+  {id:'ino',n:'まもりを固める',d:'かいふくと まもりを さいゆうせん。どうぐも おしまない'},
+  {id:'mp0',n:'わざは温存',d:'わざも どうぐも なるべく とっておく'},
 ];
 const SNM={ps:'Ps',ai:'Ai',dw:'Dw',ae:'Ae',ff:'Fi'};
 const AP={ps:{hp:1.45,mp:.7,atk:1.3,an:'ブラシ突き',am:1.25,ah:1,fx:'blunt'},ai:{hp:.8,mp:1.15,atk:1,an:'ペンツール',am:.65,ah:2,fx:'slash'},ae:{hp:.95,mp:1.4,atk:.8,an:'フレームうち',am:.9,ah:1,fx:'whirl'},dw:{hp:.75,mp:1.35,atk:.9,an:'タグなげ',am:.9,ah:1,fx:'bolt'},ff:{hp:.85,mp:1.7,atk:.6,an:'ひかりの つぶて',am:.8,ah:1,fx:'spark'}};
@@ -1134,8 +1134,14 @@ function allyChoose(a){
   if(heal&&lowR<.4)return heal;if(aoe&&en>=2&&R<.5)return aoe;if(guard&&R<.15)return guard;if(atk.length&&R<.55)return atk[Math.floor(Math.random()*atk.length)];return null}
 function pickEnemyFor(a){const al=aliveEs();return (G.tac||'min')==='gan'?[...al].sort((x,y)=>x.hp-y.hp)[0]:al[Math.floor(Math.random()*al.length)]}
 async function alliesAct(){for(const a of B.allies){await allyAct(a);if(!aliveEs().length)return}ACT='xd'}
-/* 仲間が つかう どうぐ：きまった 順番は なし。もっている 数が 多い ものほど えらばれやすい */
-function pickIt(ks){const c=ks.filter(k=>G.items[k]>0);if(!c.length)return null;let r=Math.random()*c.reduce((s,k)=>s+G.items[k],0);for(const k of c){r-=G.items[k];if(r<0)return k}return c[c.length-1]}
+/* 仲間が つかう どうぐは「方針」しだい：
+   まもりを固める＝いちばん よく 効く もの／ぜんぶ出しきる＝効く ものから 気前よく
+   わざは温存＝やすい ものから けちけち／ほどよく進める＝もっている 数に おうじて えらぶ */
+const itPrice=k=>SHOPI[k]||0;
+const healAt=()=>({ino:.5,gan:.35,min:.3,mp0:.25})[G.tac||'min']||.3;
+function pickIt(ks){const c=ks.filter(k=>G.items[k]>0);if(!c.length)return null;const t=G.tac||'min';
+  if(t==='ino'||t==='gan')return c.sort((a,b)=>itPrice(b)-itPrice(a))[0];
+  if(t==='mp0')return c.sort((a,b)=>itPrice(a)-itPrice(b))[0];let r=Math.random()*c.reduce((s,k)=>s+G.items[k],0);for(const k of c){r-=G.items[k];if(r<0)return k}return c[c.length-1]}
 async function allyAct(a){
   {
     if(a.hp<=0||!aliveEs().length)return;
@@ -1144,7 +1150,7 @@ async function allyAct(a){
     if(B.itR!==B.turn){
       if(G.hp<=0){const k=pickIt(['herb','dr','backup']);
         if(k){B.itR=B.turn;G.items[k]--;G.hp=Math.min(G.max,k==='backup'?Math.ceil(G.max/2):ITEMS[k].h);B.fiSelf=0;sfx('heal');try{jolt('#me','flash')}catch(e){}pop('#me','+'+G.hp,'heal');render();say(`<b>${a.n}</b>は XDに <b>${ITEMS[k].n}</b>を つかった！<br><b>XDが 目を さました！</b>`);await wait(900);return}}
-      else{const low=partyAll().filter(m=>m.hp>0&&m.hp<m.max*.3).sort((x,y)=>x.hp/x.max-y.hp/y.max)[0],k=low&&pickIt(['herb','dr']);
+      else{const low=partyAll().filter(m=>m.hp>0&&m.hp<m.max*healAt()).sort((x,y)=>x.hp/x.max-y.hp/y.max)[0],k=low&&pickIt(['herb','dr']);
         if(low&&k){B.itR=B.turn;G.items[k]--;const v=Math.min(low.max-low.hp,ITEMS[k].h);low.hp+=v;sfx('heal');pop(low.sel,'+'+v,'heal');render();say(`<b>${a.n}</b>は ${low.k===a.k?'じぶんに':`<b>${low.n}</b>に`} <b>${ITEMS[k].n}</b>を つかった！<br>HPが <b>${v}</b> かいふく！`);await wait(800);return}}}
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
     if(ch){a.mp-=ch.mp;cbAdd(a.k,'m',ch.mp*4);say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
