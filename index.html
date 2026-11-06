@@ -1124,10 +1124,17 @@ const ALLYSK={
   ps:{n:'生成塗りつぶし',d:'3.4ばいの ダメージ',f:()=>hit(3.4)},
   ff:{n:'妖精のちから',d:'バリア（3ばい）と HP 30% かいふく',f:()=>{guard(3);heal(Math.round(G.max*.3))}},
 };
+/* t: hp=ひとりの HP / mp=ひとりの MP / all=みんなの HP / rev=たおれた なかまを 起こす / atk=てき ぜんたいに ダメージ（戦闘のみ） */
 const ITEMS={
-  herb:{n:'やくそう',d:'HPを 30 かいふくする',h:30},
-  dr:{n:'エナジードリンク',d:'HPを 80 かいふくする',h:80},
+  herb:{n:'やくそう',d:'HPを 30 かいふくする',h:30,t:'hp'},
+  dr:{n:'エナジードリンク',d:'HPを 80 かいふくする',h:80,t:'hp'},
+  cache:{n:'キャッシュクリア',d:'MPを 12GB かいふくする',m:12,t:'mp'},
+  meal:{n:'みんなの まかない',d:'みんなの HPを 35 かいふくする',h:35,t:'all'},
+  backup:{n:'バックアップ',d:'たおれた なかまを HP はんぶんで 起こす',t:'rev'},
+  shortcut:{n:'ショートカット',d:'てき ぜんたいに 30の ダメージ（戦闘中だけ）',v:30,t:'atk'},
 };
+/* その人に つかえるか */
+function itemOk(k,m){const t=ITEMS[k].t;if(t==='mp')return m.mp!=null?m.mp<m.mpm:true;if(t==='rev')return m.k!=='xd'&&m.hp<=0;return m.hp<m.max&&!(t==='hp'&&m.hp<=0&&m.k==='xd')}
 
 /* ================= そうび（武器／防具）・クレジット ================= */
 const GEAR={},GORD=[];
@@ -1229,7 +1236,7 @@ const gdesc2=g=>[g.atk?`こうげき+${g.atk}`:'',g.def?`ぼうぎょ+${g.def}`:
 const gearSkillD=(k,id)=>{const l=k==='xd'?SKILLS:(ASK[k]||[]);const x=l.find(y=>y.g===id);return x?`「${x.n}」が つかえるようになる`:''};
 const gearSkill=(k,id)=>{const l=k==='xd'?SKILLS:(ASK[k]||[]);const s=l.find(x=>x.g===id);return s?`わざ「${s.n}」`:''};
 function updHud(){const a=document.getElementById('hudcr');if(a)a.textContent=crOf();const b=document.getElementById('hudherb');if(b)b.textContent=G.items.herb;const h=document.getElementById('hudhp');if(h)h.textContent=G.hp+'/'+G.max}
-const SHOPI={herb:30,dr:80};
+const SHOPI={herb:30,dr:80,cache:60,meal:120,backup:150,shortcut:90};
 let SHOPTAB='item';
 function shxBox(cls,html,st){const v=app.querySelector('.view');const d=document.createElement('div');d.className='shx tmsg '+cls;d.style.cssText=st||'';d.innerHTML=html;v.appendChild(d);return d}
 const SHTALL=()=>{const v=app.querySelector('.view');return !!v&&v.clientHeight>v.clientWidth*1.05};
@@ -1527,7 +1534,7 @@ function shotDlg(cv){
 function tmain(){
   if(!app.querySelector('.view'))return openSettings();
   tmChoose([
-    {l:'どうぐ',s:`やくそう ${G.items.herb||0}　ドリンク ${G.items.dr||0}`,f:()=>tmBag()},
+    {l:'どうぐ',s:Object.keys(ITEMS).filter(k=>G.items[k]).map(k=>`${ITEMS[k].n} ${G.items[k]}`).join('　')||'なにも もっていない',f:()=>tmBag()},
     {l:'そうび',s:'武器と 防具を つけかえる',f:()=>tmEquip()},
     {l:'つよさ',s:`HP ${G.hp}/${G.max}　CR ${crOf()}`,f:()=>tmStatus()},
     {l:'せかいちず',s:'いまの いちと おとずれた 場所',f:()=>{tmClose();tmMap()}},
@@ -1577,18 +1584,22 @@ function walkRegen(){FLD.mpw=(FLD.mpw||0)+1;if(FLD.mpw<MPWALK)return;FLD.mpw=0;
   if(G.amp)for(const k in G.amp){G.amp[k]=Math.min(allyMp(k),G.amp[k]+1)}
   const h=document.getElementById('hudmp');if(h)h.textContent=curMp()+'/'+mpMax()+'GB'}
 function saveAllyHP(){if(!B)return;if(B.mp!=null&&!B.final)G.mp=B.mp>=mpMax()?null:Math.max(0,B.mp);if(!B.allies)return;G.ahp=G.ahp||{};G.amp=G.amp||{};B.allies.forEach(a=>{G.ahp[a.k]=Math.max(0,a.hp);G.amp[a.k]=Math.max(0,a.mp)})}
-function useItemOn(k,who){ /* フィールドで つかう。who='xd' か 仲間の k */
-  if(!G.items[k])return false;
-  if(who==='xd'){if(G.hp>=G.max)return false;G.items[k]--;G.hp=Math.min(G.max,G.hp+ITEMS[k].h)}
-  else{const m=allyMax(who),h0=aHp(who);if(h0>=m)return false;G.items[k]--;G.ahp=G.ahp||{};G.ahp[who]=Math.min(m,h0+ITEMS[k].h)}
+function useItemOn(k,who){ /* フィールドで つかう。who='xd' か 仲間の k（みんなの まかない は who なし） */
+  if(!G.items[k])return false;const IT=ITEMS[k],t=IT.t;
+  if(t==='atk')return false;
+  if(t==='all'){let any=false;if(G.hp<G.max){G.hp=Math.min(G.max,G.hp+IT.h);any=true}G.ahp=G.ahp||{};bagWho().filter(w=>w!=='xd').forEach(w=>{const m=allyMax(w),h0=aHp(w);if(h0>0&&h0<m){G.ahp[w]=Math.min(m,h0+IT.h);any=true}});if(!any)return false;G.items[k]--}
+  else if(t==='mp'){if(who==='xd'){const c=curMp();if(c>=mpMax())return false;G.mp=Math.min(mpMax(),c+IT.m);if(G.mp>=mpMax())G.mp=null}else{const m=allyMp(who),c=aMp(who);if(c>=m)return false;G.amp=G.amp||{};G.amp[who]=Math.min(m,c+IT.m)}G.items[k]--}
+  else if(t==='rev'){if(who==='xd'||aHp(who)>0)return false;G.ahp=G.ahp||{};G.ahp[who]=Math.ceil(allyMax(who)/2);G.items[k]--}
+  else if(who==='xd'){if(G.hp>=G.max)return false;G.items[k]--;G.hp=Math.min(G.max,G.hp+IT.h)}
+  else{const m=allyMax(who),h0=aHp(who);if(h0>=m)return false;G.items[k]--;G.ahp=G.ahp||{};G.ahp[who]=Math.min(m,h0+IT.h)}
   sfx('heal');try{updHud()}catch(e){}return true}
 const bagWho=()=>['xd',...G.allies.filter(k=>k!=='ff'&&ASK[k])];
 const whoName=w=>w==='xd'?'XD':(SNM[w]||dn(ALLIES[w]));
-const whoHp=w=>w==='xd'?`HP ${G.hp}/${G.max}`:(aHp(w)<=0?'力つきて うごけない':`HP ${aHp(w)}/${allyMax(w)}`);
+const whoHp=(w,k)=>k&&ITEMS[k].t==='mp'?(w==='xd'?`MP ${curMp()}/${mpMax()}GB`:`MP ${aMp(w)}/${allyMp(w)}`):w==='xd'?`HP ${G.hp}/${G.max}`:(aHp(w)<=0?'力つきて うごけない':`HP ${aHp(w)}/${allyMax(w)}`);
 function tmBag(){
   tmChoose([...Object.keys(ITEMS).map(k=>({l:`${ITEMS[k].n} ×${G.items[k]||0}`,s:G.items[k]?ITEMS[k].d:'もっていない',f:()=>{
-      if(!G.items[k])return tmBag();const ws=bagWho();if(ws.length===1){useItemOn(k,'xd');return tmBag()}
-      tmChoose([...ws.map(w=>({l:whoName(w),s:whoHp(w),f:()=>{useItemOn(k,w);tmBag()}})),{l:'もどる',s:'',f:()=>tmBag()}],`メニュー ＞ どうぐ ＞ ${ITEMS[k].n}を だれに？`,tmBag)}})),
+      if(!G.items[k])return tmBag();const t=ITEMS[k].t;if(t==='atk'){sfx('junk');return tmBag()}if(t==='all'){if(!useItemOn(k))sfx('junk');return tmBag()}const ws=bagWho().filter(w=>t!=='rev'||w!=='xd');if(!ws.length){sfx('junk');return tmBag()}if(ws.length===1&&t!=='rev'){useItemOn(k,ws[0]);return tmBag()}
+      tmChoose([...ws.map(w=>({l:whoName(w),s:whoHp(w,k),f:()=>{if(!useItemOn(k,w))sfx('junk');tmBag()}})),{l:'もどる',s:'',f:()=>tmBag()}],`メニュー ＞ どうぐ ＞ ${ITEMS[k].n}を だれに？`,tmBag)}})),
     {l:'もどる',s:'',f:()=>tmain()}],'メニュー ＞ どうぐ',tmain);
 }
 function tmSet(){
@@ -4401,7 +4412,7 @@ function render(){
   {const on=$('#cmdw .cmd.on'),sc=on&&on.closest('.sc');if(on&&sc){const y=on.offsetTop-sc.offsetTop;if(y<sc.scrollTop)sc.scrollTop=Math.max(0,y-2);else if(y+on.offsetHeight>sc.scrollTop+sc.clientHeight)sc.scrollTop=y+on.offsetHeight-sc.clientHeight+2}}
   const nm=CMDS.find(c=>c[0]===B.menu);
   let h;
-  if(B.pane==='who'){h=partyAll().map((m,i)=>`<button class="crow ${B.wi===i?'sel':''} ${m.hp>=m.max?'dis':''}" data-w="${i}"><span class="nm2"><i class="cur2">${B.wi===i?'▶':'\u3000'}</i>${m.n}</span><span class="co">HP ${Math.max(0,m.hp)}/${m.max}</span><span class="ds">${m.hp<=0?'力つきて うごけない':m.hp>=m.max?'まんたん':''}</span></button>`).join('')}
+  if(B.pane==='who'){h=partyAll().map((m,i)=>{const ik=B.pend&&B.pend.k,mpT=ik&&ITEMS[ik].t==='mp',mm=m.k==='xd'?{mp:B.mp,mpm:mpMax()}:{mp:m.mp,mpm:m.mpm},ok=ik?itemOk(ik,{...m,hp:m.hp,max:m.max,k:m.k,...mm}):true;return `<button class="crow ${B.wi===i?'sel':''} ${ok?'':'dis'}" data-w="${i}"><span class="nm2"><i class="cur2">${B.wi===i?'▶':'\u3000'}</i>${m.n}</span><span class="co">${mpT?`MP ${mm.mp}/${mm.mpm}`:`HP ${Math.max(0,m.hp)}/${m.max}`}</span><span class="ds">${m.hp<=0?'力つきて うごけない':ok?'':'つかえない'}</span></button>`}).join('')}
   else if(B.pane==='tgt'){h=B.es.map((x,i)=>x.hp>0?`<button class="crow ${B.t===i?'sel':''}" data-t="${i}"><span class="nm2"><i class="cur2">${B.t===i?'▶':'\u3000'}</i>${x.n}</span></button>`:'').join('')}
   else if(B.menu==='skl'){
     h=SKILLS.filter(s=>s.l?!!(G.learn&&G.learn[s.l]):s.g?skOK(s):s.lv<=G.lv).map((s,ix)=>{const dis=off||(skCost(s)>B.mp);
@@ -4804,11 +4815,11 @@ async function fiFight(){
   else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
   await runQ();ACT='xd'}
 function itemWho(k){ /* やくそうを だれに？：おなじ 欄の なかで えらぶ */
-  B.pend={m:'item',k,from:'list'};B.pane='who';const ms=partyAll();B.wi=Math.max(0,ms.findIndex(m=>m.hp>0&&m.hp<m.max));sfx('tap');render()}
-function whoOk(){const ms=partyAll(),m=ms[B.wi],k=B.pend&&B.pend.k;if(!m||!k)return;if(m.hp>=m.max){sfx('junk');return}
+  B.pend={m:'item',k,from:'list'};B.pane='who';const ms=partyAll();B.wi=Math.max(0,ms.findIndex(m=>itemOk(k,{...m,hp:m.hp,max:m.max,k:m.k,...(m.k==='xd'?{mp:B.mp,mpm:mpMax()}:{mp:m.mp,mpm:m.mpm})})));sfx('tap');render()}
+function whoOk(){const ms=partyAll(),m=ms[B.wi],k=B.pend&&B.pend.k;if(!m||!k)return;const mm=m.k==='xd'?{mp:B.mp,mpm:mpMax()}:{mp:m.mp,mpm:m.mpm};if(!itemOk(k,{...m,hp:m.hp,max:m.max,k:m.k,...mm})){sfx('junk');return}
   B.pane='cmd';B.pend=null;B.t=B.es.indexOf(B.e);go('item',k+':'+B.wi)}
 function chooseTarget(m,k){
-  if(m==='item'&&B.allies.length)return itemWho(k);
+  if(m==='item'){const t=ITEMS[k].t;if(t==='all'||t==='atk'){B.t=B.es.indexOf(B.e);return go(m,k)}if(B.allies.length||t==='mp'||t==='rev')return itemWho(k)}
   if(m==='ai')return giveOrder(k);
   if(m==='tac')return setTactic(k);
   if(needsTarget(m,k)){B.pend={m,k,from:B.pane};B.pane='tgt';B.t=B.es.indexOf(B.e);sfx('tap');say('');render();return}
@@ -4848,11 +4859,17 @@ async function act(m,k){
     B.mp-=skCost(s);B.free=false;B.inSkill=true;say(`XDの <b>${s.n}</b>！`);sfx('skill');if(s.id!=='comp')B.lastSk=s;s.f();
   }else if(m==='item'){
     {
-    const [ik,ti]=String(k).split(':'),tg=ti===undefined?XDM:partyAll()[+ti];
-    if(!G.items[ik]||!tg||(tg.k==='xd'&&tg.hp<=0)){B.busy=false;return}
+    const [ik,ti]=String(k).split(':'),tg=ti===undefined?XDM:partyAll()[+ti],IT=ITEMS[ik];
+    if(!G.items[ik]){B.busy=false;return}
+    if(IT.t==='all'){G.items[ik]--;say(`XDは <b>${IT.n}</b>を ひろげた！ みんなで たべよう！`);sfx('heal');await wait(500);for(const m of partyAll()){if(m.hp<=0)continue;const h=Math.min(IT.h,m.max-m.hp);m.hp+=h;if(h)pop(m.sel,'+'+h,'hp')}render();await wait(700)}
+    else if(IT.t==='atk'){G.items[ik]--;say(`XDは <b>${IT.n}</b>を はなった！`);sfx('skill');await wait(400);for(const e of aliveEs()){const d=IT.v;e.hp=Math.max(0,e.hp-d);pop('#foe','-'+d,'dmg',e.id);jolt('.eu[data-i="'+e.id+'"]','shake')}render();await wait(800);for(const e of B.es)if(e.hp<=0&&!e._dead){e._dead=1}}
+    else if(IT.t==='mp'){if(!tg){B.busy=false;return}G.items[ik]--;sfx('heal');if(tg.k==='xd'){const g=Math.min(IT.m,mpMax()-B.mp);B.mp+=g;pop('#me','MP+'+g+'GB','pw');say(`XDは <b>${IT.n}</b>を つかった！ MPが <b>${g}GB</b> もどった！`)}else{const g=Math.min(IT.m,tg.mpm-tg.mp);tg.mp+=g;pop(tg.sel,'MP+'+g,'pw');say(`XDは ${tg.n}に <b>${IT.n}</b>を つかった！ MPが <b>${g}</b> もどった！`)}render()}
+    else if(IT.t==='rev'){if(!tg||tg.hp>0){B.busy=false;return}G.items[ik]--;const h=Math.ceil(tg.max/2);tg.hp=h;tg.rest=2;sfx('heal');pop(tg.sel,'+'+h,'hp');render();say(`XDは ${tg.n}に <b>${IT.n}</b>を つかった！<br>${tg.n}が 起きあがった！（1ターン やすんでから うごく）`)}
+    else{
+    if(!tg||(tg.k==='xd'&&tg.hp<=0)){B.busy=false;return}
     G.items[ik]--;sfx('tap');
     if(tg.k==='xd'){say(`XDは <b>${ITEMS[ik].n}</b>を つかった！`);heal(ITEMS[ik].h)}
-    else{const down=tg.hp<=0,h=Math.min(ITEMS[ik].h,tg.max-tg.hp);tg.hp+=h;if(down)tg.rest=2;sfx('heal');pop(tg.sel,'+'+h,'hp');render();say(down?`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}が 起きあがった！（HP <b>${h}</b>。1ターン やすんでから うごく）`:`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}の HPが <b>${h}</b> かいふく した！`)}}
+    else{const down=tg.hp<=0,h=Math.min(ITEMS[ik].h,tg.max-tg.hp);tg.hp+=h;if(down)tg.rest=2;sfx('heal');pop(tg.sel,'+'+h,'hp');render();say(down?`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}が 起きあがった！（HP <b>${h}</b>。1ターン やすんでから うごく）`:`XDは ${tg.n}に <b>${ITEMS[ik].n}</b>を つかった！<br>${tg.n}の HPが <b>${h}</b> かいふく した！`)}}}
   }
   B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';render();
   await wait(560);
@@ -4941,8 +4958,8 @@ async function winBattle(survived){saveAllyHP();
   const gateWin=B.boss&&G.ch===0&&G.stop===3,capped=xpCapped()&&!gateWin;
   const xz=.6+.6*dZone();let xp=B.boss?40+G.ch*16:B.es.reduce((t,e)=>t+Math.round((5+G.ch*3)*xz),0);if(gateWin)xp=G.lv<2?need(1)-G.xp+need(2):Math.max(1,need(G.lv)-G.xp);
   const msgs=[capped?'……これ以上、経験は 得られないようだ。先へ すすもう。':`<b>${gateWin?'ベータ版の ちからが あふれた':xp+'ポイントの けいけんちを かくとく'}</b>！`];
-  if(B.boss){crAdd(8);const h=Math.min(10,G.max-G.hp);G.hp+=h;G.items.herb+=2;msgs.push('やくそうを <b>2こ</b> てにいれた！');if(Math.random()<.5){G.items.dr++;msgs.push('エナジードリンクを <b>1こ</b> てにいれた！')}if(h)msgs.push(`ボス撃破の よいんで HPが <b>${h}</b> かいふく した！`)}
-  else if(Math.random()<.35){G.items.herb++;msgs.push('やくそうを <b>1こ</b> てにいれた！')}
+  if(B.boss){crAdd(8);const h=Math.min(10,G.max-G.hp);G.hp+=h;G.items.herb+=2;msgs.push('やくそうを <b>2こ</b> てにいれた！');if(Math.random()<.5){G.items.dr++;msgs.push('エナジードリンクを <b>1こ</b> てにいれた！')}{const k=['cache','meal','backup'][Math.floor(Math.random()*3)];G.items[k]=(G.items[k]||0)+1;msgs.push(`${ITEMS[k].n}を <b>1こ</b> てにいれた！`)}if(h)msgs.push(`ボス撃破の よいんで HPが <b>${h}</b> かいふく した！`)}
+  else if(Math.random()<.38){const r=Math.random(),k=r<.55?'herb':r<.72?'cache':r<.84?'shortcut':r<.94?'meal':'backup';G.items[k]=(G.items[k]||0)+1;msgs.push(`${ITEMS[k].n}を <b>1こ</b> てにいれた！`)}
   {const cg=B.boss?100+G.ch*50:B.es.reduce((t,e)=>t+Math.round((e.max||20)*.5)+G.ch*4,0);crAdd(cg);msgs.push(`クレジットを <b>${cg}</b> かくとく！`)}
   {const am=allyGain(capped?0:xp);msgs.push(...am)}
   for(const m of msgs){
