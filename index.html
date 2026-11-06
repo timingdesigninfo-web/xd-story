@@ -935,10 +935,12 @@ const HPGROW=8;
    id:識別子 / n:名前 / lv:覚えるレベル / mp:消費MP / d:説明 / f:効果
    効果の部品: hit(倍率,貫通?,全体?) guard(倍率) heal(量) mpUp(量) buff(量) weaken(ターン) skipEnemy()
    組み合わせ自由。全体攻撃は hit(倍率,false,true)。レベルアップ時に「あたらしい わざ」として自動で表示される。 */
+/* リピートグリッドの 回数：はじめ 2〜3回、レベルと ともに 2〜4回、2〜5回…（最大 2〜6回） */
+const gridRange=()=>[2,Math.min(6,3+Math.floor(Math.max(0,G.lv-2)/6))];
 const SKILLS=[
   {id:'proto',g:'x_proto',n:'プロトタイプ',lv:1,mp:2,get d(){return G.lv>=10?'人形3体が つながって 連続で なぐる':G.lv>=5?'人形2体が 連続で なぐる':'攻撃を 人形にして とばす（1.6ばい）'},f:()=>{const n=G.lv>=10?3:G.lv>=5?2:1,m=[0,1.6,1.1,.9][n];for(let i=0;i<n;i++)hitF(m,'puppet')}},
   {id:'board',g:'x_pnl0',n:'アートボード',lv:1,mp:2,get d(){return 'わくで かこって バリアを はる'},f:()=>guard(1.4+G.lv*.12)},
-  {id:'grid',n:'リピートグリッド',lv:2,mp:4,get d(){return `同じ こうげきを ${Math.min(4,2+Math.floor((G.lv-2)/6))}かい ならべる（1回 ×0.4〜0.7）`},f:()=>{const n=Math.min(4,2+Math.floor((G.lv-2)/6));for(let i=0;i<n;i++)hitF(+(.4+Math.random()*.3).toFixed(2),'grid')}},
+  {id:'grid',n:'リピートグリッド',lv:2,mp:4,get d(){const r=gridRange();return `同じ こうげきを ${r[0]}〜${r[1]}かい ならべる（1回 ×0.5〜0.8）`},f:()=>{const r=gridRange(),n=r[0]+Math.floor(Math.random()*(r[1]-r[0]+1));for(let i=0;i<n;i++)hitF(+(.5+Math.random()*.3).toFixed(2),'grid')}},
   {id:'guide',n:'スマートガイド',lv:3,mp:3,d:'ほじょ線で ねらいを そろえる（つぎの こうげきが 弱点を つく）',f:()=>Q.push({k:'sure'})},
   {id:'history',n:'ドキュメントの履歴',lv:5,mp:5,d:'戦いを 2ターン前に もどす。うけた ダメージや しっぱいを 帳消しに（MPは もどらない）',f:()=>Q.push({k:'rewind'})},
   {id:'spec',n:'デザインスペック',lv:8,mp:7,d:'仕様を みんなに くばって、ぜんいんの まえに バリアを はる',f:()=>guardAll(1.1)},
