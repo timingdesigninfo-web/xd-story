@@ -1102,15 +1102,15 @@ function allyChoose(a){
   if(tac==='gan'){if(heal&&lowR<.25)return heal;if(aoe&&en>=2)return aoe;const best=by('atk').pop();return best||atk[0]||null}
   if(heal&&lowR<.4)return heal;if(aoe&&en>=2&&R<.5)return aoe;if(guard&&R<.15)return guard;if(atk.length&&R<.55)return atk[Math.floor(Math.random()*atk.length)];return null}
 function pickEnemyFor(a){const al=aliveEs();return (G.tac||'min')==='gan'?[...al].sort((x,y)=>x.hp-y.hp)[0]:al[Math.floor(Math.random()*al.length)]}
-async function alliesAct(){
-  for(const a of B.allies){
-    if(a.hp<=0||!aliveEs().length)continue;
-    if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);continue} /* 起こされた ばかり */
+async function alliesAct(){for(const a of B.allies){await allyAct(a);if(!aliveEs().length)return}ACT='xd'}
+async function allyAct(a){
+  {
+    if(a.hp<=0||!aliveEs().length)return;
+    if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);return} /* 起こされた ばかり */
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
     if(ch){a.mp-=ch.mp;cbAdd(a.k,'m',ch.mp*4);say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
     else{const P=AP[a.k]||{an:'こうげき',am:1,ah:1};say(`<b>${a.n}</b>の <b>${P.an}</b>！`);sfx('swing');for(let q=0;q<P.ah;q++)hit(P.am);a.mp=Math.min(a.mpm,a.mp+1)}
     render();await wait(600);await runQ();ACT='xd';
-    if(!aliveEs().length)return;
   }
   ACT='xd';
 }
@@ -4641,7 +4641,21 @@ function histBack(){const H=B.hist||[];if(!H.length)return null;const want=B.tur
   h.al.forEach((o,i)=>{const a=B.allies[i];if(!a)return;for(const k in o)if(k!=='sel')a[k]=JSON.parse(JSON.stringify(o[k]))});
   SNAPB.forEach(k=>{B[k]=h.b[k]===undefined?undefined:JSON.parse(JSON.stringify(h.b[k]))});if(!B.ord)B.ord={};
   B.hist=H.filter(x=>x.turn<h.turn);return B.turn-h.turn}
-function startTurn(){B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;histSnap();B.supN=0;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
+/* すばやさ：キャラの 特性で きまる（プレイヤーには 見せない）。毎ターン すこし ゆらぐ */
+const SPD={xd:10,ff:13,ae:12,ai:9,ps:7,dw:5};
+const spdE=e=>e.spd!=null?e.spd:(e.boss||B.boss&&e===B.es[0]?9:8);
+function buildOrder(){const j=()=>Math.random()*3,u=[];
+  B.xs=SPD.xd+j();
+  B.allies.forEach(a=>u.push({t:'al',a,s:(SPD[a.k]||8)+j()}));
+  if(B.fiMode)u.push({t:'fi',s:SPD.ff+j()});
+  B.es.forEach(e=>u.push({t:'en',e,s:spdE(e)+j()}));
+  u.sort((x,y)=>y.s-x.s);B.uo=u}
+async function runUnit(u){if(u.done||B.over)return;u.done=1;
+  if(u.t==='al'){if(u.a.hp>0&&aliveEs().length)await allyAct(u.a)}
+  else if(u.t==='fi'){if(B.fiMode&&aliveEs().length)await fiTurn()}
+  else if(u.e.hp>0&&aliveEs().length)await enemyOne(u.e)}
+async function runPhase(fast){if(!B.uo)buildOrder();for(const u of B.uo){if(fast&&u.s<=B.xs)continue;await runUnit(u);if(B.over)return;if(!aliveEs().length)return}}
+function startTurn(){B.uo=null;B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;histSnap();B.supN=0;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
   if(G.hp<=0){B.busy=true;render();autoRound();return}
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
   B.busy=false;render()}
@@ -4649,12 +4663,11 @@ async function autoAnim(){ACT='xd';Q=[];say('人形が じどうで こうげき
 async function autoRound(){say('XDは たおれている……');await wait(900);await afterXD()}
 async function afterXD(){
   if(!aliveEs().length)return defeatEnemy();
-  if(B.extra)B.extra=0;
-  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;render();return}
-  await alliesAct();
+  if(B.extra2)B.extra2=0;
+  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;render();return}
+  await runPhase(false);if(B.over)return;
   if(!aliveEs().length)return defeatEnemy();
-  if(B.fiMode){await fiTurn();if(B.over)return;if(!aliveEs().length)return defeatEnemy()}
-  await enemyTurn();
+  B.preDone=0;return roundEnd();
 }
 async function finishAction(){
   await runQ();
@@ -4744,7 +4757,12 @@ function chooseTarget(m,k){
   if(needsTarget(m,k)){B.pend={m,k,from:B.pane};B.pane='tgt';B.t=B.es.indexOf(B.e);sfx('tap');say('');render();return}
   B.t=B.es.indexOf(B.e);go(m,k)}
 function confirmTarget(){const q=B.pend;B.pend=null;B.pane=q.from==='list'?'list':'cmd';go(q.m,q.k)}
-function go(m,k){m==='atk'?doAttack():act(m,k)}
+function go(m,k){goSpd(m,k)}
+async function goSpd(m,k){
+  if(B.extra){B.extra=0;B.extra2=1}
+  else if(!B.preDone){B.preDone=1;B.busy=true;render();buildOrder();await runPhase(true);if(B.over)return;if(!aliveEs().length)return defeatEnemy();
+    if(G.hp<=0){say('XDは たおれている……');await wait(800);return afterXD()}}
+  m==='atk'?doAttack():act(m,k)}
 async function doAttack(){
   G.hn=(G.hn||0)+1;if(G.hn%3===0)pickTally('h');
   B.busy=true;Q=[];B.inSkill=false;B.mp=Math.min(mpMax(),B.mp+1);actAnim('xd');say('XDの <b>こうげき</b>！');sfx('swing');render();
@@ -4794,8 +4812,12 @@ async function enemyTurn(){
   B.busy=true;render();
   /* ボスは 仲間の 数だけ 手数が ふえる（5人に 1回では 勝負に ならない） */
   const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0;
-  for(const e of B.es){if(e.hp<=0)continue;const n=1+(e===B.es[0]?nA:0);
-    for(let i=0;i<n;i++){const st=e.stun>0||e.sleep;await enemyAct(e);if(B.over)return;if(st||e.hp<=0||partyDead())break;if(i<n-1){say(`<b>${e.n}</b>の れんぞく こうどう！`);await wait(420)}}}
+  for(const e of B.es){await enemyOne(e);if(B.over)return}
+  return roundEnd()}
+async function enemyOne(e){if(e.hp<=0||B.over)return;
+  const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0,n=1+(e===B.es[0]?nA:0);
+  for(let i=0;i<n;i++){const st=e.stun>0||e.sleep;await enemyAct(e);if(B.over)return;if(st||e.hp<=0||partyDead())break;if(i<n-1){say(`<b>${e.n}</b>の れんぞく こうどう！`);await wait(420)}}}
+async function roundEnd(){if(B.over)return;
   if(B.nul>0){B.nul--;if(B.nul<=0){B.nulBlur=false;say('かかげた 光が きえた……')}}
   const e0=B.es[0];
   if(e0.survive&&B.turn>=e0.survive){B.over=true;render();say(`${e0.n}は よゆうの えみを のこして さっていった……。XDは、たっていた。`);await wait(1500);return winBattle(true)}
