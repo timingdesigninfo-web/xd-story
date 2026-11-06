@@ -4643,7 +4643,9 @@ function histBack(){const H=B.hist||[];if(!H.length)return null;const want=B.tur
   B.hist=H.filter(x=>x.turn<h.turn);return B.turn-h.turn}
 /* すばやさ：キャラの 特性で きまる（プレイヤーには 見せない）。毎ターン すこし ゆらぐ */
 const SPD={xd:10,ff:13,ae:12,ai:9,ps:7,dw:5};
-const spdE=e=>e.spd!=null?e.spd:(e.boss||B.boss&&e===B.es[0]?9:8);
+/* 敵の すばやさ：生まれた「くせ」で きめる（ねむい・ほうっておく は おそい、せっかち・先回り は はやい） */
+const ESPD={ダレカニ:7,ナントナクラゲ:6,シラケザメ:11,ヤッツケダコ:12,ヒトマカセガイ:4,マイイカ:9,マーセキリ:8,コピペ虫:11,ウノミー:7,ゴテゴテ:5,ニドーネル:3,モイイカ:8,イッタキリ:10,ホウチ虫:4,サーシラン:6,メンドウ:4,サンドーネル:2,チラケル:9,キカヌン:7,ヤリボン:8,シタガッキー:6,ケシゴムシ:9,ヒミツノ:7,モスコッシ:5,マルナンゲ:10,オマカンセ:9,クショクショ:5,チャオチャオ:7,エラベン:10,マドローミ:4,ダイペン:9,ノージーフラワー:6,サキマワリン:14,ヤキオセワ:11,カワリーン:12,ソノマンマー:5,オマカッシー:10};
+const spdE=e=>e.spd!=null?e.spd:ESPD[e.n]!=null?ESPD[e.n]:(B.boss&&e===B.es[0]?9:8);
 function buildOrder(){const j=()=>Math.random()*3,u=[];
   B.xs=SPD.xd+j();
   B.allies.forEach(a=>u.push({t:'al',a,s:(SPD[a.k]||8)+j()}));
