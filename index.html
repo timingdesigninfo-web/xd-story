@@ -4301,7 +4301,7 @@ function startBattle(f0,boss,opt={}){staleInput();
     const c=e.target.closest('.cmd');if(!c||B.busy||B.over||Date.now()-window.BT0<800)return;
     if(B.pane==='tgt')return;B.ci=CMDS.findIndex(x=>x[0]===c.dataset.c);B.menu=CMDS[B.ci][0];B.pane='cmd';B.li=0;sfx('tap');render();
   };
-  $('#listw').onclick=e=>{const b=e.target.closest('.crow');if(!b||B.busy||B.over||Date.now()-window.BT0<800)return;if(B.pane==='tgt'){if(b.dataset.t!==undefined){B.t=+b.dataset.t;sfx('tap');render()}return}if(b.classList.contains('dis'))return;B.li=[...$$('#listw .crow')].indexOf(b);B.pane='list';sfx('tap');render()};
+  $('#listw').onclick=e=>{const b=e.target.closest('.crow');if(!b||B.busy||B.over||Date.now()-window.BT0<800)return;if(B.pane==='who'){if(b.dataset.w!==undefined){const i=+b.dataset.w;if(B.wi===i)whoOk();else{B.wi=i;sfx('tap');render()}}return}if(B.pane==='tgt'){if(b.dataset.t!==undefined){B.t=+b.dataset.t;sfx('tap');render()}return}if(b.classList.contains('dis'))return;B.li=[...$$('#listw .crow')].indexOf(b);B.pane='list';sfx('tap');render()};
   if(boss&&f.n==='妖精の王'&&G.fkc){B.fkc=G.fkc;if(G.fkc==='f')B.fkb=true}
   say(B.fkc?`<b>${f.n}</b>が あらわれた！<br>${({h:'XDの 手に、つくる 力が みなぎる……！',c:'仲間たちの 力が ひとつに あつまって いく……！',f:'Fiの 力が 解き放たれ、みなぎって いる……！',t:'ねむけが おそう……。2ターンは 力が 出ない！'})[B.fkc]}`:f.survive?`<b>${f.n}</b>が あらわれた！<br>つよすぎる……${f.survive}ターン たえれば あらしは すぎる。`:N>1?`<b>${es.map(e=>e.n).join('、')}</b>が あらわれた！`:`<b>${f.n}</b>が あらわれた！`);
   startTurn();
@@ -4333,7 +4333,8 @@ function render(){
   {const on=$('#cmdw .cmd.on'),sc=on&&on.closest('.sc');if(on&&sc){const y=on.offsetTop-sc.offsetTop;if(y<sc.scrollTop)sc.scrollTop=Math.max(0,y-2);else if(y+on.offsetHeight>sc.scrollTop+sc.clientHeight)sc.scrollTop=y+on.offsetHeight-sc.clientHeight+2}}
   const nm=CMDS.find(c=>c[0]===B.menu);
   let h;
-  if(B.pane==='tgt'){h=B.es.map((x,i)=>x.hp>0?`<button class="crow ${B.t===i?'sel':''}" data-t="${i}"><span class="nm2"><i class="cur2">${B.t===i?'▶':'\u3000'}</i>${x.n}</span></button>`:'').join('')}
+  if(B.pane==='who'){h=partyAll().map((m,i)=>`<button class="crow ${B.wi===i?'sel':''} ${m.hp>=m.max?'dis':''}" data-w="${i}"><span class="nm2"><i class="cur2">${B.wi===i?'▶':'\u3000'}</i>${m.n}</span><span class="co">HP ${Math.max(0,m.hp)}/${m.max}</span><span class="ds">${m.hp<=0?'力つきて うごけない':m.hp>=m.max?'まんたん':''}</span></button>`).join('')}
+  else if(B.pane==='tgt'){h=B.es.map((x,i)=>x.hp>0?`<button class="crow ${B.t===i?'sel':''}" data-t="${i}"><span class="nm2"><i class="cur2">${B.t===i?'▶':'\u3000'}</i>${x.n}</span></button>`:'').join('')}
   else if(B.menu==='skl'){
     h=SKILLS.filter(s=>s.l?!!(G.learn&&G.learn[s.l]):s.g?skOK(s):s.lv<=G.lv).map((s,ix)=>{const dis=off||(skCost(s)>B.mp);
       return `<button class="crow ${dis?'dis':''} ${B.pane==='list'&&B.li===ix?'sel':''}" data-k="${s.id}"><span class="nm2">${s.n}</span><span class="co">MP ${skCost(s)}GB</span><span class="ds">${s.g&&GEAR[s.g]?`【${GEAR[s.g].n}】`:''}${s.d}</span></button>`}).join('');
@@ -4345,7 +4346,7 @@ function render(){
     const ik=Object.keys(ITEMS);h=ik.map((k,ix)=>{const n=G.items[k]||0,dis=off||!n;
       return `<button class="crow ${dis?'dis':''} ${B.pane==='list'&&B.li===ix?'sel':''}" data-k="${k}"><span class="nm2">${ITEMS[k].n}</span><span class="co">×${n}</span><span class="ds">${ITEMS[k].d}</span></button>`}).join('');
   }else h='';
-  $('#listw').innerHTML=`<div class="wt" id="lt">${B.pane==='tgt'?'てき':nm[1]}</div><div class="sc">${h}</div>`;
+  $('#listw').innerHTML=`<div class="wt" id="lt">${B.pane==='who'&&B.pend?ITEMS[B.pend.k].n+'を だれに？':B.pane==='tgt'?'てき':nm[1]}</div><div class="sc">${h}</div>`;
   const sl=$('#listw .sel');if(sl){const sc=sl.closest('.sc');let y=0,n=sl;while(n&&n!==sc){y+=n.offsetTop;n=n.offsetParent}if(n!==sc)y=sl.offsetTop-sc.offsetTop;if(y<sc.scrollTop)sc.scrollTop=Math.max(0,y-4);else if(y+sl.offsetHeight>sc.scrollTop+sc.clientHeight)sc.scrollTop=y+sl.offsetHeight-sc.clientHeight+4}
 }
 function cameo(k){const h=$('.fwrap .mid');if(!h)return;const a=ALLIES[k],im=document.createElement('img');im.className='cameo';im.src=sprite(a.n,a.col[0],a.col[1]);im.alt='';h.appendChild(im);setTimeout(()=>im.remove(),1700)}
@@ -4583,6 +4584,7 @@ function pickCmd(){
 }
 function navMove(dx,dy){
   if(!B||B.busy||B.over||!$('#cmdw'))return;
+  if(B.pane==='who'){const n=partyAll().length;if(dx<0){B.pane='list';B.pend=null}else if(dy)B.wi=(B.wi+dy+n)%n;sfx('tap');render();return}
   if(B.pane==='tgt'){const al=aliveEs(),i=al.indexOf(B.e),n=al.length,d=(dx||dy)>0?1:-1;B.t=B.es.indexOf(al[(i+d+n)%n]);sfx('tap');render();return}
   const n=$$('#listw .crow').length;
   if(B.pane==='list'){
@@ -4597,10 +4599,11 @@ function navMove(dx,dy){
 function navOk(){
   if(!B||B.busy||B.over||!$('#cmdw'))return;
   if(B.pane==='tgt')return confirmTarget();
+  if(B.pane==='who')return whoOk();
   if(B.pane==='list'){const r=$$('#listw .crow')[B.li];if(r&&!r.classList.contains('dis'))chooseTarget(B.menu,r.dataset.k);return}
   pickCmd();
 }
-function navBack(){if(!B||B.busy||B.over)return;if(B.pane==='tgt'){B.pane=B.pend&&B.pend.from==='list'?'list':'cmd';B.pend=null;say('');sfx('tap');render();return}B.pane='cmd';sfx('tap');render()}
+function navBack(){if(!B||B.busy||B.over)return;if(B.pane==='who'){B.pane='list';B.pend=null;sfx('tap');render();return}if(B.pane==='tgt'){B.pane=B.pend&&B.pend.from==='list'?'list':'cmd';B.pend=null;say('');sfx('tap');render();return}B.pane='cmd';sfx('tap');render()}
 /* ドキュメントの履歴：ターンの はじめの 戦いの ようすを とっておく */
 const SNAPB=['block','blockT','ord','up','str','fiDown','defend','stance','sure','free','autoN','bad','paid'];
 const cpv=o=>{const r={};for(const k in o){const v=o[k];if(v===null||typeof v!=='object'&&typeof v!=='function')r[k]=v;else if(typeof v==='object'&&!(v instanceof Node))try{r[k]=JSON.parse(JSON.stringify(v))}catch(e){}}return r};
@@ -4703,9 +4706,10 @@ async function fiFight(){
   if(gen){say('Fiの <b>生成攻撃</b>！<br>光が 敵ぜんたいに ふりそそぐ！');sfx('skill');await wait(500);hitF(.95+.04*P,'burst:',true)}
   else{say('Fiの <b>こうげき</b>！');sfx('swing');await wait(400);hit(1)}
   await runQ();ACT='xd'}
-function itemWho(k){ /* やくそうを だれに？ */
-  const ms=partyAll().map((m,i)=>({m,i}));
-  menuOv(`${ITEMS[k].n}を だれに つかう？`,ms.map(o=>({l:o.m.n,s:o.m.hp<=0?'力つきて うごけない':`HP ${o.m.hp}/${o.m.max}${o.m.hp>=o.m.max?'　まんたん':''}`,f:()=>{if(o.m.hp>=o.m.max){sfx('junk');return itemWho(k)}B.t=B.es.indexOf(B.e);go('item',k+':'+o.i)}})))}
+function itemWho(k){ /* やくそうを だれに？：おなじ 欄の なかで えらぶ */
+  B.pend={m:'item',k,from:'list'};B.pane='who';const ms=partyAll();B.wi=Math.max(0,ms.findIndex(m=>m.hp>0&&m.hp<m.max));sfx('tap');render()}
+function whoOk(){const ms=partyAll(),m=ms[B.wi],k=B.pend&&B.pend.k;if(!m||!k)return;if(m.hp>=m.max){sfx('junk');return}
+  B.pane='cmd';B.pend=null;B.t=B.es.indexOf(B.e);go('item',k+':'+B.wi)}
 function chooseTarget(m,k){
   if(m==='item'&&B.allies.length)return itemWho(k);
   if(m==='ai')return giveOrder(k);
