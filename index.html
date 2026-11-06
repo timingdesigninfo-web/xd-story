@@ -5181,7 +5181,7 @@ function startTurn(){B.uo=null;B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;
   if(B.autoN>0&&aliveEs().length){B.autoN--;B.busy=true;render();autoAnim();return}
   B.busy=false;askTurn();render()}
 /* ひととおり 動きおわったら、かならず「どうする？」に もどす（つぎの 入力の 合図） */
-function askTurn(){if(!B||B.over)return;const L=$('#log'),q='<b>XD</b>は どうする？';if(!L)return;
+function askTurn(){if(!B||B.over)return;const L=$('#log'),q='どうする？';if(!L)return;
   if(B.turn<=1&&L.innerHTML&&!/どうする/.test(L.innerHTML))L.innerHTML+='<br>'+q;else L.innerHTML=q;
   L.classList.remove('askp');void L.offsetWidth;L.classList.add('askp')}
 async function autoAnim(){ACT='xd';Q=[];say('人形が じどうで こうげき！');B.t=B.es.indexOf(B.e);await wait(500);hitF(1.6,'puppet');await runQ();if(B.over)return;if(!aliveEs().length)return defeatEnemy();B.busy=false;askTurn();render()}
@@ -5189,7 +5189,7 @@ async function autoRound(){say('XDは たおれている……');await wait(900)
 async function afterXD(){
   if(!aliveEs().length)return defeatEnemy();
   if(B.extra2)B.extra2=0;
-  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;say('<b>XD</b>は もういちど どうする？');render();return}
+  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;say('もういちど どうする？');render();return}
   await runPhase(false);if(B.over)return;
   if(!aliveEs().length)return defeatEnemy();
   B.preDone=0;return roundEnd();
