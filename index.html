@@ -5189,7 +5189,7 @@ async function autoRound(){say('XDは たおれている……');await wait(900)
 async function afterXD(){
   if(!aliveEs().length)return defeatEnemy();
   if(B.extra2)B.extra2=0;
-  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;say('もういちど どうする？');render();return}
+  else if(eqHas('xd','x_stack')&&G.hp>0&&Math.random()<.25&&!B.extra2){B.extra=1;say('<b>スタックの靴</b>で はやい！ もういちど うごける！');sfx('lvup');await wait(900);B.busy=false;B.pane='cmd';B.menu='atk';B.ci=0;B.li=0;say('<b>スタックの靴</b>で もういちど うごける。どうする？');render();return}
   await runPhase(false);if(B.over)return;
   if(!aliveEs().length)return defeatEnemy();
   B.preDone=0;return roundEnd();
