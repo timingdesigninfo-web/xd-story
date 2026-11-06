@@ -1552,12 +1552,12 @@ function tmMap(){
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
   const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:absolute;inset:0;z-index:90;background:#000e;display:flex;flex-direction:column';
   const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;color:#fff;font-size:12px;flex:none';
-  top.innerHTML='<span>せかいちず　<span style="opacity:.75">指で うごかせる・赤い点＝いまの いち・左右の はしは つながっている</span></span><button id="wmapx" style="flex:none;padding:6px 14px;border-radius:6px;border:1px solid #fff8;background:#26308f;color:#fff;font-weight:700">とじる</button>';
+  top.innerHTML='<span>せかいちず　<span style="opacity:.75">指で うごかせる・赤い点＝いまの いち・左右の はしは つながっている</span></span><button id="wmapx" style="flex:none;padding:10px 18px;font-size:15px;position:relative;z-index:2;border-radius:6px;border:1px solid #fff8;background:#26308f;color:#fff;font-weight:700">とじる</button>';
   const vp=document.createElement('div');vp.style.cssText='flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;border-top:1px solid #fff3';
   c.style.cssText=`display:block;width:${c.width/2}px;height:${c.height/2}px;image-rendering:pixelated;max-width:none`;
   vp.appendChild(c);o.append(top,vp);
   const close=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{if(['Escape','x','X','b','B','Backspace'].includes(e.key)){e.stopPropagation();e.preventDefault();close()}else if(/^Arrow/.test(e.key)){e.preventDefault();const d=60;vp.scrollBy({left:e.key==='ArrowLeft'?-d:e.key==='ArrowRight'?d:0,top:e.key==='ArrowUp'?-d:e.key==='ArrowDown'?d:0})}};
-  o.querySelector('#wmapx').onclick=e=>{e.stopPropagation();sfx('tap');close()};document.addEventListener('keydown',kd,true);(app||document.body).appendChild(o);
+  o._close=close;{const xb=o.querySelector('#wmapx');const fx=e=>{e.stopPropagation();e.preventDefault();sfx('tap');close()};xb.addEventListener('click',fx);xb.addEventListener('touchend',fx,{passive:false});xb.addEventListener('pointerup',fx)}document.addEventListener('keydown',kd,true);(app||document.body).appendChild(o);
   /* マウスでも ドラッグで うごかす */
   {let dr=null;vp.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;dr={x:e.clientX,y:e.clientY,l:vp.scrollLeft,t:vp.scrollTop};vp.style.cursor='grabbing'});
    addEventListener('pointermove',e=>{if(!dr)return;vp.scrollLeft=dr.l-(e.clientX-dr.x);vp.scrollTop=dr.t-(e.clientY-dr.y)});addEventListener('pointerup',()=>{dr=null;vp.style.cursor='grab'})}
@@ -1886,6 +1886,7 @@ const qmenu=()=>`<div class="qm"><button data-act="q_menu">メニュー</button>
 app.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;
   const a=b.dataset.act;
+  {const wm=document.getElementById('wmapov');if(wm&&wm._close&&!['snd','pad'].includes(a)){sfx('tap');wm._close();return}} /* 世界地図は どの ボタンでも とじる */
   if(a==='snd')toggleSound();
   if(a==='spd'){setTxt(TXT==='auto'?'manual':'auto');sfx('tap');document.querySelectorAll('.spdbtn').forEach(x=>{x.textContent=spdLbl();x.classList.toggle('on',TXT==='auto')});if(TXT==='auto')tapSkip();return}
   if(a==='rules'){sfx('tap');showRules()}
