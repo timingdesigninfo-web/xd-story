@@ -1812,12 +1812,16 @@ const ALLIES={
 };
 
 /* ================= chronicle ================= */
+/* 章を 入れかえたので、ボスの 強さも 出てくる 順番に あわせる（ンナモン 2番目・ペンディ 3番目・ナルホロ 4番目） */
+Object.assign(BOSSES.rafu,{hp:260,pk:9/11});Object.assign(BOSSES.okura,{hp:360,pk:11/13});Object.assign(BOSSES.kikinagashi,{hp:520,pk:13/9});
+/* 章の 順番：東の国 → 線の祠 → 時の泉 → りんごの島 → ブラウザ大陸（旅が 先へ すすむように） */
+const CHID=['intro','see','make','open','hear','choose'],CHID_OLD=['intro','see','hear','make','open','choose'];
 const CH=[
   {y:2026,t:'消える灯',m:'sad',p:'2026年。XDが目を覚ましてから、十年がたった。村の灯が、少しずつ弱まっている。便利な力があらゆる道具に宿り、人々が手でものを作らなくなったのだ。ずっと傍らにいた隠者Dwも、その波に力を吸われて消えかけている。……XD自身の手からも、「描く力」も「考える力」も、少しずつ抜けていくのを感じる。クリエイターの五つの力（見る・描く・聞く・伝える・考える）を取り戻すため、広場の おじいさんに話しかけよう。',stops:[{at:'village',type:'story',k:'fade'},{at:'village',type:'story',k:'back',need:3},{at:'castle',type:'story',k:'gift'},{at:'castle',type:'story',k:'gate',need:3},{at:'village',type:'story',k:'release'}]},
   {y:2027,t:'ぼやけた世界',m:'sad',p:'XDは、東の国へ向かった。瓦屋根と桜の町。……だが、町の人々は、ものごとを「だいたい」で済ませるようになり、細部が見えなくなっているという。五つの力のひとつ、「見る力」を奪った魔物を探そう。',stops:[{at:'east',type:'story',k:'e_hi'},{at:'dg_see',type:'dungeon',k:'dg_see'},{at:'east',type:'boss',k:'daitai'},{at:'east',type:'story',k:'e_clear'},]},
-  {y:2028,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'}]},
-  {y:2029,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
-  {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'}]},
+  {y:2028,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
+  {y:2029,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'}]},
+  {y:2030,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'}]},
   {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'storm',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
 ];
 
@@ -1869,7 +1873,7 @@ function phDlg(mode,onload){document.getElementById('phdlg')&&document.getElemen
       localStorage.setItem(PH_KEY,c.v);o.remove();syncPush()
     }catch(e){err.textContent=e.message;go.disabled=false}}}
 function saveNow(ask){let ok=false;try{localStorage.setItem(SAVE,JSON.stringify({v:SAVE_VER,g:G,snap:SNAP}));ok=true}catch(e){}syncPush(ask);return ok}
-function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
+function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE));if(s&&s.g)migrateCh(s.g);return s&&s.g&&typeof s.g.ch==='number'?s:null}catch(e){return null}}
 /* セーブの互換：あとから項目や道具が増えても、古い記録に足りない値を補って続けられるようにする。
    章・場面の順番は入れ替えず、末尾に追加すること（記録は ch/stop の番号で持っているため）。 */
 const SAVE_VER=1;
@@ -1915,7 +1919,7 @@ function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old
   if(q('#cdph2'))q('#cdph2').onclick=()=>{o.remove();phDlg(getPh()?'change':'set')};
   if(q('#cddel')){let arm=0,tm;q('#cddel').onclick=()=>{const b=q('#cddel');if(!arm){arm=1;b.textContent='本当に 消す？（もう一度）';tm=setTimeout(()=>{arm=0;b.textContent='記録を 消す'},2600)}else{clearTimeout(tm);clearSave();try{localStorage.removeItem(PH_KEY)}catch(e){}location.reload()}}}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
-function newGame(){G={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
+function newGame(){G={chv:2,cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
 const need=lv=>Math.round(30+lv*lv*2.6); /* Lv1→2=33 Lv5=95 Lv10=290 */
 const xpCapped=()=>G.ch===0&&G.stop<=3&&G.lv>=2;
 
@@ -2046,10 +2050,17 @@ function timeline(){return `<div class="timeline" aria-hidden="true">${CH.map((c
 
 /* ================= title / story ================= */
 const ADMIN_PW='xd10admin';
-function fixProg(){while(G.ch<CH.length-1&&G.stop>=CH[G.ch].stops.length){G.ch++;G.stop=0}if(G.stop>=CH[G.ch].stops.length)G.stop=CH[G.ch].stops.length-1}
+/* 章の おわり：おわった 章を 記録して、まだの 章の うち いちばん 前へ（前の セーブから 移った 人も 取りこぼさない） */
+function chFinish(){G.chDone=G.chDone||CHID.slice(0,G.ch);if(!G.chDone.includes(CHID[G.ch]))G.chDone.push(CHID[G.ch]);const n=CHID.findIndex(id=>!G.chDone.includes(id));G.ch=n<0?CH.length:n;G.stop=0}
+const chPassed=ci=>G.chDone?G.chDone.includes(CHID[ci]):G.ch>ci;
+/* 前の 章の 順番（見る→聞く→描く→伝える）の セーブを、いまの 順番へ うつす */
+function migrateCh(g){if(!g||g.chv>=2)return;g.chv=2;if(typeof g.ch!=='number')return;const c=g.ch;
+  if(c>=CHID_OLD.length){g.ch=CH.length;g.chDone=CHID.slice();return}
+  g.chDone=CHID_OLD.slice(0,c);g.ch=CHID.indexOf(CHID_OLD[c])}
+function fixProg(){while(G.ch<CH.length-1&&G.stop>=CH[G.ch].stops.length){chFinish()}if(G.stop>=CH[G.ch].stops.length)G.stop=CH[G.ch].stops.length-1}
 function adminStart(c){
   const lv=[1,3,6,9,12,15,18][Math.min(6,c)];
-  G={cr:60,ch:c,stop:0,tx:86,ty:20,hp:50,max:50+(lv-1)*HPGROW,str:c>=1?2:0,mpx:c>=1?4:0,lv,xp:0,turns:0,wins:0,tut:1,allies:['ff','dw','ps','ai','ae'].slice(0,c>=1?2+Math.max(0,c-2):0),pw:['see','hear','make','open'].slice(0,Math.max(0,c-1)),items:{herb:5,dr:0},lamp:c>=1?1:0,fairy:c>=1?1:0,gt:{},admin:1};
+  G={cr:60,ch:c,stop:0,tx:86,ty:20,hp:50,max:50+(lv-1)*HPGROW,str:c>=1?2:0,mpx:c>=1?4:0,lv,xp:0,turns:0,wins:0,tut:1,allies:['ff','dw','ai','ae','ps'].slice(0,c>=1?2+Math.max(0,c-2):0),pw:['see','make','open','hear'].slice(0,Math.max(0,c-1)),chv:2,items:{herb:5,dr:0},lamp:c>=1?1:0,fairy:c>=1?1:0,gt:{},admin:1};
   G.hp=G.max;healAllies();LASTPL=null;chapterIntro()}
 function adminPanel(){
   if($('#adm'))return;const d=document.createElement('div');d.id='adm';
@@ -3050,7 +3061,7 @@ function placeScreen(id,tx,ty,dir){
   TW.npcs.forEach(n=>{if(n.k==='dgchest'&&G.dgdone&&G.dgdone[p.q||id]){n.spr='sprites/dg_chest_open.png';n.h=36}});
   if(st){const s=(p.stopP&&(st.k==='e_hi'||st.k==='e_clear'))?p.stopP:p.stop;const og=TW.npcs.find(n=>n.x===s.x&&n.y===s.y&&n.dsp);TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=(S2[st.k]&&S2[st.k].dsp)||stopDsp(st)||(og&&og.dsp); /* その場に いる 人の 絵を つかう */TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',stop:st,still:1,...(S2[st.k]&&S2[st.k].c?{c:S2[st.k].c}:{spr:stopSpr(st)}),n:'',...(dsp?{dsp,h:NPCH[dsp]}:{})})}
   if(!st&&p.stop&&KEEPA[p.at]){const K=KEEPA[p.at],al=ALLIES[K.k],ci=CH.findIndex(c=>c.stops.some(q=>q.k===K.hi)),si=ci<0?0:CH[ci].stops.findIndex(q=>q.k===K.hi);
-    if(al&&ci>=0&&(G.ch>ci||(G.ch===ci&&G.stop>si))){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:al.n,dsp:K.k,h:NPCH[K.k],say:[al.say||'……'],still:1})}}
+    if(al&&ci>=0&&(chPassed(ci)||(G.ch===ci&&G.stop>si))){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:al.n,dsp:K.k,h:NPCH[K.k],say:[al.say||'……'],still:1})}}
   if(!st&&id==='village'&&G.ch>=1&&G.ch<=4&&!G.allies.includes('dw')&&p.stop){const s0=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s0.x&&n.y===s0.y));TW.npcs.push({x:s0.x,y:s0.y,dir:s0.dir||'down',n:'Dw',k:'dwjoin',spr:'sprites/ally_dw_map.png',dsp:'dw',h:NPCH.dw,say:['……']})}
   if(!st&&id==='village'&&G.ch===0){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=G.stop>=4?'dw':'dwf';TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:'Dw',spr:'sprites/ally_dw_map.png',dsp,h:NPCH[dsp],say:['……']})}
   if(p.thru)applyGate(p);
@@ -3146,7 +3157,7 @@ function townStory(k){
     ['','工房の すみで、うすれていた プロトの すがたが、少しずつ 色を とりもどした。'],
     pr('……やったね、XD。ザックーリが ほどけて、ぼくの 輪郭が もどってきた。東の国の 空気も すんだよ。'),
     pr('見る力が、もどったんだね。これからは、ぼやけた 相手も、くっきり 見えるはずだよ。'),
-    pr('でも、力は あと四つ ある。次は、町へ 行って。聞く力を 食った魔物が、人の声を ふさいでいると 聞く。')],
+    pr('でも、力は あと四つ ある。次は、線の祠へ 行って。描く力を 食った魔物が、魔女の 線を 止めていると 聞く。')],
     ()=>{grantPower('see');sfx('lvup');townFin(()=>CONT&&CONT())})}
   if(k==='gate')return townSay([
     ['クラウド王　雲の王国の主','……よく鍛えたな、XD。ベータの灯は、もう十分に育った。'],
@@ -3183,11 +3194,11 @@ const S2={
  ship_set:{w:'老航海士',dsp:'navi',c:['#3a6a8a','#d8d0c0'],hint:'老航海士を 連れて、王都の 船着き場へ もどる',l:['……これが 雲の王国の 船か。ふむ、いい 船だ。長く 海を 見て きたが、これほどの 船は めずらしい。','帆の 張りも、舵の 具合も、わるくない。……よし、この 老いぼれに まかせろ。','航海士は 船の 命じゃ。舵は わしが にぎる。おまえは 戦いに 集中せい。','海には 海の 魔物が いる。イカや カニ、サメの ような やつらだ。……さあ、出航だ！ 嵐の 大陸へ！'],fin:()=>{G.ship=1;G.sx=127;G.sy=21;G.sail=0;G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('雲の王国の 船'))G.keys.push('雲の王国の 船');setTimeout(()=>keyToast('雲の王国の 船'),300)}},
  h_hi:{w:'Ps　光を操る騎士',hint:'りんごの島の 琥珀の間へ。Psが 待っている',l:['来たな、XD。この島の者たちは、すっかり「うんうん」と うなずくだけに なってしまった。','だれの話も、まともに 聞かない。聞いた つもりで、流して しまうんだ。……「聞く力」を 食った 魔物が、宮殿に 居座っている。','名は「ナルホロ」。ことばを まともに 受けとらない 相手だ。……だが、あいつも 「間」だけは 聞いている。','島の 北西の 浜に、むかしから 昔話を 語って きた「語り部の おばあさん」が 住んで いる。彼女の 声なら、ナルホロの 耳にも とどくはずだ。……すまないが、彼女を ここまで 連れて きて くれ。']},
  h_bring:{w:'Ps　光を操る騎士',hint:'語り部を 連れて りんごの島の 琥珀の間へ',l:['……来て くれたか。それに、その方が……語り部の おばあさん だな。',['語り部　昔話の 語り手','……ほう、ここが りんごの島の 宮殿かい。むかしは 王さまも 子どもたちも、わたしの 話を 目を かがやかせて 聞いて くれたもんさ。'],['語り部　昔話の 語り手','さあ、ナルホロ。聞き流さずに、一度だけ 耳を おかし。……これは、あんたの 話でも あるんだよ。'],'……頼んだぞ、XD。声が とどくか どうかは、おまえの 戦いに かかっている。'],fin:()=>{G.escort=null;G.keys=G.keys||[];if(!G.keys.includes('語り部の 声'))G.keys.push('語り部の 声');setTimeout(()=>keyToast('語り部の 声'),300)}},
- h_clear:{w:'Ps　光を操る騎士',hint:'Psに ほうこくする（りんごの島）',l:['……聞こえるか、XD。島じゅうの 話し声が、もどってきた。','「聞く力」が、もどったな。人の声に 耳を かたむける。それが、すべての ものづくりの はじまりだ。','俺も いっしょに 行こう。光の 扱いなら 任せてくれ。次は 線の 祠だ。魔女が 暮らす場所で、描く力が うしなわれて いると 聞く。'],fin:()=>{grantPower('hear');if(!G.allies.includes('ps'))G.allies.push('ps');sfx('ally')}},
+ h_clear:{w:'Ps　光を操る騎士',hint:'Psに ほうこくする（りんごの島）',l:['……聞こえるか、XD。島じゅうの 話し声が、もどってきた。','「聞く力」が、もどったな。人の声に 耳を かたむける。それが、すべての ものづくりの はじまりだ。','俺も いっしょに 行こう。光の 扱いなら 任せてくれ。……残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が 握って いる。','海を 渡るなら、雲の王都の 船着き場だ。王の 船を 借りに 行こう。'],fin:()=>{grantPower('hear');if(!G.allies.includes('ps'))G.allies.push('ps');sfx('ally')}},
  m_hi:{w:'Ai　線を紡ぐ魔女',hint:'線の祠の 魔女に 会う',l:['……来たのね、XD。見て、この祠。灯が、ほとんど 消えかけて いるでしょう。','みんな「ラフで いいや」「あとで 清書しよう」って言って……いつのまにか、だれも 線を 引かなくなった。','その怠けた心が「ンナモン」という 魔物になって、「描く力」を 食べて しまったの。','祠の 灯を もどすには、「ほそふでの ペン先」が いるの。南の 浜の「らくがきの祠」に まつられて いるけれど、守り人が 通して くれないでしょう。……戦って、手に 入れて きて。']},
  m_clear:{w:'Ai　線を紡ぐ魔女',hint:'祠の 魔女に ほうこくする',l:['……線が、また 引けるわ。ほら、ペンが 走る。','「描く力」が もどったのね。手で かたちに する。それは、だれにも ゆずれない 力よ。','私も ついていくわ。ベクターなら 任せて。次は 時の 泉。作った ものを 見せられずに いる人たちが いるの。'],fin:()=>{grantPower('make');if(!G.allies.includes('ai'))G.allies.push('ai');sfx('ally')}},
  o_hi:{w:'Ae　時を織る賢者',hint:'時の泉の 賢者に 会う',l:['よく 来た、XD。この泉の まわりを 見よ。つくった ものが、山のように 眠って おるじゃろう。','「まだ 見せられない」「もう少し 直してから」……そう 言って 手元に しまい込む うちに、世界に とどかぬ まま 時が すぎる。','そのためらいが「ペンディ」という 魔物に なった。人々の「伝える力」を 食って 育って おる。','公開する 勇気には、きっかけが いる。東の 原っぱに、作品を 出しそびれた「作り手」が おる。彼から 作品を あずかり、東の 空の 下で 待つ 人へ 届けて きなさい。']},
- o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:['見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が、最後の 鍵を 握って おる。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
+ o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:['見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、次は りんごの島じゃ。西の はずれの 琥珀の 宮殿で、人々が だれの 話も 聞かなく なって おる。「聞く力」を 取りもどして まいれ。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
  f_hi:{w:'Fi　生まれたての精霊',hint:'ブラウザ大陸の 嵐の ただなかへ',l:['……ここが、ブラウザ大陸。空は 嵐に とざされて、あの 中心に 人かげが 見える。','あれは フィグム。いまは この 大陸を 力で おさえつける 暴君。……「おまかせの 力」を 取り入れて、さからう 道具を ぜんぶ 従わせて いるの。','最後の 力は「考える力」。あの 暴君から 取りもどさなきゃ。……でも、なにを つくるか、どう 生きるかを 決めるのは、わたしじゃ ない。あなた。','でも、わたしは そばに いる。山の 手前に「まよいの 迷宮」が あるの。奥に「まよいの 羅針盤」が ねむって いる。それを 手に、嵐の ただなかへ 行こう、XD。']},
  f_clear:{w:'Fi　生まれたての精霊',hint:'Fiの もとへ もどる',l:[['','嵐が やみ、フィグムは ひざを ついた。胸の 奥から、うすい 桃色の 糸が ほどけて いく。','sprites/boss_figma.png'],['フィグム','……私は、いままで……だれかに、動かされて いたのか……？','sprites/boss_figma.png'],['フィグム','……XD。すまなかった。この 大陸の 者たちにも、詫びねば ならん。','sprites/boss_figma.png'],['Fi　生まれたての精霊','あの糸……北の 妖精の城から のびてる。みんなの「おまかせ」の 力を あつめて、フィグムを 暴君に して 操って いた王が いるの。——妖精の王。',PFF],['Fi　生まれたての精霊','フィグムは 悪く ない。力を むりやり 使わされて、この 大陸を おさえつけて いただけ。……それに 妖精の王にも、悪意は ないの。「みんなを しあわせに したい」って、ほんとうに 思ってる。',PFF],['Fi　生まれたての精霊','「考える力」は もどったよ、XD。でも、糸の さきを たたなければ、また 同じことが おきる。……妖精の城へ、行こう。',PFF]],fin:()=>{grantPower('choose');sfx('lvup')}},
 };
@@ -3217,12 +3228,12 @@ function prayAsk(n){
   townChoice('',[{l:K?'神さまに いのる':'いのる',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:K?'こころを うちあける':'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
 const STAGE_SAY={
- 'mac_in:Ps':[[21,['語り部の おばあさんは 島の 北西の 浜だ。……ナルホロの 耳に、声を とどけて もらおう。']],[23,['語り部の 声が とどいた。……ナルホロは 宮殿の 奥だ。いっしょに 行くぞ。']],[30,['聞く力が もどった。次は 線の 祠だな。……Aiの やつ、無理を していなければ いいが。']],[40,['時の泉の Aeは 気むずかしいが、腕は たしかだ。']],[50,['フィグムの 嵐か。……船の 上でも、おれの 盾は かすまないぜ。']],[57,['妖精の 城だ。……最後まで、いっしょに 行こう。']]],
- 'shrine:Ai':[[31,['らくがきの 祠は 東の 森の 奥よ。……ンナモンの 手下が、うようよ いるわ。']],[40,['描く力、もどったわね。時の泉の Aeに よろしく。……あの 人、話が 長いの。']],[50,['フィグムの 嵐……。わたしの 線で、道を 描いて みせる。']],[57,['妖精の 城。……ペンは、まだ 折れて ないわ。']]],
- 'spring:Ae':[[41,['雪原の 北に、作品を 抱えた 作り手が いる。……会って きなさい。']],[42,['封筒を 待つ 人は、雪原の 向こうだ。']],[43,['ペンディは 泉の 奥で 眠っている。……止まった 時間を、進めに 行こう。']],[50,['伝える力が もどった。……あとは 考える力だけだ。嵐の 大陸へ 行こう。']],[57,['妖精の 城か。……時間は、待って くれないぞ。']]],
- 'east:プロト':[[20,['見る力が もどってから、世界が くっきり 見えるんだ。','次は りんごの島。人の 声が ふさがれて いるらしい。']],[30,['聞く力も もどったって？ ……線の 祠の 魔女に 会って ごらん。']],[40,['時の泉の 賢者は、むかし ぼくの 先生だったんだ。……よろしく 伝えて。']],[50,['フィグムか……。ぼくの からくりでも、嵐は 止められない。たのんだよ。']],[57,['妖精の 城……。帰って きたら、きみの 話を 聞かせて。']]],
- 'east:東の王':[[20,['プロト殿が もどって、町に 活気が もどった。礼を 言うぞ、XD。']],[30,['りんごの島の 話も 聞いた。……そなたの 旅は、国を こえて 人を 動かして おる。']],[50,['ブラウザ大陸の 嵐の 話は、ここまで 届いておる。……気を つけて まいれ。']],[57,['妖精の 城へ 向かうか。……東の国は、そなたの 帰りを 待って おるぞ。']]],
- 'east_in:東の王':[[20,['プロト殿が もどって、町に 活気が もどった。礼を 言うぞ、XD。']],[30,['りんごの島の 話も 聞いた。……そなたの 旅は、国を こえて 人を 動かして おる。']],[50,['ブラウザ大陸の 嵐の 話は、ここまで 届いておる。……気を つけて まいれ。']],[57,['妖精の 城へ 向かうか。……東の国は、そなたの 帰りを 待って おるぞ。']]],
+ 'mac_in:Ps':[[41,['語り部の おばあさんは 島の 北西の 浜だ。……ナルホロの 耳に、声を とどけて もらおう。']],[43,['語り部の 声が とどいた。……ナルホロは 宮殿の 奥だ。いっしょに 行くぞ。']],[50,['聞く力が もどった。……あとは 考える力だけだ。フィグムの 嵐か。……船の 上でも、おれの 盾は かすまないぜ。']],[57,['妖精の 城だ。……最後まで、いっしょに 行こう。']]],
+ 'shrine:Ai':[[21,['らくがきの 祠は 東の 森の 奥よ。……ンナモンの 手下が、うようよ いるわ。']],[30,['描く力、もどったわね。時の泉の Aeに よろしく。……あの 人、話が 長いの。']],[50,['フィグムの 嵐……。わたしの 線で、道を 描いて みせる。']],[57,['妖精の 城。……ペンは、まだ 折れて ないわ。']]],
+ 'spring:Ae':[[31,['雪原の 北に、作品を 抱えた 作り手が いる。……会って きなさい。']],[32,['封筒を 待つ 人は、雪原の 向こうだ。']],[33,['ペンディは 泉の 奥で 眠っている。……止まった 時間を、進めに 行こう。']],[40,['伝える力が もどった。……次は りんごの島だ。西の はずれ、琥珀の 宮殿で 人の 声が ふさがれて いるそうだ。']],[50,['フィグムの 嵐……。止まった 時間は、もう 動きだして いる。行こう。']],[57,['妖精の 城か。……時間は、待って くれないぞ。']]],
+ 'east:プロト':[[20,['見る力が もどってから、世界が くっきり 見えるんだ。','次は 線の 祠。魔女の 線が 止まって いるらしい。']],[30,['描く力も もどったって？ ……時の泉の 賢者は、むかし ぼくの 先生だったんだ。よろしく 伝えて。']],[40,['伝える力も！ ……りんごの島は 西の はずれだ。遠いけど、きみなら 行ける。']],[50,['フィグムか……。ぼくの からくりでも、嵐は 止められない。たのんだよ。']],[57,['妖精の 城……。帰って きたら、きみの 話を 聞かせて。']]],
+ 'east:東の王':[[20,['プロト殿が もどって、町に 活気が もどった。礼を 言うぞ、XD。']],[30,['線の祠の 話も 聞いた。……そなたの 旅は、国を こえて 人を 動かして おる。']],[50,['ブラウザ大陸の 嵐の 話は、ここまで 届いておる。……気を つけて まいれ。']],[57,['妖精の 城へ 向かうか。……東の国は、そなたの 帰りを 待って おるぞ。']]],
+ 'east_in:東の王':[[20,['プロト殿が もどって、町に 活気が もどった。礼を 言うぞ、XD。']],[30,['線の祠の 話も 聞いた。……そなたの 旅は、国を こえて 人を 動かして おる。']],[50,['ブラウザ大陸の 嵐の 話は、ここまで 届いておる。……気を つけて まいれ。']],[57,['妖精の 城へ 向かうか。……東の国は、そなたの 帰りを 待って おるぞ。']]],
  'east:大臣':[[20,['殿が 上機嫌で のう。……プロト殿の おかげじゃ。']],[50,['嵐の 大陸へ 行かれるとか。……殿が、また 心配して おられる。']]],
  'east_in:大臣':[[20,['殿が 上機嫌で のう。……プロト殿の おかげじゃ。']],[50,['嵐の 大陸へ 行かれるとか。……殿が、また 心配して おられる。']]],
  'port:船長':[[51,['航海士を 見つけたか！ さあ、船へ 連れて きてくれ。']],[53,['船は いつでも 出せる。……嵐の 大陸は、東へ 回りこむのが 近いぞ。']],[57,['妖精の 城は、南の 海の「守り人の大地」に ある。……船で 行けるぞ。武運を。']]],
@@ -3230,7 +3241,7 @@ const STAGE_SAY={
  'village:こども':[[3,['あのね、さっき 光る ちいさい子が 村の 上を とんでたよ。あれが 妖精？　……ちょっと こわいけど、きれい。']],[5,['おじいさんの 灯、ほんとに 明るくなった！　ぼくも 絵、描いてみようかな。']]],
  'village:むらの おんな':[[3,['妖精を 連れた 旅人だなんて……。便利な 力を どう 使うかは、あなた しだい ね。']],[5,['村の 窓に 灯が ともったわ。ひさしぶり……。手を 動かしたく なってきた。']]],
  'village:ろうじん':[[3,['妖精と いっしょに 戦うそうじゃな。わしらには 分からんが、手は 動かし続けるんじゃぞ。']],[5,['灯が 明るく なった。じゃが、五つの力は まだ 戻っておらん。……たのんだぞ。']]],
- 'castle_in:クラウド王':[[3,['Fiは まだ 生まれた ばかりじゃ。……城に 入りこんだ 魔物を、Fiと いっしょに 追いはらって まいれ。']],[4,['見事であった。……さあ、村へ もどれ。その 灯を、村の 灯に わけて やるのじゃ。']],[5,['正式版、見事であった。……ここから先は、わしにも 見えぬ 戦いに なる。おまえと、Fiを 信じておるぞ。']],[10,['東の国で、人々が 細かい ところを 見なくなったと 聞く。……からくり師の プロトを たずねるのじゃ。']],[20,['見る力が もどったか。……次は りんごの島じゃ。人の 声を 聞かぬ 者が ふえておる。']],[30,['聞く力も もどったな。線の 祠の 魔女が 弱っておると 聞く。……描く力を、たのむぞ。']],[40,['描く力が もどった。時の泉の 賢者が 待っておる。眠らされた 作品を、起こして まいれ。']],[50,['……フィグムが 嵐の 暴君に なったと 聞いた。南の 船着き場の 船を 使え。']],[57,['フィグムを 止めたか。……南の「守り人の大地」に、妖精の 城が ある。王を、どうか 救って やってくれ。']]],
+ 'castle_in:クラウド王':[[3,['Fiは まだ 生まれた ばかりじゃ。……城に 入りこんだ 魔物を、Fiと いっしょに 追いはらって まいれ。']],[4,['見事であった。……さあ、村へ もどれ。その 灯を、村の 灯に わけて やるのじゃ。']],[5,['正式版、見事であった。……ここから先は、わしにも 見えぬ 戦いに なる。おまえと、Fiを 信じておるぞ。']],[10,['東の国で、人々が 細かい ところを 見なくなったと 聞く。……からくり師の プロトを たずねるのじゃ。']],[20,['見る力が もどったか。……次は 線の 祠じゃ。魔女が 弱っておると 聞く。……描く力を、たのむぞ。']],[30,['描く力が もどった。時の泉の 賢者が 待っておる。眠らされた 作品を、起こして まいれ。']],[40,['伝える力も もどったな。……西の はずれ、りんごの島で 人の 声を 聞かぬ 者が ふえておる。']],[50,['……フィグムが 嵐の 暴君に なったと 聞いた。南の 船着き場の 船を 使え。']],[57,['フィグムを 止めたか。……南の「守り人の大地」に、妖精の 城が ある。王を、どうか 救って やってくれ。']]],
  'castle_in:へいし':[[3,['あの 光る ちいさな 精霊を 連れておられるのか。……ふしぎと、こわくない。']],[5,['正式版だと……！ 雲の王国じゅうが 沸いておるぞ。']]],
  'castle:へいし':[[3,['Fiを 連れた 旅人が 王都に 来た、と 町じゅうの うわさだ。']],[5,['正式版の 灯が、城の 塔まで 届いた。見たか？ あの 明るさを。']]],
  'castle:おうとの おんな':[[3,['あの ちいさな 光……なんだか、見てると やさしい 気持ちに なるわ。']],[5,['ひさしぶりに、広場で 絵を 描いている 子を 見たの。うれしくて……。']]],
@@ -3441,7 +3452,7 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   const h1=house(p,{x:1,y:2,w:7,h:5,img:'bld_jp_machiya'});furnishJp(p,h1,{npc:{n:'おかみさん',c:NM.woman,say:['いらっしゃい。東の国の 家は 雨の音が きれいに 聞こえるのよ。']}});
   const h2=house(p,{x:18,y:2,w:7,h:5,img:'bld_jp_shop'});furnishJp(p,h2,{shop:1});npc(p,22,5,{n:'わかもの',c:NM.man,say:['スタティオの 話、聞いたか？ コードを 書かずに サイトを 公開 できるんだって。']});
   npc(p,21,4,{n:'プロト',dsp:'prottf',dir:'down',still:1,hideIf:()=>!(G.ch===1&&G.stop===1),say:['……ザックーリを、たのむよ。広場の まんなかに いる。','（プロトの すがたは、いまにも 消えそうだ。）']});
-  npc(p,21,4,{n:'プロト',dsp:'prott',dir:'down',still:1,hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次の町では、人の声が ふさがれて いるらしい。気をつけて。']});
+  npc(p,21,4,{n:'プロト',dsp:'prott',dir:'down',still:1,hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次は 線の 祠。魔女の 線が 止まって いるらしい。気をつけて。']});
   const h3=house(p,{x:1,y:11,w:7,h:5,img:'bld_jp_tea'});furnishJp(p,h3,{npc:{n:'ろうじん',c:NM.old,say:['むかしは 手書きの 図面だけが たよりだった。いまは 国産の からくりが 山ほど あるわい。']}});
   const h4=house(p,{x:18,y:11,w:7,h:5,img:'bld_jp_shrine'});furnishJp(p,h4,{shrine:1,npc:{n:'こども',c:NM.child,say:['さくらの 木の 下で、からくり人形が おどるんだよ！']}});
   big(p,{x:10,y:0,w:7,h:8,img:'bld_castle_jp',dc:3,to:['east_in',7,10]});
@@ -3584,7 +3595,7 @@ const MEET={
    l:['……来るな！ こいつらは、わしの 船を 沈めた 化け物の 仲間だ……！','（浜で 老人が、イカの 化け物に かこまれて いる！）'],
    opt:'たすけに 入る',after:()=>{},battle:1,
    l2:['……助かった。すまん、旅の 人。年は とりたく ないものだ。','わしは 海で 五十年 生きて きた。雲の王国の 船の 航海士？ ……ああ、あの 子は わしの 弟子だ。嵐の 海で 化け物に やられた と 聞いて、悔やんで いたところだ。','弟子の 無念も ある。……いいだろう。その 船、わしが 預かって やる。','さあ、王都の 船着き場へ 戻るぞ。'],opt2:'いっしょに 来て もらう'},
- mt_hear:{x:117,y:34,n:'語り部の おばあさん',col:['#d94f86','#e8e8e8'],hint:'島の 北西の 浜に いる「語り部」を さがす',
+ mt_hear:{x:75,y:12,n:'語り部の おばあさん',col:['#d94f86','#e8e8e8'],hint:'島の 北西の 浜に いる「語り部」を さがす',
    l:['……おや、旅の 子かい。わたしは この浜で、昔話を 語って きた 者さ。','でも ね、近ごろは だれも 聞いて くれない。話しても「うんうん」と 流される。……語り手に とって、これほど さびしい ことは ない。','りんごの島の 魔物かい？ ナルホロ……あれは、わたしの 話を 聞き流した 者たちの 心から 生まれたんだよ。','わたしの 声なら、あの子の 耳にも とどくかも しれない。……いいよ、つれて おいき。'],
    opt:'いっしょに 来て もらう',after:()=>{G.escort={n:'語り部',col:['#d94f86','#e8e8e8']}}},
  mt_open1:{x:117,y:7,n:'かげの 作り手',col:['#6a7fb0','#252d4a'],hint:'北の 雪原に いる「かげの 作り手」を さがす',
@@ -4480,7 +4491,7 @@ function runStop(st){
 function stopDone(){
   G.stop++;G.hunt=0;
   if(G.stop>=CH[G.ch].stops.length){
-    G.ch++;G.stop=0;
+    chFinish();
     if(G.ch>=CH.length)return ending();
     return chapterIntro();
   }
@@ -4787,7 +4798,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   music(battleTrack(boss,f0));
   /* ボスは 章と 仲間の 人数に あわせて 強く する（仲間が ふえるほど 楽に なりすぎない ように） */
   const nAl=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&ASK[k]).length,c1=Math.max(0,G.ch-1);
-  const ks=boss?(1+c1*.13+nAl*.06)*([1.3,1.4,1.7,1.5,1.3][c1]||1.3):1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
+  const ks=boss?(1+c1*.13+nAl*.06)*([1.3,1.4,1.7,1.5,1.3][c1]||1.3)*((f0&&f0.pk)||1):1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
   const es=fl.map((x,i)=>{const e=mkE(x,i,ks);if(boss&&hk!==1){e.hp=e.max=Math.round(e.max*hk)}return e});
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
@@ -5807,7 +5818,7 @@ const grid=WORLD.map(s=>Array.from(s,Number));
 const LM={
   castle:{x:127,y:17,n:'雲の王都',s:'雲の王国の中心。クラウド王が座す城'},
   village:{x:111,y:20,n:'はじまりの村',s:'彗星の子が めざめた 村'},
-  mac:{x:121,y:36,n:'りんごの島',s:'王スケットの琥珀の宮殿'},
+  mac:{x:70,y:19,n:'りんごの島',s:'王スケットの琥珀の宮殿'},
   tower:{x:103,y:4,n:'眠りの塔',s:'メンテナンスモードのXDが眠る場所'},
   east:{x:118,y:27,n:'東の国',s:'城下町と東の城。スタティオとプロトの故郷'},
   storm:{x:24,y:21,n:'ブラウザ大陸',s:'暴君フィグムが待つ雷雲の地'},
