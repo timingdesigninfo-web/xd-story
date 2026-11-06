@@ -1138,6 +1138,12 @@ async function allyAct(a){
   {
     if(a.hp<=0||!aliveEs().length)return;
     if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);return} /* 起こされた ばかり */
+    /* 仲間も どうぐを つかう：XDが たおれたら 起こす。HPが へった 人には やくそう（1ターンに ひとりまで） */
+    if(B.itR!==B.turn){
+      if(G.hp<=0){const k=G.items.backup?'backup':G.items.dr?'dr':G.items.herb?'herb':null;
+        if(k){B.itR=B.turn;G.items[k]--;G.hp=Math.min(G.max,k==='backup'?Math.ceil(G.max/2):ITEMS[k].h);B.fiSelf=0;sfx('heal');try{jolt('#me','flash')}catch(e){}pop('#me','+'+G.hp,'heal');render();say(`<b>${a.n}</b>は XDに <b>${ITEMS[k].n}</b>を つかった！<br><b>XDが 目を さました！</b>`);await wait(900);return}}
+      else{const low=partyAll().filter(m=>m.hp>0&&m.hp<m.max*.3).sort((x,y)=>x.hp/x.max-y.hp/y.max)[0],k=low&&(G.items.herb?'herb':G.items.dr?'dr':null);
+        if(low&&k){B.itR=B.turn;G.items[k]--;const v=Math.min(low.max-low.hp,ITEMS[k].h);low.hp+=v;sfx('heal');pop(low.sel,'+'+v,'heal');render();say(`<b>${a.n}</b>は ${low.k===a.k?'じぶんに':`<b>${low.n}</b>に`} <b>${ITEMS[k].n}</b>を つかった！<br>HPが <b>${v}</b> かいふく！`);await wait(800);return}}}
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
     if(ch){a.mp-=ch.mp;cbAdd(a.k,'m',ch.mp*4);say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
     else{const P=AP[a.k]||{an:'こうげき',am:1,ah:1};say(`<b>${a.n}</b>の <b>${P.an}</b>！`);sfx('swing');for(let q=0;q<P.ah;q++)hit(P.am);a.mp=Math.min(a.mpm,a.mp+1)}
@@ -5132,12 +5138,12 @@ const spdE=e=>e.spd!=null?e.spd:ESPD[e.n]!=null?ESPD[e.n]:(B.boss&&e===B.es[0]?9
 function buildOrder(){const j=()=>Math.random()*3,u=[];
   B.xs=SPD.xd+j();
   B.allies.forEach(a=>u.push({t:'al',a,s:(SPD[a.k]||8)+j()}));
-  if(B.fiMode)u.push({t:'fi',s:SPD.ff+j()});
+  if(B.fiMode||(G.fairy&&G.hp<=0))u.push({t:'fi',s:SPD.ff+j()});
   B.es.forEach(e=>u.push({t:'en',e,s:spdE(e)+j()}));
   u.sort((x,y)=>y.s-x.s);B.uo=u}
 async function runUnit(u){if(u.done||B.over)return;u.done=1;
   if(u.t==='al'){if(u.a.hp>0&&aliveEs().length)await allyAct(u.a)}
-  else if(u.t==='fi'){if(B.fiMode&&aliveEs().length)await fiTurn()}
+  else if(u.t==='fi'){if((B.fiMode||G.hp<=0)&&aliveEs().length)await fiTurn()}
   else if(u.e.hp>0&&aliveEs().length)await enemyOne(u.e)}
 async function runPhase(fast){if(!B.uo)buildOrder();for(const u of B.uo){if(fast&&u.s<=B.xs)continue;await runUnit(u);if(B.over)return;if(!aliveEs().length)return}}
 function startTurn(){B.uo=null;B.menu='atk';B.ci=0;B.li=0;B.pane='cmd';B.turn++;G.turns++;histSnap();B.supN=0;if(B.fkc==='t'&&B.turn>=3&&!B.awk){B.awk=true;G.hp=G.max;setTimeout(()=>{sfx('lvup');say('<b>……！ XDの 灯が ふたたび もえあがった！</b><br>HPが 全回復。こうげき・ぼうぎょが 大きく あがる！')},60)}if(B.blockT>0){B.blockT--;if(B.blockT<=0){B.block=0;B.allies.forEach(a=>a.block=0)}}else{B.block=0};B.ordTurn=0;B.badSaid=0;if(B.up)['a','s'].forEach(k=>{if(B.up[k]){B.up[k].t--;if(B.up[k].t<=0)delete B.up[k]}});['atk','grd'].forEach(k=>{if(B.ord[k]>0)B.ord[k]--});B.bad=false;if(B.fiDown>0)B.fiDown--;if(!(B.ord.atk>0)){B.ord.pr=false;B.ord.m=0;B.ord.nb=false}if(!(B.ord.grd>0))B.ord.half=false;B.defend=false;
@@ -5195,7 +5201,13 @@ async function giveOrder(k){
   say((was?`<small>（${FIMODE[was]} から きりかえ）</small><br>`:'')+T+`<br><small>Fiが うごく ターンごとに ${turnCost()}CR つかう</small>`)}
 /* Fiの ターン：モードの わりあいで 行動を えらぶ */
 async function fiTurn(){
-  if(!B||B.over||!B.fiMode||!G.fairy||!aliveEs().length)return;
+  if(!B||B.over||!G.fairy||!aliveEs().length)return;
+  if(G.hp<=0){ /* XDが たおれたら、だれの 指示も ない。Fiが 自分で 考えて XDを 起こそうと する */
+    say(B.fiSelf?'Fiは XDの そばを はなれない……':'……XDの 声が しない。<br>Fiは 自分で 考えた。「XD、起きて！」');sfx('skill');B.fiSelf=1;await wait(800);
+    if(Math.random()<.45){G.hp=Math.max(1,Math.round(G.max*.25));B.fiSelf=0;sfx('heal');try{jolt('#me','flash')}catch(e){}pop('#me','+'+G.hp,'heal');render();say('妖精の 光が XDを つつんだ。<br><b>XDが 目を さました！</b>');await wait(900)}
+    else{say('妖精の 光が ゆれる……。XDは まだ 目を さまさない。');await wait(700)}
+    return}
+  if(!B.fiMode)return;
   const c=turnCost();if(crOf()<c){if(!B.crSaid){B.crSaid=1;say('クレジットが たりず、Fiは うごけない……');await wait(800)}return}
   crAdd(-c);B.paid=(B.paid||0)+c;render();
   const r=Math.random(),hurt=G.hp<G.max*.6||B.allies.some(x=>x.hp>0&&x.hp<x.max*.55);
