@@ -1131,7 +1131,7 @@ const ITEMS={
   cache:{n:'キャッシュクリア',d:'MPを 12GB かいふくする',m:12,t:'mp'},
   meal:{n:'みんなの まかない',d:'みんなの HPを 35 かいふくする',h:35,t:'all'},
   backup:{n:'バックアップ',d:'たおれた なかまを HP はんぶんで 起こす',t:'rev'},
-  shortcut:{n:'ショートカット',d:'てき ぜんたいに 30の ダメージ（戦闘中だけ）',v:30,t:'atk'},
+  shortcut:{n:'ショートカット',d:'いちど 行った 町へ 一瞬で とぶ（戦闘中は つかえない）',t:'warp'},
 };
 /* その人に つかえるか */
 function itemOk(k,m){const t=ITEMS[k].t;if(t==='mp')return m.mp!=null?m.mp<m.mpm:true;if(t==='rev')return m.k!=='xd'&&m.hp<=0;return m.hp<m.max&&!(t==='hp'&&m.hp<=0&&m.k==='xd')}
@@ -1586,7 +1586,7 @@ function walkRegen(){FLD.mpw=(FLD.mpw||0)+1;if(FLD.mpw<MPWALK)return;FLD.mpw=0;
 function saveAllyHP(){if(!B)return;if(B.mp!=null&&!B.final)G.mp=B.mp>=mpMax()?null:Math.max(0,B.mp);if(!B.allies)return;G.ahp=G.ahp||{};G.amp=G.amp||{};B.allies.forEach(a=>{G.ahp[a.k]=Math.max(0,a.hp);G.amp[a.k]=Math.max(0,a.mp)})}
 function useItemOn(k,who){ /* フィールドで つかう。who='xd' か 仲間の k（みんなの まかない は who なし） */
   if(!G.items[k])return false;const IT=ITEMS[k],t=IT.t;
-  if(t==='atk')return false;
+  if(t==='warp')return false;
   if(t==='all'){let any=false;if(G.hp<G.max){G.hp=Math.min(G.max,G.hp+IT.h);any=true}G.ahp=G.ahp||{};bagWho().filter(w=>w!=='xd').forEach(w=>{const m=allyMax(w),h0=aHp(w);if(h0>0&&h0<m){G.ahp[w]=Math.min(m,h0+IT.h);any=true}});if(!any)return false;G.items[k]--}
   else if(t==='mp'){if(who==='xd'){const c=curMp();if(c>=mpMax())return false;G.mp=Math.min(mpMax(),c+IT.m);if(G.mp>=mpMax())G.mp=null}else{const m=allyMp(who),c=aMp(who);if(c>=m)return false;G.amp=G.amp||{};G.amp[who]=Math.min(m,c+IT.m)}G.items[k]--}
   else if(t==='rev'){if(who==='xd'||aHp(who)>0)return false;G.ahp=G.ahp||{};G.ahp[who]=Math.ceil(allyMax(who)/2);G.items[k]--}
@@ -1598,9 +1598,28 @@ const whoName=w=>w==='xd'?'XD':(SNM[w]||dn(ALLIES[w]));
 const whoHp=(w,k)=>k&&ITEMS[k].t==='mp'?(w==='xd'?`MP ${curMp()}/${mpMax()}GB`:`MP ${aMp(w)}/${allyMp(w)}`):w==='xd'?`HP ${G.hp}/${G.max}`:(aHp(w)<=0?'力つきて うごけない':`HP ${aHp(w)}/${allyMax(w)}`);
 function tmBag(){
   tmChoose([...Object.keys(ITEMS).map(k=>({l:`${ITEMS[k].n} ×${G.items[k]||0}`,s:G.items[k]?ITEMS[k].d:'もっていない',f:()=>{
-      if(!G.items[k])return tmBag();const t=ITEMS[k].t;if(t==='atk'){sfx('junk');return tmBag()}if(t==='all'){if(!useItemOn(k))sfx('junk');return tmBag()}const ws=bagWho().filter(w=>t!=='rev'||w!=='xd');if(!ws.length){sfx('junk');return tmBag()}if(ws.length===1&&t!=='rev'){useItemOn(k,ws[0]);return tmBag()}
+      if(!G.items[k])return tmBag();const t=ITEMS[k].t;if(t==='warp')return tmWarp();if(t==='all'){if(!useItemOn(k))sfx('junk');return tmBag()}const ws=bagWho().filter(w=>t!=='rev'||w!=='xd');if(!ws.length){sfx('junk');return tmBag()}if(ws.length===1&&t!=='rev'){useItemOn(k,ws[0]);return tmBag()}
       tmChoose([...ws.map(w=>({l:whoName(w),s:whoHp(w,k),f:()=>{if(!useItemOn(k,w))sfx('junk');tmBag()}})),{l:'もどる',s:'',f:()=>tmBag()}],`メニュー ＞ どうぐ ＞ ${ITEMS[k].n}を だれに？`,tmBag)}})),
     {l:'もどる',s:'',f:()=>tmain()}],'メニュー ＞ どうぐ',tmain);
+}
+const WARPOK=k=>!!PLACES[k]&&!k.startsWith('dg_')&&!['storm','gate','pass'].includes(k);
+function warpList(){const w=Object.assign({village:1},G.went||{});/* 前の セーブ：すすんだ ぶんの 場所は 行ったことに */CH.forEach((c,ci)=>c.stops.forEach((q,si)=>{if((ci<G.ch||(ci===G.ch&&si<G.stop))&&q.at)w[q.at]=1}));return Object.keys(w).filter(k=>WARPOK(k)&&loc(k)&&loc(k).x!=null)}
+function tmWarp(){
+  const here=TW.on&&TW.pl?TW.pl.at:null,ls=warpList().filter(k=>k!==here);
+  if(!ls.length){sfx('junk');return tmBag()}
+  tmChoose([...ls.map(k=>{const L=loc(k);return {l:L.n,s:L.s||'',f:()=>warpTo(k)}}),{l:'もどる',s:'',f:()=>tmBag()}],'メニュー ＞ どうぐ ＞ ショートカット　どこへ とぶ？',tmBag);
+}
+function warpTo(k){
+  const L=loc(k);if(!L||!G.items.shortcut)return;G.items.shortcut--;tmClose();
+  if(TW.on)townOff();else stopField();KL=null;LASTPL=null;
+  G.tx=L.x;G.ty=L.y;G.sail=false;
+  if(G.ship){ /* 船も ちかくの 海へ つれていく */
+    let best=null,bd=1e9;for(let y=L.y-8;y<=L.y+8;y++)for(let x=L.x-8;x<=L.x+8;x++){if(y<0||x<0||y>=MH||x>=MW||grid[y][x]!==0)continue;const d=Math.hypot(x-L.x,y-L.y);if(d<bd){bd=d;best=[x,y]}}
+    if(best){G.sx=best[0];G.sy=best[1]}}
+  sfx('skill');
+  const f=document.createElement('div');f.style.cssText='position:fixed;inset:0;z-index:99995;background:#fff;opacity:0;transition:opacity .25s;pointer-events:none';document.body.appendChild(f);
+  requestAnimationFrame(()=>f.style.opacity='1');
+  setTimeout(()=>{CONT=fieldResume;placeScreen(k);f.style.opacity='0';setTimeout(()=>f.remove(),300)},300);
 }
 function tmSet(){
   tmChoose([
@@ -2995,7 +3014,7 @@ function placeScreen(id,tx,ty,dir){
   document.querySelectorAll('#pad button').forEach(b=>{const d=b.dataset.d;
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);setHeld(d,true)});
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>setHeld(d,false)))});
-  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};saveNow();{const sp=document.querySelector('.objective span');if(sp){const o0=sp.textContent;sp.textContent=(p.id===p.at?'街':'ここ')+'の 入り口で 記録されました';setTimeout(()=>{if(sp.isConnected)sp.textContent=o0},2600)}}
+  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};if((LM[p.id]||POI[p.id])&&WARPOK(p.id)){G.went=G.went||{};G.went[p.id]=1}saveNow();{const sp=document.querySelector('.objective span');if(sp){const o0=sp.textContent;sp.textContent=(p.id===p.at?'街':'ここ')+'の 入り口で 記録されました';setTimeout(()=>{if(sp.isConnected)sp.textContent=o0},2600)}}
   TW.raf=requestAnimationFrame(townLoop);
   if(p.thru&&gateElig(p.id)&&!gateOpen(p.id))setTimeout(()=>{if(TW.on&&TW.pl===p&&!TW.busy)gateCeremony(p.id)},600);
 if(G.pendLight)setTimeout(showPendLight,700);}
@@ -4422,7 +4441,7 @@ function render(){
   }else if(B.menu==='tac'){
     h=TACTICS.map((t,ix)=>`<button class="crow ${B.pane==='list'&&B.li===ix?'sel':''}" data-k="${t.id}"><span class="nm2">${(G.tac||'min')===t.id?'●':'○'} ${t.n}</span><span class="ds">${t.d}</span></button>`).join('');
   }else if(B.menu==='item'){
-    const ik=Object.keys(ITEMS);h=ik.map((k,ix)=>{const n=G.items[k]||0,dis=off||!n;
+    const ik=Object.keys(ITEMS);h=ik.map((k,ix)=>{const n=G.items[k]||0,dis=off||!n||ITEMS[k].t==='warp';
       return `<button class="crow ${dis?'dis':''} ${B.pane==='list'&&B.li===ix?'sel':''}" data-k="${k}"><span class="nm2">${ITEMS[k].n}</span><span class="co">×${n}</span><span class="ds">${ITEMS[k].d}</span></button>`}).join('');
   }else h='';
   $('#listw').innerHTML=`<div class="wt" id="lt">${B.pane==='who'&&B.pend?ITEMS[B.pend.k].n+'を だれに？':B.pane==='tgt'?'てき':nm[1]}</div><div class="sc">${h}</div>`;
@@ -4819,7 +4838,7 @@ function itemWho(k){ /* やくそうを だれに？：おなじ 欄の なか�
 function whoOk(){const ms=partyAll(),m=ms[B.wi],k=B.pend&&B.pend.k;if(!m||!k)return;const mm=m.k==='xd'?{mp:B.mp,mpm:mpMax()}:{mp:m.mp,mpm:m.mpm};if(!itemOk(k,{...m,hp:m.hp,max:m.max,k:m.k,...mm})){sfx('junk');return}
   B.pane='cmd';B.pend=null;B.t=B.es.indexOf(B.e);go('item',k+':'+B.wi)}
 function chooseTarget(m,k){
-  if(m==='item'){const t=ITEMS[k].t;if(t==='all'||t==='atk'){B.t=B.es.indexOf(B.e);return go(m,k)}if(B.allies.length||t==='mp'||t==='rev')return itemWho(k)}
+  if(m==='item'){const t=ITEMS[k].t;if(t==='warp'){sfx('junk');return}if(t==='all'||t==='atk'){B.t=B.es.indexOf(B.e);return go(m,k)}if(B.allies.length||t==='mp'||t==='rev')return itemWho(k)}
   if(m==='ai')return giveOrder(k);
   if(m==='tac')return setTactic(k);
   if(needsTarget(m,k)){B.pend={m,k,from:B.pane};B.pane='tgt';B.t=B.es.indexOf(B.e);sfx('tap');say('');render();return}
