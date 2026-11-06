@@ -4817,7 +4817,7 @@ async function enemyTurn(){
   for(const e of B.es){await enemyOne(e);if(B.over)return}
   return roundEnd()}
 /* ボスの 必殺：数ターンに 1回、予告して から 全員に 大きな 一撃 */
-const BSPN={daitai:'だいたい ぜんぶ ふきとばし',kikinagashi:'ききながしの うず',rafu:'ラフスケッチ・ストーム',okura:'おくらいりの ふういん',figmaX:'ジェネレート・テンペスト',fairyKing:'おまかせの ゆりかご',cloudKing:'雲の 王の 裁き',nidoneru:'ふかい ふかい 二度寝',mendo:'めんどうの なだれ',nocode:'ノーコード・クラッシュ',canva:'テンプレート・なだれ',gd_see:'かすみの 大波',gd_make:'らくがきの 嵐',gd_choose:'まよいの 迷路落とし'};
+const BSPN={daitai:'ざっくり ぜんぶ ふきとばし',kikinagashi:'なるほど なるほどの うず',rafu:'ラフで いいや・ストーム',okura:'ぜんぶ ペンディング',figmaX:'ジェネレート・テンペスト',fairyKing:'おまかせの ゆりかご',cloudKing:'雲の 王の 裁き',nidoneru:'ふかい ふかい 二度寝',mendo:'めんどうの なだれ',nocode:'ノーコード・クラッシュ',canva:'テンプレート・なだれ',gd_see:'かすみの 大波',gd_make:'らくがきの 嵐',gd_choose:'まよいの 迷路落とし'};
 async function bossSpecial(e){const nm=BSPN[B.bk||Object.keys(BOSSES).find(k=>BOSSES[k].n===e.n)]||'ひっさつわざ',base=Math.max(...e.m.filter(x=>x.t==='A'||x.t==='M').map(x=>x.t==='M'?x.v*x.x*.7:x.v),8);
   say(`<b>${e.n}の ${nm}！</b>`);sfx('crit');jolt('#foe','shake');try{screenHurt(true)}catch(x){}await wait(900);
   for(const m of partyAlive()){let d=Math.round((base*1.5+e.str)*(e.weak?.75:1)*(.9+Math.random()*.2));
