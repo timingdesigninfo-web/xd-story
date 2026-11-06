@@ -2968,7 +2968,7 @@ function placeScreen(id,tx,ty,dir){
   const sp=p.spawn;TP.tx=tx??sp[0];TP.ty=ty??sp[1];TP.px=TP.tx*TT;TP.py=TP.ty*TT;TP.dir=dir||'up';TP.moving=false;TP.anim=0;TW.busy=false;TW.door=null;TW.tick=0;
   const st=stopHere(p);TW.npcs=p.npcs.filter(n=>!(n.hideIf&&n.hideIf(st))).map(n=>({...n}));
   TW.npcs.forEach(n=>{if(n.k==='dgchest'&&G.dgdone&&G.dgdone[p.q||id]){n.spr='sprites/dg_chest_open.png';n.h=36}});
-  if(st){const s=(p.stopP&&(st.k==='e_hi'||st.k==='e_clear'))?p.stopP:p.stop;const og=TW.npcs.find(n=>n.x===s.x&&n.y===s.y&&n.dsp);TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=(S2[st.k]&&S2[st.k].dsp)||stopDsp(st)||(og&&og.dsp); /* その場に いる 人の 絵を つかう */TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',stop:st,...(S2[st.k]&&S2[st.k].c?{c:S2[st.k].c}:{spr:stopSpr(st)}),n:'',...(dsp?{dsp,h:NPCH[dsp]}:{})})}
+  if(st){const s=(p.stopP&&(st.k==='e_hi'||st.k==='e_clear'))?p.stopP:p.stop;const og=TW.npcs.find(n=>n.x===s.x&&n.y===s.y&&n.dsp);TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=(S2[st.k]&&S2[st.k].dsp)||stopDsp(st)||(og&&og.dsp); /* その場に いる 人の 絵を つかう */TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',stop:st,still:1,...(S2[st.k]&&S2[st.k].c?{c:S2[st.k].c}:{spr:stopSpr(st)}),n:'',...(dsp?{dsp,h:NPCH[dsp]}:{})})}
   if(!st&&p.stop&&KEEPA[p.at]){const K=KEEPA[p.at],al=ALLIES[K.k],ci=CH.findIndex(c=>c.stops.some(q=>q.k===K.hi)),si=ci<0?0:CH[ci].stops.findIndex(q=>q.k===K.hi);
     if(al&&ci>=0&&(G.ch>ci||(G.ch===ci&&G.stop>si))){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:al.n,dsp:K.k,h:NPCH[K.k],say:[al.say||'……'],still:1})}}
   if(!st&&id==='village'&&G.ch>=1&&G.ch<=4&&!G.allies.includes('dw')&&p.stop){const s0=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s0.x&&n.y===s0.y));TW.npcs.push({x:s0.x,y:s0.y,dir:s0.dir||'down',n:'Dw',k:'dwjoin',spr:'sprites/ally_dw_map.png',dsp:'dw',h:NPCH.dw,say:['……']})}
@@ -3141,7 +3141,7 @@ const STAGE_SAY={
  'village:こども':[[3,['あのね、さっき 光る ちいさい子が 村の 上を とんでたよ。あれが 妖精？　……ちょっと こわいけど、きれい。']],[5,['おじいさんの 灯、ほんとに 明るくなった！　ぼくも 絵、描いてみようかな。']]],
  'village:むらの おんな':[[3,['妖精を 連れた 旅人だなんて……。便利な 力を どう 使うかは、あなた しだい ね。']],[5,['村の 窓に 灯が ともったわ。ひさしぶり……。手を 動かしたく なってきた。']]],
  'village:ろうじん':[[3,['妖精と いっしょに 戦うそうじゃな。わしらには 分からんが、手は 動かし続けるんじゃぞ。']],[5,['灯が 明るく なった。じゃが、五つの力は まだ 戻っておらん。……たのんだぞ。']]],
- 'castle_in:クラウド王':[[3,['Fiとは うまく やっておるか。無理は するな。ベータの 灯が 育てば、正式版は 近い。']],[5,['正式版、見事であった。……ここから先は、わしにも 見えぬ 戦いに なる。おまえと、Fiを 信じておるぞ。']]],
+ 'castle_in:クラウド王':[[3,['Fiは まだ 生まれた ばかりじゃ。……城に 入りこんだ 魔物を、Fiと いっしょに 追いはらって まいれ。']],[4,['見事であった。……さあ、村へ もどれ。その 灯を、村の 灯に わけて やるのじゃ。']],[5,['正式版、見事であった。……ここから先は、わしにも 見えぬ 戦いに なる。おまえと、Fiを 信じておるぞ。']],[10,['東の国で、人々が 細かい ところを 見なくなったと 聞く。……からくり師の プロトを たずねるのじゃ。']],[20,['見る力が もどったか。……次は りんごの島じゃ。人の 声を 聞かぬ 者が ふえておる。']],[30,['聞く力も もどったな。線の 祠の 魔女が 弱っておると 聞く。……描く力を、たのむぞ。']],[40,['描く力が もどった。時の泉の 賢者が 待っておる。眠らされた 作品を、起こして まいれ。']],[50,['……フィグムが 嵐の 暴君に なったと 聞いた。南の 船着き場の 船を 使え。']],[57,['フィグムを 止めたか。……北の 妖精の 城へ。王を、どうか 救って やってくれ。']]],
  'castle_in:へいし':[[3,['あの 光る ちいさな 精霊を 連れておられるのか。……ふしぎと、こわくない。']],[5,['正式版だと……！ 雲の王国じゅうが 沸いておるぞ。']]],
  'castle:へいし':[[3,['Fiを 連れた 旅人が 王都に 来た、と 町じゅうの うわさだ。']],[5,['正式版の 灯が、城の 塔まで 届いた。見たか？ あの 明るさを。']]],
  'castle:おうとの おんな':[[3,['あの ちいさな 光……なんだか、見てると やさしい 気持ちに なるわ。']],[5,['ひさしぶりに、広場で 絵を 描いている 子を 見たの。うれしくて……。']]],
@@ -3338,8 +3338,8 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
   fillG(p,'d',4,16,1,1);fillG(p,'d',4,16,8,1);fillG(p,'d',21,16,1,1);fillG(p,'d',14,16,8,1);
   const h1=house(p,{x:1,y:2,w:7,h:5,img:'bld_jp_machiya'});furnishJp(p,h1,{npc:{n:'おかみさん',c:NM.woman,say:['いらっしゃい。東の国の 家は 雨の音が きれいに 聞こえるのよ。']}});
   const h2=house(p,{x:18,y:2,w:7,h:5,img:'bld_jp_shop'});furnishJp(p,h2,{shop:1});npc(p,22,5,{n:'わかもの',c:NM.man,say:['スタティオの 話、聞いたか？ コードを 書かずに サイトを 公開 できるんだって。']});
-  npc(p,21,4,{n:'プロト',dsp:'prottf',dir:'down',hideIf:()=>!(G.ch===1&&G.stop===1),say:['……ザックーリを、たのむよ。広場の まんなかに いる。','（プロトの すがたは、いまにも 消えそうだ。）']});
-  npc(p,21,4,{n:'プロト',dsp:'prott',dir:'down',hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次の町では、人の声が ふさがれて いるらしい。気をつけて。']});
+  npc(p,21,4,{n:'プロト',dsp:'prottf',dir:'down',still:1,hideIf:()=>!(G.ch===1&&G.stop===1),say:['……ザックーリを、たのむよ。広場の まんなかに いる。','（プロトの すがたは、いまにも 消えそうだ。）']});
+  npc(p,21,4,{n:'プロト',dsp:'prott',dir:'down',still:1,hideIf:()=>!((G.ch===1&&G.stop>=3)||G.ch>1),say:['見る力が もどってから、世界が くっきり 見えるんだ。','次の町では、人の声が ふさがれて いるらしい。気をつけて。']});
   const h3=house(p,{x:1,y:11,w:7,h:5,img:'bld_jp_tea'});furnishJp(p,h3,{npc:{n:'ろうじん',c:NM.old,say:['むかしは 手書きの 図面だけが たよりだった。いまは 国産の からくりが 山ほど あるわい。']}});
   const h4=house(p,{x:18,y:11,w:7,h:5,img:'bld_jp_shrine'});furnishJp(p,h4,{shrine:1,npc:{n:'こども',c:NM.child,say:['さくらの 木の 下で、からくり人形が おどるんだよ！']}});
   big(p,{x:10,y:0,w:7,h:8,img:'bld_castle_jp',dc:3,to:['east_in',7,10]});
