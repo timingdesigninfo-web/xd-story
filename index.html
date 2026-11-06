@@ -1082,9 +1082,9 @@ const skCost=sk=>{const c=skCost0(sk);return B&&B.fkc==='h'&&c>0?Math.max(1,Math
 const skBase=sk=>{if(!(sk.mp>0))return sk.mp;const up=Math.max(0,(G&&G.lv||1)-(sk.lv>=99?(G&&G.lv||1):sk.lv));return Math.min(sk.mp*2,Math.round(sk.mp*(1+.06*up)))}; /* 育つほど 消費も ふえる：おぼえた Lvから 1ごとに +6%（さいだい 2ばい） */
 const skCost0=sk=>{if(B&&B.free)return 0;const cl=fiLv('choose'),m0=skBase(sk),c=(hasPw('choose')||cl>0)&&m0>0?Math.max(1,Math.floor(m0*(1-.1*Math.max(2,Math.min(3,cl+1))))):m0; /* 考える力：Lv1=-20% Lv2=-30% */return (sk.mp>0&&G&&G.lv&&eqHas('xd','x_prop'))?Math.max(1,c-1):c};
 const TACTICS=[
-  {id:'gan',n:'ぜんぶ出しきる',d:'MPを おしまず ぜんりょくで こうげき'},
+  {id:'gan',n:'ぜんぶ出しきる',d:'MPを おしまず ぜんりょくで こうげき。どうぐは ぎりぎりまで つかわない'},
   {id:'min',n:'ほどよく進める',d:'こうげきと かいふくを バランスよく'},
-  {id:'ino',n:'まもりを固める',d:'かいふくと まもりを さいゆうせん。どうぐも おしまない'},
+  {id:'ino',n:'まもりを固める',d:'かいふくと まもりを さいゆうせん。早めに やすい どうぐから'},
   {id:'mp0',n:'わざは温存',d:'わざも どうぐも なるべく とっておく'},
 ];
 const SNM={ps:'Ps',ai:'Ai',dw:'Dw',ae:'Ae',ff:'Fi'};
@@ -1135,22 +1135,25 @@ function allyChoose(a){
 function pickEnemyFor(a){const al=aliveEs();return (G.tac||'min')==='gan'?[...al].sort((x,y)=>x.hp-y.hp)[0]:al[Math.floor(Math.random()*al.length)]}
 async function alliesAct(){for(const a of B.allies){await allyAct(a);if(!aliveEs().length)return}ACT='xd'}
 /* 仲間が つかう どうぐは「方針」しだい：
-   まもりを固める＝いちばん よく 効く もの／ぜんぶ出しきる＝効く ものから 気前よく
-   わざは温存＝やすい ものから けちけち／ほどよく進める＝もっている 数に おうじて えらぶ */
+   まもりを固める＝早めに、やすい ものから／ぜんぶ出しきる＝こうげき優先、ほぼ ぎりぎりまで つかわない
+   わざは温存＝やすい ものから けちけち／ほどよく進める＝もっている 数に おうじて えらぶ
+   へったら かならず つかう わけではない：キャラの 性格と、どれだけ ピンチかで きめる */
 const itPrice=k=>SHOPI[k]||0;
-const healAt=()=>({ino:.5,gan:.35,min:.3,mp0:.25})[G.tac||'min']||.3;
+const healAt=()=>({ino:.5,gan:.1,min:.3,mp0:.25})[G.tac||'min']||.3;
+const ITCARE={dw:1.25,ae:1.1,ai:.95,ps:.8,ff:1}; /* Dwは 慎重、Psは 攻めっ気が つよい */
+function itWill(a,ratio,thr){const base=({ino:.75,min:.55,gan:.45,mp0:.4})[G.tac||'min']||.5,urg=thr>0?Math.max(0,(thr-ratio)/thr)*.35:0;return Math.random()<Math.min(.95,(base+urg)*(ITCARE[a.k]||1))}
 function pickIt(ks){const c=ks.filter(k=>G.items[k]>0);if(!c.length)return null;const t=G.tac||'min';
-  if(t==='ino'||t==='gan')return c.sort((a,b)=>itPrice(b)-itPrice(a))[0];
-  if(t==='mp0')return c.sort((a,b)=>itPrice(a)-itPrice(b))[0];let r=Math.random()*c.reduce((s,k)=>s+G.items[k],0);for(const k of c){r-=G.items[k];if(r<0)return k}return c[c.length-1]}
+  if(t==='gan')return c.sort((a,b)=>itPrice(b)-itPrice(a))[0];
+  if(t==='ino'||t==='mp0')return c.sort((a,b)=>itPrice(a)-itPrice(b))[0];let r=Math.random()*c.reduce((s,k)=>s+G.items[k],0);for(const k of c){r-=G.items[k];if(r<0)return k}return c[c.length-1]}
 async function allyAct(a){
   {
     if(a.hp<=0||!aliveEs().length)return;
     if(a.rest>0){a.rest--;say(`<b>${a.n}</b>は まだ ふらついている……（やすみ）`);await wait(600);return} /* 起こされた ばかり */
     /* 仲間も どうぐを つかう：XDが たおれたら 起こす。HPが へった 人には やくそう（1ターンに ひとりまで） */
     if(B.itR!==B.turn){
-      if(G.hp<=0){const k=pickIt(['herb','dr','backup']);
+      if(G.hp<=0){const k=Math.random()<Math.min(.95,.7*(ITCARE[a.k]||1))?pickIt(['herb','dr','backup']):null;
         if(k){B.itR=B.turn;G.items[k]--;G.hp=Math.min(G.max,k==='backup'?Math.ceil(G.max/2):ITEMS[k].h);B.fiSelf=0;sfx('heal');try{jolt('#me','flash')}catch(e){}pop('#me','+'+G.hp,'heal');render();say(`<b>${a.n}</b>は XDに <b>${ITEMS[k].n}</b>を つかった！<br><b>XDが 目を さました！</b>`);await wait(900);return}}
-      else{const low=partyAll().filter(m=>m.hp>0&&m.hp<m.max*healAt()).sort((x,y)=>x.hp/x.max-y.hp/y.max)[0],k=low&&pickIt(['herb','dr']);
+      else{const low=partyAll().filter(m=>m.hp>0&&m.hp<m.max*healAt()).sort((x,y)=>x.hp/x.max-y.hp/y.max)[0],k=low&&itWill(a,low.hp/low.max,healAt())&&pickIt(['herb','dr']);
         if(low&&k){B.itR=B.turn;G.items[k]--;const v=Math.min(low.max-low.hp,ITEMS[k].h);low.hp+=v;sfx('heal');pop(low.sel,'+'+v,'heal');render();say(`<b>${a.n}</b>は ${low.k===a.k?'じぶんに':`<b>${low.n}</b>に`} <b>${ITEMS[k].n}</b>を つかった！<br>HPが <b>${v}</b> かいふく！`);await wait(800);return}}}
     const ch=allyChoose(a);ACT=a.k;Q=[];actAnim(a.k);ACT_T=pickEnemyFor(a).id;
     if(ch){a.mp-=ch.mp;cbAdd(a.k,'m',ch.mp*4);say(`<b>${a.n}</b>の <b>${ch.n}</b>！`);sfx('skill');cameo(a.k);ch.f()}
