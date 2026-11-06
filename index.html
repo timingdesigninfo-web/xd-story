@@ -686,7 +686,7 @@ const TR={
     lead:SB([76,1,1,1,72,1,1,1],[74,1,1,1,71,1,1,1],[72,1,1,1,69,1,1,1],[68,1,1,1,71,1,76,1],[76,1,1,79,77,1,1,1],[77,1,76,1,72,1,1,1],[74,1,1,1,71,1,67,1],[69,1,1,1,1,1,1,1])},
   // ending: 8 sections x 4 bars (32 bars, ~77 s, once) — quiet start -> build -> fanfare -> full theme -> soft lull -> rising -> key lift to D -> grand close
   // finale: heroic overture (loops) - starts at the end of the crawl
-  finale:{bpm:138,grand:1,lt:'p25',lv:1.35,harm:1,dbl:1,dv:1.3,pad:1,arp:2,bass:'gallop',bv:1.9,drum:3,timp:1,roll:1,
+  finale:{bpm:138,grand:1,once:1,lt:'p25',lv:1.35,harm:1,dbl:1,dv:1.3,pad:1,arp:2,bass:'gallop',bv:1.9,drum:3,timp:1,roll:1,
     sec:[{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1,lv:1.5},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1,lv:1.6}],
     chords:[[48,'M'],[48,'M'],[41,'M'],[43,'M'], [48,'M'],[45,'m'],[41,'M'],[43,'M'], [48,'M'],[43,'M'],[45,'m'],[41,'M'], [41,'M'],[43,'M'],[48,'M'],[43,'7']],
     lead:SB(
@@ -2344,8 +2344,14 @@ function openingLong(after,label,cfg){window.__bpmSet=0;
       if(place==='storm'||place==='tower'){rain(t,place==='storm'?.4:.25)}
       dip(t);
       {const sc=.5*Math.min(1,t/3)*(t<TE-2?1:Math.max(0,1-(t-(TE-2))/2));const gr=g.createLinearGradient(0,0,0,OH);gr.addColorStop(0,`rgba(0,0,10,${sc})`);gr.addColorStop(1,`rgba(0,0,10,${sc*.55})`);g.fillStyle=gr;g.fillRect(0,0,OW,OH)}
-      const th=roll.offsetHeight,Y=th-clamp((t-1)*V,0,TOT);
-      if(!fl.fm){const mk=roll.querySelector('#endfin');const sp=clamp((t-1)*V,0,TOT);if(mk&&t>3){if(!fl.fe&&sp>=mk.offsetTop-chhA*.25){fl.fe=1;if(SND.track==='ending')SND.step=TR.ending.lead.length*TR.ending.once}if(sp>=mk.offsetTop+chhA*.2){fl.fm=1;music('finale')}}}
+      const th=roll.offsetHeight,ty=roll.querySelector('#endty'),spR=clamp((t-1)*V,0,TOT),stopAt=ty?ty.offsetTop+ty.offsetHeight/2+chhA*.5:1e9,sp=Math.min(spR,stopAt),Y=th-sp,frozen=!!ty&&spR>=stopAt;
+      {const m1=roll.querySelector('#endmus')||roll.querySelector('#endfin'),m2=roll.querySelector('#endstaff');
+        if(m1&&!fl.fe&&t>3&&sp>=m1.offsetTop-chhA*.1){fl.fe=1;if(SND.track==='ending')SND.step=TR.ending.lead.length*TR.ending.once}
+        if(m2&&!fl.fm&&sp>=m2.offsetTop-chhA*.05){fl.fm=1;music('finale')}}
+      if(frozen){roll.style.opacity=1;roll._Y=Y;roll._t=t;roll.style.transform=`translateX(-50%) rotateX(52deg) translateY(${Y}px)`;camUpdate();
+        if(!fl.fz){fl.fz=t;stb.style.top='auto';stb.style.bottom='7%';stb.style.transform='translateX(-50%) scale(.8)';stb.classList.add('on')}
+        if(!fl.fd&&SND.track==='finale'&&(SND.ended||!SND.ctx||!SND.on)&&t-fl.fz>4){fl.fd=1;setTimeout(finish,2500)}
+        raf=requestAnimationFrame(frame);return}
       roll.style.opacity=(t>1&&t<TE-1)?1:0;roll._Y=Y;roll._t=t;roll.style.transform=`translateX(-50%) rotateX(52deg) translateY(${Y}px)`;camUpdate();
       const fin=clamp(1-t/1.5,0,1);if(fin>0){g.fillStyle=`rgba(0,0,0,${fin})`;g.fillRect(0,0,OW,OH)}
       if(t>=TE){const lg=clamp((t-TE)/3,0,1);logo.style.opacity=lg;stb.classList.toggle('on',t>=TE+3);if(!fl.up){fl.up=1;sfx('lvup')}g.fillStyle=`rgba(0,0,12,${.55*lg})`;g.fillRect(0,0,OW,OH)}
@@ -4843,14 +4849,14 @@ function entrust(){
 }
 /* ---- マルチエンディング：妖精と どう生きるか ＝ クリエイターとして どうなるか ---- */
 const ENDINGS={
-  t:{n:'自動の国',sub:'ぜんぶ 任せた 未来',col:'#7fb8ff',
-    lines:['妖精は なんでも つくってくれた。<br>ひと言で 画面が でき、<br>ひと息で 世界が ふえた。','XDは もう、線を 引かない。<br>「いいね」と 言うだけで、<br>仕事は おわる。……はずだった。','……ともしびが、ふっと 小さく なった。<br>なにを つくりたかったのか、<br>XDは おもい出せない。','クリエイターの 力は、<br>つかわないうちに、<br>手から こぼれ落ちていた。','【クリエイターの未来】','つくる人から、えらぶ人へ。<br>けれど「えらぶだけ」は、<br>らくでは なかった。','えらぶ たびに<br>「これで よかったのか」と 迷いが ふえ、<br>苦しみも ふえていった。','自分の 手と 好みが うすれる ほど、<br>えらぶ 理由が わからなくなる。<br>力は、手放すと 戻りにくい。']},
+  t:{n:'自動の国',sub:'ぜんぶ 任せる 未来',col:'#7fb8ff',
+    lines:['妖精は なんでも つくってくれた。<br>ひと言で 画面が でき、<br>ひと息で 世界が ふえた。','XDは もう、線を 引かない。<br>「いいね」と 言うだけで、<br>仕事は おわる。……はずだった。','……灯が、ふっと 小さく なった。<br>なにを つくりたかったのか、<br>XDは 思い出せない。','クリエイターの 力は、<br>つかわないうちに、<br>手から こぼれ落ちていた。','','【クリエイターの未来】','つくる人から、えらぶ人へ。<br>けれど「えらぶだけ」は、<br>らくでは なかった。','えらぶ たびに<br>「これで よかったのか」と 迷いが ふえ、<br>苦しみも ふえていった。','自分の 手と 好みが うすれる ほど、<br>えらぶ 理由が わからなくなる。<br>力は、手放すと 戻りにくい。']},
   h:{n:'職人の道',sub:'手でやりぬいた 未来',col:'#ffb86b',
-    lines:['XDは 妖精に たよらず、<br>一本ずつ 線を 引きつづけた。','「描く力」は、手の なかで<br>たしかな 重さを 取りもどした。','世界の 速さには おいつけない。<br>けれど、手の ぬくもりが ある 画面は、<br>わかる人に だけ 届いた。','夜、ともしびの そばで、<br>Dwが ぽつりと 言った。<br>「おまえの 線は、すぐ わかるよ」','【クリエイターの未来】','数は 少なくても、<br>誰かの 心に のこる 仕事。','ただし、えらぶ ことは、<br>手を うごかす ことより 重い。','何を つくり、何を すてるのか。<br>ひとりで えらぶ 苦しみを、<br>XDは 線の 重さに かえていった。']},
+    lines:['XDは 妖精に たよらず、<br>一本ずつ 線を 引きつづけた。','「描く力」は、手の なかで<br>たしかな 重さを 取りもどした。','世界の 速さには おいつけない。<br>けれど、手の ぬくもりが ある 画面は、<br>わかる人に だけ 届いた。','夜、ともしびの そばで、<br>Dwが ぽつりと 言った。<br>「おまえの 線は、すぐ わかるよ」','','【クリエイターの未来】','数は 少なくても、<br>誰かの 心に のこる 仕事。','ただし、えらぶ ことは、<br>手を うごかす ことより 重い。','何を つくり、何を すてるのか。<br>ひとりで えらぶ 苦しみを、<br>XDは 線の 重さに かえていった。']},
   c:{n:'共同制作',sub:'いっしょに つくる 未来',col:'#ffe27a',
-    lines:['XDは Fiに たずねた。<br>「きみは、なにが 得意？」','ひらめきは 妖精が ひろげ、<br>えらぶのは XD。<br>つくるのは ふたりで、責任は XDが もつ。','取りもどした 力は、<br>妖精と 分けあって、<br>あたらしい 力に なった。','ともしびは 彗星になり、空へ のぼった。<br>——オープン・コメット。<br>みんなの 手に 光が とどく。','【クリエイターの未来】','妖精と いっしょに つくり、<br>「なにを つくるか」を えらぶ人へ。','道具が ふえるほど、<br>えらぶ 場面も ふえた。<br>えらぶ ことは、らくには ならない。','けれど、その 苦しみを<br>分けあえる 相手が いる。']},
-  m:{n:'ゆれる灯',sub:'まだ きまらない 未来',col:'#c9a6ff',
-    lines:['ときには 任せ、ときには 手で やった。','XDは、力を 取りもどす 途中で、<br>まだ 自分の 答えを さがしている。','ともしびは ゆれながら、<br>それでも 消えなかった。','【クリエイターの未来】','どれにも なれる。<br>だから えらぶ ことは、<br>これからも 苦しい。','それでも えらびつづける ことが、<br>そのまま 道に なる。']}};
+    lines:['XDは Fiに たずねた。<br>「きみは、なにが 得意？」','ひらめきは 妖精が ひろげ、<br>えらぶのは XD。<br>つくるのは ふたりの方が楽しい。','取りもどした 力は、<br>妖精と 分けあって、<br>あたらしい 力に なった。','ともしびは 彗星になり、空へ のぼった。','','そこにはXDの新たな道があった','オープンソースとしての未来<br>それは——オープン・コメット。','そう呼ばれた。','','みんなの 手に 光が とどくのだ。','','','【クリエイターの未来】','妖精と いっしょに つくり、<br>「なにを つくるか」を えらぶ人へ。','道具が ふえるほど、<br>えらぶ 場面も ふえた。<br>えらぶ ことは、らくには ならない。','けれど、その 苦しみを<br>分けあえる 相手が いる。']},
+  m:{n:'ゆれる灯',sub:'きまらない 未来',col:'#c9a6ff',
+    lines:['ときには 任せ、ときには 手で やった。','XDは、力を 取りもどす 途中で、<br>まだ 自分の 答えを さがしている。','ともしびは ゆれながら、<br>それでも 消えなかった。','','【クリエイターの未来】','どれにも なれる。<br>だから えらぶ ことは、<br>これからも 苦しい。','それでも えらびつづける ことが、<br>そのまま 道に なる。']}};
 function endingKind(){const k=G.pick||{t:0,h:0,c:0},tot=k.t+k.h+k.c;if(!tot)return 'm';
   const mx=Math.max(k.t,k.h,k.c),w=['t','h','c'].filter(x=>k[x]===mx);return w.length===1&&mx>tot/2?w[0]:(w.length===1&&mx>=tot*.45?w[0]:'m')}
 function showEnding(kind,back,flow){
@@ -4957,7 +4963,7 @@ const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function creditNamesHtml(){if(!CREDIT_NAMES.length)return '';return '<p class="gp"><br></p><p class="h">みんなの アイデア</p><p class="gp"><br></p>'+CREDIT_NAMES.map(n=>`<p>${escH(n)}</p>`).join('')+'<p class="gp"><br></p>'}
 function endText(ek){
   const E=ENDINGS[ek],KL={t:'ツールは ますます 賢くなり、<br>画面は ひと言で<br>生まれるように なった。',h:'ツールは めまぐるしく 入れかわり、<br>それでも 手で引いた線だけは<br>色あせなかった。',c:'ツールは いくつも 入れかわり、<br>そのたびに 妖精と 相談しては<br>新しい 形を つくった。',m:'ツールは 変わりつづけ、<br>XDは そのたびに 悩み、迷い、<br>また 灯を かかげた。'}[ek];
-  const wj=(t,n=17)=>/<br>/.test(t)&&!/<small>/.test(t)?t:t.split('<br>').map(seg=>{if(/</.test(seg))return seg;const tk=seg.match(/[^ 、。]+[、。]?|[ ]/g)||[seg],out=[];let cur='';
+  const wj=(t,n=17)=>t;const _wjOld=(t,n=17)=>t.split('<br>').map(seg=>{if(/</.test(seg))return seg;const tk=seg.match(/[^ 、。]+[、。]?|[ ]/g)||[seg],out=[];let cur='';
     tk.forEach(w=>{if(w===' '){if(cur&&!/[、。]$/.test(cur))cur+=' ';return}if(cur.replace(/ /g,'').length+w.length>n&&cur){out.push(cur.trim());cur=''}cur+=w;if(/。$/.test(cur)||cur.replace(/ /g,'').length>=n){out.push(cur.trim());cur=''}});if(cur.trim())out.push(cur.trim());return out.join('<br>')}).join('<br>');
   const gp='<p class="gp"><br></p>',P=(t,c,sn)=>`<p${sn?` data-s="${sn}"`:''}${c?` data-c="${c}"`:''}>${wj(t)}</p>`;
   const fk=({h:'「自分で 切り開く。」',c:'「手を 貸してくれ。」',f:'「妖精の 解放。」',t:'「すべてを ゆだねる。」'})[G.fkc];
@@ -4969,14 +4975,14 @@ function endText(ek){
     gp,
     P('そしてXDも、クリエイティブの<br>見る・聞く・描く・伝える・考える<br>5つの 力を 取りもどした。','','mac'),
     gp,
-    P('しかし<br>そのチカラもまた、一時的なものでしかない。',''),
-    ...(fk?[gp,`<p>${fk}</p>`]:[]),
+    P('しかし',''),P('そのチカラもまた、一時的なものでしかない。',''),
+    ...(fk?[gp,P(`XDの 答えは ${fk.replace('。','')}`,''),P('そこからの 未来は……','')]:[]),
     gp,
     `<p class="h" data-s="village">${E.n}</p>`,
     P(`<small>${E.sub}</small>`,''),
-    ...E.lines.map(t=>P(t,'')),
+    ...E.lines.map(t=>t===''?gp:P(t,'')),
     gp,
-    '<p class="yr" data-s="tower">あれから、十年</p>',
+    '<p class="yr" id="endmus" data-s="tower">あれから、十年</p>',
     P('雲の王国の空は、<br>今日も 晴れていた。',''),
     P(KL,'','east'),
     P('Fiは もう「未来の子」ではない。<br>そばには、新しい 旅人たちが いる。','ffB@84','castle'),
@@ -4984,10 +4990,10 @@ function endText(ek){
     P('ツールは 変わる。名前も、かたちも。<br>それでも <b>人のために 手を うごかすこと</b>は、変わらない。','xd@16'),
     P('灯は、つぎの だれかの 手へ。','xdW@16').replace('<p','<p id="endfin"'),
     gp,gp,
-    '<p class="h">STAFF</p>',gp,
+    '<p class="h" id="endstaff">STAFF</p>',gp,
     '<p>企画・シナリオ・演出・監修<br>TIMING DESIGN　たあ</p>',
     gp,creditNamesHtml(),
-    '<p class="h">Thank you for playing</p>',gp];
+    '<p class="h" id="endty">Thank you for playing</p>'];
   return story.join('')}
 function credits(back){
   music('ending');
