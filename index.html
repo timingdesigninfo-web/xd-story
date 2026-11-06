@@ -4829,7 +4829,7 @@ async function bossSpecial(e){const nm=BSPN[B.bk||Object.keys(BOSSES).find(k=>BO
 async function enemyOne(e){if(e.hp<=0||B.over)return;
   if(B.boss&&e===B.es[0]&&!e.stun&&!e.sleep){e.spc=(e.spc||0)+1;
     if(e.spRdy){e.spRdy=0;e.spc=0;await bossSpecial(e);if(partyDead()){B.over=true;say('みんな ちからつきた……');await wait(900);return lose()}return}
-    if(e.spc>=4&&B.turn>=2){e.spRdy=1;say(`<b>${e.n}</b>は 力を ためている……！ <small>（つぎの ターンに 大きな こうげき。ぼうぎょで そなえよう）</small>`);sfx('skill');pop('#foe','ため','pw',e.id);await wait(1300);return}}
+    if(e.spc>=4&&B.turn>=2){e.spRdy=1;say(`<b>${e.n}</b>は 力を ためている……！`);sfx('skill');pop('#foe','ため','pw',e.id);await wait(1300);return}}
   const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0,n=1+(e===B.es[0]?nA:0);
   for(let i=0;i<n;i++){const st=e.stun>0||e.sleep;await enemyAct(e);if(B.over)return;if(st||e.hp<=0||partyDead())break;if(i<n-1){say(`<b>${e.n}</b>の れんぞく こうどう！`);await wait(420)}}}
 async function roundEnd(){if(B.over)return;
