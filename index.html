@@ -409,7 +409,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #allyw .ar .ah{min-width:26px!important}#allyw .am .ah{min-width:44px!important}#allyw .ach2 .chip{padding:0 2px!important}
 #allyw .ar .an.wide{width:46px!important;min-width:46px}#allyw .ach2{display:flex!important;width:46px!important}#allyw .ach2 .chip{font-size:9px!important;padding:0 2px!important;white-space:nowrap}
 .fimode{font-size:.82em;color:#ffe27a}
-.btop .ally.lvup{animation:alup 1.6s ease-out}@keyframes alup{0%{box-shadow:0 0 0 0 #ffe27a;filter:brightness(1)}15%{box-shadow:0 0 14px 4px #ffe27a;filter:brightness(1.8)}100%{box-shadow:0 0 0 0 #ffe27a00;filter:brightness(1)}}
+.btop #me.lvup,.btop .ally.lvup{animation:alup 1.6s ease-out}@keyframes alup{0%{box-shadow:0 0 0 0 #ffe27a;filter:brightness(1)}15%{box-shadow:0 0 14px 4px #ffe27a;filter:brightness(1.8)}100%{box-shadow:0 0 0 0 #ffe27a00;filter:brightness(1)}}
   /* 敵は 横ならび（こちらと おなじ）。横画面の 右の 欄では 縦 */
 body #efoe{display:grid;grid-template-columns:repeat(var(--n,1),minmax(0,1fr));column-gap:8px}
 body #efoe>.wt{grid-column:1/-1}
@@ -4123,14 +4123,15 @@ function gainXP(n,done,inline){
   G.xp+=n;
   if(G.xp<need(G.lv))return done();
   const a0=atkPow();
-  G.xp-=need(G.lv);G.lv++;G.max+=HPGROW;G.hp=G.max;crAdd(8);sfx('verup');
+  G.xp-=need(G.lv);G.lv++;G.max+=HPGROW;G.hp=G.max;crAdd(8);if(!inline)sfx('verup');
   const ns=SKILLS.filter(s=>s.lv===G.lv&&!s.g&&!s.l),na=[],ng=[];
   if(inline){
-    const ms=[`<b>${vname()}</b> に バージョンアップ！`,`さいだいHP +${HPGROW}　さいだいMP +2GB　こうげき +${atkPow()-a0}　HPが ぜんかいふく！`];
+    const ms=[`<b>XD</b>が <b>${vname()}</b> に バージョンアップ！`,`さいだいHP +${HPGROW}　さいだいMP +2GB　こうげき +${atkPow()-a0}　HPが ぜんかいふく！`];
     if(ns.length)ms.push(`あたらしい わざ：<b>${ns.map(x=>x.n).join('、')}</b>`);
     if(na.length)ms.push(`なかまの あたらしい わざ：<b>${na.join('、')}</b>`);
     if(ng.length)ms.push(`ショップに あたらしい そうび：<b>${ng.join('、')}</b>`);
-    return (async()=>{for(const m of ms){say(m);await wait(1300)}gainXP(0,done,true)})();
+    return (async()=>{try{const box=document.getElementById('me');if(box){box.classList.remove('lvup');void box.offsetWidth;box.classList.add('lvup');pop('#me','UP!','pw')}const tg=box&&box.querySelector('.alv');if(tg)tg.textContent=vshort(G.lv)}catch(e){}
+      for(let i=0;i<ms.length;i++){if(i===0)sfx('verup');say(ms[i]);await wait(i===0?1900:1300)}gainXP(0,done,true)})();
   }
   scene('バージョンアップ',`${vname()}に なった！`,
     `<p class="lead">さいだいHP +${HPGROW}　さいだいMP +2GB　こうげき +${atkPow()-a0}<br>HPが ぜんかいふく した！${ns.length?`<br>あたらしい わざ：<b>${ns.map(x=>x.n).join('、')}</b>`:''}${na.length?`<br>なかまの あたらしい わざ：<b>${na.join('、')}</b>`:''}${ng.length?`<br>ショップに あたらしい そうび：<b>${ng.join('、')}</b>`:''}</p>`,
@@ -4833,8 +4834,7 @@ async function winBattle(survived){saveAllyHP();
     if(box){const lv=box.querySelector('.alv');if(lv)lv.textContent=(B.allies.length>=4?vshort(m.lv).replace(/\.0$/,''):vshort(m.lv));
       box.classList.remove('lvup');void box.offsetWidth;box.classList.add('lvup');pop('#al_'+m.k,'UP!','pw')}
     say(m.h);await wait(1900)}
-  music(fieldTrack());
-  gainXP(capped?0:xp,B.boss?updateNode:nodeDone,true);
+  {const dn=B.boss?updateNode:nodeDone;gainXP(capped?0:xp,()=>{music(fieldTrack());dn()},true)}
 }
 function lose(){
   music(null);SND.track=null;sfx('lose');
