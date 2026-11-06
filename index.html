@@ -3541,7 +3541,7 @@ function tale(p,x,y,id){const T=RTALE[id];npc(p,x,y,{n:T.n,dsp:T.dsp,still:1,c:N
   const ws=house(p,{x:12,y:2,w:7,h:5,img:'bld_brown'});furnishHome(p,ws,{});tale(p,ws.x+3,ws.y+3,'rest1');
   [[8,4],[11,4],[8,12],[11,12],[3,10],[16,10]].forEach(([x,y])=>prop(p,'lantern',x,y));
   prop(p,'well',13,10);prop(p,'bench',4,11,{fw:2});prop(p,'crate',17,12);prop(p,'barrel',18,12);
-  npc(p,6,9,{n:'たびびと',c:NM.man,say:['この 村の 東に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。','妖精の 城の 話なら、ランプの 工房の じいさんが くわしいよ。']});
+  npc(p,6,9,{n:'たびびと',c:NM.man,say:['雪原の 村から 南へ 下ると、雲に うかぶ 王都だ。橋を 渡れば すぐさ。','妖精の 城の 話なら、ランプの 工房の じいさんが くわしいよ。']});
   npc(p,10,8,{n:'ランプ番の こども',c:NM.child,still:1,fn:()=>{
     if(EVF('r1lamp'))return townSay([['ランプ番の こども','広場の ランプ、XDの 灯で ともったまま なんだ。ずっと 消えないよ！']]);
     if(!G.lamp)return townSay([['ランプ番の こども','広場の まんなかの ランプ、ずっと 消えたまま なんだ……。だれか 灯を わけて くれないかな。']]);
@@ -5817,7 +5817,7 @@ const KC={g:'grass',s:'sand',n:'snow',t:'storm',c:'cloud'};
 const grid=WORLD.map(s=>Array.from(s,Number));
 const LM={
   castle:{x:127,y:17,n:'雲の王都',s:'雲の王国の中心。クラウド王が座す城'},
-  village:{x:111,y:20,n:'はじまりの村',s:'彗星の子が めざめた 村'},
+  village:{x:112,y:8,n:'はじまりの村',s:'彗星の子が めざめた 村'},
   mac:{x:81,y:14,n:'りんごの島',s:'王スケットの琥珀の宮殿'},
   tower:{x:103,y:4,n:'眠りの塔',s:'メンテナンスモードのXDが眠る場所'},
   east:{x:118,y:27,n:'東の国',s:'城下町と東の城。スタティオとプロトの故郷'},
@@ -5861,6 +5861,7 @@ function route(a,b){
   while(y!==b.y){y+=Math.sign(b.y-y);set()}
 }
 route({x:117,y:17},{x:127,y:17});
+route({x:127,y:10},{x:127,y:13}); /* 雪原から 雲の王都へ 下る 橋 */
 route({x:110,y:26},{x:118,y:26});
 route({x:118,y:26},{x:118,y:27});
 route({x:118,y:29},{x:118,y:33});
