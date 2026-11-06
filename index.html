@@ -3166,6 +3166,7 @@ const STAGE_SAY={
 };
 function stageSay(n){const t=STAGE_SAY[(TW.pl?TW.pl.id:'')+':'+n.n];if(!t)return n.say;let r=n.say;t.forEach(([k,l])=>{if(G.ch*10+G.stop>=k)r=l});return r}
 function townNPC(n){
+  if(n.fn)return n.fn(n);
   if(n.k==='fl')return flTalk();
   if(n.k==='fw')return fwTalk();
   if(n.stop)return stopTalk(n.stop);
@@ -3412,17 +3413,6 @@ const FLW=['flowers1','flowers2','flowers3','flowers4','flowers5','flowers6','fl
 
 /* ---- ヒントの村（橋のとちゅうの休み場。やどで回復・会話でヒント） ---- */
 /* 休憩所：宿屋と、その土地の 物語を 聞ける 家 */
-function restStop(id,name,sub,hint1,hint2,kid){
-  const W=18,H=14,T=RTALE[id]||{},p=mkP(id,'spring',W,H,{name,sub,spawn:[8,12],exit:[8,9]});
-  border(p,[8,9],{ks:['tree1','tree4','pine2','tree5','tree2']});
-  fillG(p,'c',2,7,14,4);fillG(p,'d',8,11,2,3);
-  const inn=house(p,{x:1,y:2,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
-  const hm=house(p,{x:10,y:2,w:7,h:5,img:T.img||'bld_brown'});furnishHome(p,hm,{npc:{n:T.n||'むらびと',c:NM.old,...(T.dsp?{dsp:T.dsp}:/おばあさん/.test(T.n||'')?{dsp:'inn'}:{}),say:T.l||['……']}});
-  prop(p,'flowerbed',2,9);prop(p,'flowerbed',15,9);prop(p,'bench',2,11,{fw:2});prop(p,'bench',14,11,{fw:2});prop(p,'torch',3,7);prop(p,'torch',14,7);
-  npc(p,6,9,{n:'たびびと',c:NM.man,say:hint1});
-  npc(p,11,10,{n:'ものしり',c:NM.old,say:hint2});
-  npc(p,12,12,{n:'こども',c:NM.child,say:kid||['ここで ひとやすみ すると、元気に なるんだよ。']});
-}
 const RTALE={
  rest1:{n:'ランプ職人の おじいさん',dsp:'lamp',img:'bld_brown',l:['この 村の 灯りは、むかし 妖精が ともして くれたんじゃ。','夜に なると、南の 海の ほうから 小さな 光が とんで きてな。家々の ランプに ひとつずつ 灯を いれて いった。','だれも たのんで いないのに、毎晩 毎晩。……わしらは いつしか、自分で 火を おこす ことを わすれて しもうた。','ある冬、光は こなくなった。海の 向こうの 城に、妖精の王が こもって しまったと いう。','妖精の 城は、南の 海に うかぶ「守り人の大地」の 北の はずれ。……船が あれば、行けるはずじゃ。']},
  rest2:{n:'看板描きの おばあさん',dsp:'sign',img:'bld_blue',l:['わたしは むかし、この 宿場の 看板を ぜんぶ 描いて いたのさ。','字の かたち ひとつで、店の 声が かわる。やさしい 字、元気な 字、まじめな 字……。','いまは どこも おなじ 字。きれいだけど、どの 店も おなじ 声で しゃべって いる みたいでね。','東の りんごの島の 人たちも、だれの 話も 聞かなく なったと いう。……声が みんな おなじに なると、聞く 気も なくなるのかねえ。','あんたの 旅の 看板は、あんたの 字で 書きなさいよ。']},
@@ -3440,10 +3430,64 @@ const RTALE={
   npc(p,10,9,{n:'船長',dsp:'captain',still:1,c:['#1f5fa0','#f0e0b0'],dir:'up',say:['雲の王国の 船は、いつでも 出せるように 手入れして ある。','……航海士さえ いれば、な。']});
   npc(p,4,11,{n:'船乗り',c:NM.man,say:['この 海には、イカだの カニだの、へんな 化け物が 出る。航海士なしじゃ、とても 出せんよ。']});
   npc(p,15,10,{n:'漁師',c:NM.old,say:['むかしは 王都から 西の 島まで、船が 行き来して いたもんだ。……嵐が ひどく なって からは、だれも 行かん。']});}
-restStop('rest1','ひとやすみの村','大陸の 西の 休み場',['この 村の 東に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。','妖精の 城の 話なら、村の 奥の 家の じいさんが くわしいよ。'],['南西の 海に うかぶ 弓なりの 島々が「東の国」。あの国の 人は「だいたい」で すませるように なって、細かい ことが 見えなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
-restStop('rest3','潮風の渡し場','海を行く 旅人の 小さな 宿',['ここは 大陸と 大陸の あいだの 小さな 島だ。西へ 行けば ブラウザ大陸、東へ 行けば りんごの島の 街。','海は 荒れて いるが、ここで 休んで いけば だいじょうぶ だ。'],['西の ブラウザ大陸には、妖精の 力を 手に した 暴君が いる と 聞く。……気を つけて 行きなさい。']);
-restStop('rest4','凪の漁村','南の 海に うかぶ 小さな 村',['この 村の 人は、みんな 手で 網を あんで いるんだ。便利な 道具は あるが、手で あんだ 網の ほうが 魚が よく とれる。','北東の 大地には「守り人」が いると いう 昔ばなしが ある。'],['南の 小さな 島には、流れ着いた 道具箱が あるらしい。ほしければ 見に 行って みるが いい。']);
-restStop('rest2','ひとやすみの宿場','りんごの島へ つづく 大陸の 宿場',['この 道を ずっと 東へ 行くと、琥珀の 宮殿の ある りんごの島の 街だ。ずいぶん 遠いぞ。'],['あの街の 人は「うんうん」と うなずくだけで、だれの 話も まともに 聞かなく なったと 聞く。疲れたら ここで 休んで いきなさい。']);
+/* ---- 休憩所：それぞれ ちがう 作りと 出来事 ---- */
+const EVF=k=>!!(G.ev&&G.ev[k]),EVS=k=>{G.ev=G.ev||{};G.ev[k]=1};
+function tale(p,x,y,id){const T=RTALE[id];npc(p,x,y,{n:T.n,dsp:T.dsp,still:1,c:NM.old,say:T.l})}
+/* 灯守りの村：森の 中、道に そって ランプが ならぶ。広場の 消えた ランプに 灯を わける */
+{const W=20,H=15,p=mkP('rest1','spring',W,H,{name:'灯守りの村',sub:'ランプの 灯が ならぶ 森の 村',spawn:[9,13],exit:[9,10]});
+  border(p,[9,10],{ks:['pine2','tree4','tree1','pine2','tree5']});
+  fillG(p,'d',9,2,2,12);fillG(p,'d',3,8,14,2);fillG(p,'c',7,7,6,4);
+  const inn=house(p,{x:1,y:2,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
+  const ws=house(p,{x:12,y:2,w:7,h:5,img:'bld_brown'});furnishHome(p,ws,{});tale(p,ws.x+3,ws.y+3,'rest1');
+  [[8,4],[11,4],[8,12],[11,12],[3,10],[16,10]].forEach(([x,y])=>prop(p,'lantern',x,y));
+  prop(p,'well',13,10);prop(p,'bench',4,11,{fw:2});prop(p,'crate',17,12);prop(p,'barrel',18,12);
+  npc(p,6,9,{n:'たびびと',c:NM.man,say:['この 村の 東に、雲に うかぶ 王都が 見える。短い 橋を 渡れば すぐだ。','妖精の 城の 話なら、ランプの 工房の じいさんが くわしいよ。']});
+  npc(p,10,8,{n:'ランプ番の こども',c:NM.child,still:1,fn:()=>{
+    if(EVF('r1lamp'))return townSay([['ランプ番の こども','広場の ランプ、XDの 灯で ともったまま なんだ。ずっと 消えないよ！']]);
+    if(!G.lamp)return townSay([['ランプ番の こども','広場の まんなかの ランプ、ずっと 消えたまま なんだ……。だれか 灯を わけて くれないかな。']]);
+    townSay([['ランプ番の こども','広場の まんなかの ランプ、ずっと 消えたまま なんだ……。'],['ランプ番の こども','あ、その 灯！ ……ちょっとだけ、わけて くれる？']],()=>townChoice('',[{l:'灯を わける',s:'',f:()=>{EVS('r1lamp');G.items.herb=(G.items.herb||0)+2;sfx('lvup');townSay([['','XDの 灯から、小さな 火が ランプへ うつった。'],['ランプ番の こども','ともった！ ……ありがとう！ これ、村の おまもり。'],['','やくそうを 2こ もらった。']])}},{l:'いまは やめておく',s:'',f:()=>{}}]))}});
+}
+/* 看板の宿場：大通りに 屋台と 看板が ならぶ。看板描きが XDの 看板を 描いてくれる */
+{const W=22,H=13,p=mkP('rest2','spring',W,H,{name:'看板の宿場',sub:'看板が ずらりと ならぶ 街道の 宿場',spawn:[10,11],exit:[10,11]});
+  border(p,[10,11],{ks:['tree1','tree2','cypress','tree4']});
+  fillG(p,'d',1,6,20,3);fillG(p,'d',10,8,2,4);
+  const inn=house(p,{x:1,y:1,w:7,h:5,img:'bld_blue'});furnishInn(p,inn);
+  const st=house(p,{x:14,y:1,w:7,h:5,img:'bld_brown'});furnishHome(p,st,{});tale(p,st.x+3,st.y+3,'rest2');
+  prop(p,'stall_a',9,4,{fw:2});prop(p,'stall_b',2,10,{fw:2});prop(p,'stall_d',17,10,{fw:2});
+  [[3,6],[7,6],[13,6],[18,6]].forEach(([x,y],i)=>prop(p,i%2?'signpost':'signboard',x,y,{say:['「'+['やすみ処 あおい屋','茶と だんご','わらじ あります','この先 りんごの島'][i]+'」……どれも、ちがう 字で 描かれている。']}));
+  {const q=prop(p,'signboard',12,9,{say:['……'] });Object.defineProperty(q,'say',{get:()=>EVF('r2sign')?['「XDの 旅、ここに 立ちよる」……おばあさんの 字だ。']:['まだ なにも 描かれていない 看板。']})}
+  npc(p,6,8,{n:'たびびと',c:NM.man,say:['この 道を ずっと 東へ 行くと、琥珀の 宮殿の ある りんごの島の 街だ。ずいぶん 遠いぞ。']});
+  npc(p,16,7,{n:'屋台の おやじ',c:NM.man,say:['どの 店も 看板は おばあさんの 字さ。字を 見れば、店の 声が わかるだろ？']});
+  npc(p,13,10,{n:'看板 見習い',c:NM.child,still:1,fn:()=>{
+    if(EVF('r2sign'))return townSay([['看板 見習い','おばあちゃんの 字、かっこいいでしょ。XDの 看板、ずっと ここに 立てとくね。']]);
+    townSay([['看板 見習い','この 白い 看板、だれの 店の かも まだ 決まって ないんだ。'],['看板 見習い','……旅の 人の 看板、おばあちゃんに 描いて もらう？']],()=>townChoice('',[{l:'描いてもらう',s:'',f:()=>{EVS('r2sign');crAdd(30);sfx('lvup');townSay([['看板描きの おばあさん','どれ……あんたの 字は、こうだね。'],['','白い 看板に「XDの 旅、ここに 立ちよる」と 描かれた。'],['看板描きの おばあさん','字は 声さ。……あんたの 声、しっかり 聞こえたよ。'],['','クレジットが 30 ふえた。']])}},{l:'やめておく',s:'',f:()=>{}}]))}});
+}
+/* 潮風の渡し場：小さな 島の 桟橋。宿の 夫婦は、びんの 手紙で むすばれた ふたり */
+{const W=18,H=14,p=mkP('rest3','port',W,H,{name:'潮風の渡し場',sub:'海を行く 旅人の 小さな 宿',spawn:[8,12],exit:[8,9]});
+  fillG(p,'q',0,0,W,4);solidR(p,0,0,W,4);fillG(p,'d',7,3,4,1);solidR(p,7,3,4,1,false);fillG(p,'f',0,4,W,2);
+  for(let y=6;y<H;y++){prop(p,'tree1',0,y);prop(p,'cypress',W-1,y)}for(let x=1;x<W-1;x++)if(x!==8&&x!==9)prop(p,x%2?'tree4':'tree1',x,H-1);
+  fillG(p,'d',8,6,2,7);
+  const inn=house(p,{x:1,y:6,w:7,h:5,img:'bld_jp_tea'});furnishInn(p,inn);
+  const fh=house(p,{x:11,y:6,w:6,h:5,img:'bld_blue'});furnishHome(p,fh,{});tale(p,fh.x+3,fh.y+3,'rest3');
+  [[3,4],[5,4],[12,4],[14,4]].forEach(([x,y],i)=>prop(p,i%2?'crate':'barrel',x,y));prop(p,'lantern',7,4);prop(p,'lantern',10,4);
+  npc(p,9,5,{n:'宿の だんなさん',c:NM.man,still:1,fn:()=>{
+    if(EVF('r3bottle'))return townSay([['宿の だんなさん','あの びん、いまごろ どこを 流れて いるかな。……だれかに とどくと いいね。']]);
+    townSay([['宿の だんなさん','ここには むかしから、びんに 手紙を 入れて 海に 流す ならわしが あるんだ。'],['宿の だんなさん','とどくか どうかは 海しだい。……でも、流さなきゃ、ぜったいに とどかない。'],['宿の だんなさん','君も ひとつ、流して みるかい？']],()=>townChoice('',[{l:'手紙を 流す',s:'',f:()=>{EVS('r3bottle');G.items.herb=(G.items.herb||0)+1;sfx('lvup');townSay([['','XDは 短い 手紙を 書いて、びんに 入れた。'],['','びんは 波に のって、ゆっくり 沖へ 流れていった。'],['宿の おかみ','……とどけたい 気持ちは、もう 半分 とどいてるのよ。ほら、これ 持っていって。'],['','やくそうを 1こ もらった。']])}},{l:'やめておく',s:'',f:()=>{}}]))}});
+  npc(p,5,12,{n:'たびびと',c:NM.man,say:['ここは 大陸と 大陸の あいだの 小さな 島だ。','西へ 行けば ブラウザ大陸、東へ 行けば りんごの島の 街。']});
+}
+/* 凪の漁村：北は 海、網を 干す 浜。網あみの おばあさんを 手つだう */
+{const W=20,H=14,p=mkP('rest4','port',W,H,{name:'凪の漁村',sub:'南の 海に うかぶ 小さな 漁村',spawn:[9,12],exit:[9,10]});
+  fillG(p,'q',0,0,W,3);solidR(p,0,0,W,3);fillG(p,'f',0,3,W,3);
+  for(let y=6;y<H;y++){prop(p,'tree4',0,y);prop(p,'tree1',W-1,y)}for(let x=1;x<W-1;x++)if(x!==9&&x!==10)prop(p,x%3?'tree1':'cypress',x,H-1);
+  fillG(p,'d',9,6,2,7);fillG(p,'d',2,6,16,1);
+  const inn=house(p,{x:1,y:7,w:7,h:5,img:'bld_jp_machiya'});furnishInn(p,inn);
+  const nh=house(p,{x:12,y:7,w:7,h:5,img:'bld_brown'});furnishHome(p,nh,{});tale(p,nh.x+3,nh.y+3,'rest4');
+  [[2,4],[4,4],[6,4]].forEach(([x,y])=>prop(p,'fence',x,y,{say:['網が 干してある。……ひと目 ひと目、手で あんで ある。']}));prop(p,'barrel',14,4);prop(p,'crate',15,4);prop(p,'wagon',17,4);
+  npc(p,8,5,{n:'漁師',c:NM.man,say:['この 村の 人は、みんな 手で 網を あんで いるんだ。便利な 道具は あるが、手で あんだ 網の ほうが 魚が よく とれる。','南の 小さな 島には、流れ着いた 道具箱が あるらしい。']});
+  npc(p,4,5,{n:'網あみの むすめ',c:NM.woman,still:1,fn:()=>{
+    if(EVF('r4net'))return townSay([['網あみの むすめ','あの とき つくろった 網、大漁だったの！ ……おばあちゃんも 笑ってた。']]);
+    townSay([['網あみの むすめ','あっ、網が やぶれちゃった……。おばあちゃんに 見つかる 前に、つくろわないと。'],['網あみの むすめ','……手つだって くれる？']],()=>townChoice('',[{l:'いっしょに つくろう',s:'',f:()=>{EVS('r4net');G.items.herb=(G.items.herb||0)+2;sfx('lvup');townSay([['','XDは むすめと ならんで、ひと目ずつ 網を あんだ。'],['','……手を 動かすと、どこが よわいか、手が 教えてくれる。'],['網あみの むすめ','できた！ ……ありがとう。これ、おばあちゃんの やくそう。'],['','やくそうを 2こ もらった。']])}},{l:'やめておく',s:'',f:()=>{}}]))}});
+}
 
 /* ---- クエスト：であい・ダンジョン ---- */
 const MEET={
@@ -3852,8 +3896,8 @@ const POIDEF={
   dg_choose:{x:41,y:17,fixed:1,n:'まよいの迷宮',s:''},
   dg_castle:{x:74,y:39,fixed:1,n:'妖精の城',s:''},
   port:{x:127,y:20,fixed:1,n:'王都の 船着き場',s:'雲の王国の 船が とまる 港'},
-  rest1:{x:101,y:15,fixed:1,n:'ひとやすみの村',s:'大陸の 西の 休み場'},
-  rest2:{x:85,y:21,fixed:1,n:'ひとやすみの宿場',s:'りんごの島へ つづく 大陸の 宿場'},
+  rest1:{x:101,y:15,fixed:1,n:'灯守りの村',s:'ランプの 灯が ならぶ 森の 村'},
+  rest2:{x:85,y:21,fixed:1,n:'看板の宿場',s:'看板が ずらりと ならぶ 街道の 宿場'},
   eu:{x:81,y:14,fixed:1,n:'石畳の国',s:'ヨーロッパのような 古い街なみ（未開）'},
   cn:{x:97,y:27,fixed:1,n:'山水の国',s:'中国のような 山と川の国（未開）'},
   rest3:{x:61,y:31,fixed:1,n:'潮風の渡し場',s:'海を行く 旅人の 小さな 宿'},
