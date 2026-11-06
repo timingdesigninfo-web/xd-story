@@ -4157,10 +4157,10 @@ function bezGame(W){
   mgOpen('曲線　ハンドルで 線を 曲げる','',(b,close,lead)=>{
     const [c,g]=mgCv(b,.8),w=c.W,h=c.H;const info=document.createElement('div');info.className='mgrow';b.appendChild(info);
     let si=0,S,a,bb,h1,h2,drag=null,passed=false;
-    const P=q=>[q[0]*w,q[1]*h];
+    const P=q=>[w*(.22+q[0]*.56),h*(.2+q[1]*.6)]; /* 手本は まんなかに 小さく：ハンドルを 外まで 引ける */
     const setup=()=>{S=BZST[si];a=P(S.a);bb=P(S.b);h1=[a[0],a[1]-20];h2=[bb[0],bb[1]-20];passed=false;draw()};
     const score=()=>{const T=[],U=[];for(let i=0;i<=30;i++)T.push(bzP(a,P(S.c1),P(S.c2),bb,i/30));for(let i=0;i<=80;i++)U.push(bzP(a,h1,h2,bb,i/80));
-      const d=T.reduce((s,p)=>s+Math.min(...U.map(q=>Math.hypot(p[0]-q[0],p[1]-q[1]))),0)/T.length;return Math.max(0,Math.round(100-d/w*100*5))};
+      const d=T.reduce((s,p)=>s+Math.min(...U.map(q=>Math.hypot(p[0]-q[0],p[1]-q[1]))),0)/T.length;return Math.max(0,Math.round(100-d/w*100*7))};
     const curve=(c1,c2,st,lw,dash)=>{g.setLineDash(dash||[]);g.strokeStyle=st;g.lineWidth=lw;g.beginPath();g.moveTo(a[0],a[1]);g.bezierCurveTo(c1[0],c1[1],c2[0],c2[1],bb[0],bb[1]);g.stroke();g.setLineDash([])};
     function draw(){g.fillStyle='#14122a';g.fillRect(0,0,w,h);g.strokeStyle='#ffffff10';for(let x=0;x<w;x+=20){g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}for(let y=0;y<h;y+=20){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
       curve(P(S.c1),P(S.c2),'#ffe27a88',6,[6,6]);g.strokeStyle='#7fd0ff';g.lineWidth=1.5;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(h1[0],h1[1]);g.moveTo(bb[0],bb[1]);g.lineTo(h2[0],h2[1]);g.stroke();
