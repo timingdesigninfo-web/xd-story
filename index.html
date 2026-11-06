@@ -946,8 +946,8 @@ const SKILLS=[
   {id:'share',g:'x_share',n:'ウェブシェア',lv:11,mp:8,d:'全体攻撃。てきぜんたいに 2.0ばいの ダメージ',f:()=>hit(2,false,true)},
   {id:'master',g:'x_master',n:'メインコンポーネント',lv:13,mp:10,d:'全体攻撃。てきぜんたいに 0.9ばいを 3かい',f:()=>{hitF(.9,'puppet',true);hitF(.9,'puppet',true);hitF(.9,'puppet',true)}},
   {id:'comet',g:'x_comet',n:'コメット',lv:15,mp:14,d:'全体攻撃。バリアを むしして 3.5ばいの ダメージ',f:()=>hit(3.5,true,true)},
-  {id:'flash',l:'fl',n:'フラッシュ',lv:99,mp:6,d:'【Flの 技】まぶしい光で あいてを 3ターン うごけなくする（ボスは 2ターン）',f:()=>Q.push({k:'stun'})},
-  {id:'fwork',l:'fw',n:'はなび',lv:99,mp:7,d:'【Fwの 技】4ターン、みんなの こうげきが つよくなる',f:()=>Q.push({k:'teamUp'})},
+  {id:'flash',l:'fl',n:'フラッシュ',lv:99,mp:6,d:'【Flの 技】まぶしい光で あいてを 3ターン うごけなくする（ボスは 2ターン）',f:()=>{Q.push({k:'logo',w:'fl'});Q.push({k:'stun'})}},
+  {id:'fwork',l:'fw',n:'はなび',lv:99,mp:7,d:'【Fwの 技】4ターン、みんなの こうげきが つよくなる',f:()=>{Q.push({k:'logo',w:'fw'});Q.push({k:'teamUp'})}},
   {id:'plugin',g:'x_plug',n:'プラグイン',lv:5,mp:0,get d(){return `かくちょう機能で MPを ${3+Math.floor(G.lv/2)} かいふくする`},f:()=>mpUp(3+Math.floor(G.lv/2))},
   {id:'resp',g:'x_resp',n:'複数攻撃',lv:8,mp:5,d:'ランダムな てき 3たいに 1.1ばいの ダメージ（ぜんいんでは ない）',f:()=>hitS(1.1,3)},
   {id:'coedit',g:'x_cc',n:'MPかいふく',lv:12,mp:3,d:'MPを すこし かいふく（4）',f:()=>mpUp(4)},
@@ -4399,6 +4399,19 @@ function deathMosaic(e){return new Promise(res=>{try{
   step();setTimeout(()=>{try{cv.remove();im.style.visibility=''}catch(e2){}res()},1400);
 }catch(err){res()}})}
 const FXCOL={ai:'#c58bff',ps:'#6ab4ff',ae:'#ffd24a',dw:'#6be08a',ff:'#ff9ad0'};
+/* Fl・Fwの わざ：ふたりの マークが 出て、フラッシュ（白い 閃光）／はなび（打ち上げ花火） */
+function logoFx(w){return new Promise(res=>{try{const foe=$('#foe');if(!foe){res();return}const W=foe.clientWidth,H=foe.clientHeight;
+  const c=document.createElement('canvas');c.width=W;c.height=H;c.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:12';foe.appendChild(c);const g=c.getContext('2d');
+  const fl=w==='fl',col=fl?'#d8262b':'#c7d63a',ink=fl?'#fff':'#2b2f12',t0=performance.now(),D=fl?1500:2100;sfx(fl?'fxbolt':'fxburst');
+  const parts=[];if(!fl)[[.28,.32,0],[.72,.28,.25],[.5,.18,.5]].forEach(([x,y,d],k)=>{for(let i=0;i<40;i++){const a=i/40*Math.PI*2;parts.push({x:x*W,y:y*H,a,v:(.7+((i*7)%5)/10)*Math.min(W,H)*.45,d:d,c:['#ffe27a','#ff7ad0','#7fe4ff'][k]})}});
+  const box=(sz,al)=>{const x=W/2-sz/2,y=H/2-sz/2,r=sz*.16;g.globalAlpha=al;g.fillStyle=col;g.beginPath();g.moveTo(x+r,y);g.arcTo(x+sz,y,x+sz,y+sz,r);g.arcTo(x+sz,y+sz,x,y+sz,r);g.arcTo(x,y+sz,x,y,r);g.arcTo(x,y,x+sz,y,r);g.fill();
+    g.fillStyle=ink;g.font=`900 ${sz*.5}px system-ui,sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText(fl?'Fl':'Fw',W/2,H/2+sz*.03);g.globalAlpha=1};
+  const tick=()=>{const t=(performance.now()-t0)/D;g.clearRect(0,0,W,H);if(t>=1){c.remove();res();return}
+    const base=Math.min(W,H)*.42,ap=Math.min(1,t/.18),sz=base*(fl?(.6+.4*Math.min(1,t/.25)+(t>.35?(t-.35)*1.4:0)):(.7+.3*ap));
+    const fade=fl?(t<.35?1:Math.max(0,1-(t-.35)/.25)):(t<.3?1:Math.max(0,1-(t-.3)/.2));if(fade>0)box(sz,ap*fade);
+    if(fl&&t>.33){const k=Math.max(0,1-(t-.33)/.6);g.fillStyle=`rgba(255,255,255,${k})`;g.fillRect(0,0,W,H);g.strokeStyle=`rgba(255,240,180,${k})`;g.lineWidth=3;for(let i=0;i<16;i++){const a=i/16*Math.PI*2,r0=base*.3,r1=base*(.6+(t-.33)*2.4);g.beginPath();g.moveTo(W/2+Math.cos(a)*r0,H/2+Math.sin(a)*r0);g.lineTo(W/2+Math.cos(a)*r1,H/2+Math.sin(a)*r1);g.stroke()}}
+    if(!fl)parts.forEach(q=>{const u=(t-.28-q.d*.35)/.45;if(u<0||u>1)return;const r=q.v*Math.sqrt(u),x=q.x+Math.cos(q.a)*r,y=q.y+Math.sin(q.a)*r+u*u*14;g.globalAlpha=1-u*u;g.fillStyle=q.c;g.fillRect(Math.round(x)-3,Math.round(y)-3,6,6);g.fillStyle='#fff';g.fillRect(Math.round(x)-1,Math.round(y)-1,2,2);g.fillStyle=q.c;for(let k=1;k<4;k++)g.fillRect(Math.round(x-Math.cos(q.a)*k*7)-1,Math.round(y-Math.sin(q.a)*k*7)-1,3,3);g.globalAlpha=1});
+    requestAnimationFrame(tick)};tick();setTimeout(()=>{c.remove();res()},D+400)}catch(e){res()}})}
 function fxRun(kind,e){return new Promise(res=>{
   try{const k0s=((kind||'').split(':')[0]),FXS={slash:'fxslash',thrust:'fxthrust',bolt:'fxbolt',blunt:'fxblunt',stamp:'fxstamp',magic:'fxmagic',rain:'fxrain',spark:'fxrain',whirl:'fxwhirl',burst:'fxburst',grid:'fxmagic',puppet:'fxthrust'};if(FXS[k0s])sfx(FXS[k0s])}catch(e0){}
   try{const foe=$('#foe'),eu=$('.eu[data-i="'+e.id+'"]');if(!foe||!eu){res();return}
@@ -4490,6 +4503,7 @@ function fxRun(kind,e){return new Promise(res=>{
 async function runQ(){
   while(Q.length&&!B.over){
     const a=Q.shift(),xs=Math.min(B.str||0,Math.round(atkPow()*.5)),base=a.who==='fi'?(atkPow()+xs)*(1.8+.08*fiPow())*(fkb()?1.3:1):((a.who&&a.who!=='xd')?allyAtk(a.who):(atkPow()+xs));
+    if(a.k==='logo'){await logoFx(a.w);continue}
     if(a.k==='hit'&&a.some){const es=aliveEs().slice().sort(()=>Math.random()-.5).slice(0,a.some);Q.unshift(...es.map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.k==='hit'&&a.all){Q.unshift(...aliveEs().map(x=>({k:'hit',m:a.m,pierce:a.pierce,fx:a.fx,who:a.who,tid:x.id,ex:1})));continue}
     if(a.tid!==undefined&&B.es[a.tid].hp<=0){if(a.who&&a.who!=='xd'&&!a.ex&&aliveEs().length)a.tid=aliveEs()[0].id;else continue}
