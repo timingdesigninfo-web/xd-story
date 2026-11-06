@@ -380,6 +380,35 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .rcol .abtns button+button{margin-bottom:0}
   .rcol .ab small{font-size:10px;color:var(--mute);text-align:center;line-height:1.2;white-space:nowrap}
 }
+.mgov{position:fixed;inset:0;z-index:99980;background:#05040cf2;display:flex;justify-content:center;overflow:auto;padding:max(10px,env(safe-area-inset-top)) 10px 18px;color:#fff;font-size:14px;line-height:1.5}
+.mgin{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;height:max-content}
+.mgh{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:6px;padding:6px 10px;box-shadow:0 0 0 2px #000}
+.mgh b{color:#ffe27a;font-size:15px}.mgx{background:none;border:1px solid #fff8;color:#fff;border-radius:4px;padding:3px 10px;font:inherit;font-size:12px}
+.mgl{margin:0;min-height:3em;background:#0a1160cc;border:2px solid #f4f4f4;border-radius:6px;padding:8px 10px}.mgl b{color:#ffe27a}
+.mgb{display:flex;flex-direction:column;gap:8px}
+.mgbtn{background:#1c2470;color:#fff;border:2px solid #f4f4f4;border-radius:6px;padding:7px 10px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 0 0 2px #000}
+.mgbtn.on{background:#ffe27a;color:#201000}.mgbtn.go{background:#d94f86}.mgbtn:disabled{opacity:.35}
+.mgrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.mgrow>span{min-width:4.2em;color:#ffe27a;font-size:12px}
+.mgcv{width:100%;touch-action:none;border:2px solid #f4f4f4;border-radius:6px;background:#000;display:block}
+.kcase{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-height:30vh;overflow:auto;padding:6px;background:#3a2a1a;border-radius:6px}
+.kt{aspect-ratio:1;background:linear-gradient(#c4c9d0,#7d838c);color:#1a1a1a;border:0;border-radius:2px;font:700 16px serif;transform:scaleX(-1);padding:0;box-shadow:inset 0 -2px 0 #0005;display:flex;align-items:center;justify-content:center}
+.kstick{display:flex;flex-direction:row-reverse;justify-content:center;gap:2px;min-height:48px;padding:6px;background:#555b63;border-radius:4px;border:2px solid #222}.kstick .kt{width:34px;font-size:20px}
+.kpaper{background:#f3ead6;color:#1a1208;border-radius:2px;padding:16px 10px;text-align:center;font-family:serif;box-shadow:0 4px 12px #0008}
+.kpaper small{display:block;font-size:11px;letter-spacing:.3em;border-bottom:1px solid #1a1208;margin-bottom:8px;padding-bottom:4px}
+.kpaper b{display:block;font-size:clamp(22px,8vw,38px);letter-spacing:.06em;animation:kink .7s ease-out}@keyframes kink{from{opacity:0;filter:blur(4px)}to{opacity:1;filter:none}}
+.uksv{width:100%;height:auto;border:2px solid #f4f4f4;border-radius:6px;display:block}
+.ukal{position:relative;height:22px;background:#f3ead6;border-radius:4px}.ukal i{position:absolute;top:3px;left:50%;width:16px;height:16px;margin-left:-8px;border-left:3px solid #111;border-bottom:3px solid #111}.ukal .ukp{border-color:#d8452f}
+.monn{text-align:center;margin:0;font-size:18px;color:#ffe27a;font-family:serif}
+.fsw{background:linear-gradient(#9cc8e8 0 55%,#7cb35a 55%);border-radius:6px;display:flex;justify-content:center;align-items:center;overflow:hidden;height:150px}
+.fsign{background:linear-gradient(#c89458,#8d5f2e);border:5px solid #4a2e14;border-radius:4px;padding:14px 18px;color:#1a0d04;font-size:34px;line-height:1.2;transition:transform .35s,filter .35s;white-space:nowrap}
+.fsw.far .fsign{transform:scale(.3);filter:blur(1.3px)}
+.pict .pic{padding:4px 6px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ccard{background:#f3ead6;color:#1a1208;border-radius:6px;padding:8px;border:3px solid #fff;min-height:96px;display:flex;flex-direction:column;gap:5px;transition:box-shadow .2s}
+.ccard.hit{border-color:#ffe27a;box-shadow:0 0 0 4px #d94f86}.ccard h4{margin:0;font-size:14px}
+.ccard button{font:inherit;font-size:12px;background:#1c2470;color:#fff;border:0;border-radius:4px;padding:5px 6px;text-align:left}.ccard button b{color:#ffe27a}
+.lyr{display:flex;flex-direction:column;gap:4px}.lyr div{display:flex;gap:6px;align-items:center;background:#1c2470;border:2px solid #f4f4f4;border-radius:4px;padding:4px 6px}
+.lyr div b{flex:1}.lyr button{font:inherit;font-size:12px;padding:3px 8px;border-radius:4px;border:1px solid #fff;background:#0a1160;color:#fff}.lyr button:disabled{opacity:.3}.lyr div.off b{opacity:.4;text-decoration:line-through}
 .tmsg{position:absolute;left:3%;right:3%;bottom:3%;z-index:6;background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:6px;padding:8px 12px;font-size:13px;line-height:1.5;color:#fff;box-shadow:0 0 0 2px #000;cursor:pointer}
 .qm{display:grid;grid-template-columns:1fr;gap:4px;margin-top:6px}.qm button{font:inherit;font-size:12px;padding:6px 2px;border-radius:6px;border:1px solid var(--line,#6a5aa0);background:rgba(20,16,50,.7);color:inherit;cursor:pointer}.qm button:active{background:#ff5fb7;color:#fff}
 .tmsg b.who{display:block;color:#ffe27a;font-size:12px}.tmsg b:not(.who){color:#ffe27a;font-weight:700;font-size:inherit}
@@ -1555,7 +1584,7 @@ function tmMap(){
   const lab=(x,y,n,col,dn)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S,ty=dn?py+30:py-13;g.fillStyle=col;g.beginPath();g.arc(px,py,7,0,7);g.fill();g.lineWidth=2.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,ty);g.fillStyle='#fff';g.fillText(n,px,ty)};
   {g.save();g.font='bold italic 30px serif';g.globalAlpha=.85;[...REGIONS.filter(r=>r.lx!=null),SNOWN].forEach(r=>{const py=(r.ly+.5)*TS*S,hw=g.measureText(r.n).width/2+4;let best=null;[-1,0,1].forEach(m=>{const raw=(WX(r.lx)+.5+m*MW)*TS*S,cl=Math.max(hw,Math.min(c.width-hw,raw));if(best==null||Math.abs(cl-raw)<best[1])best=[cl,Math.abs(cl-raw)]});{const px=best[0];g.lineWidth=4;g.strokeStyle='rgba(20,10,30,.75)';g.strokeText(r.n,px,py);g.fillStyle='#ffe9a8';g.fillText(r.n,px,py)}});g.restore();g.font='bold 22px sans-serif';g.textAlign='center'}
   for(const k in LM)if(k!=='storm')lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
-  for(const k of ['rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
+  for(const k of ['eu','rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
   const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#000e;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)';
   const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;color:#fff;font-size:12px;flex:none';
@@ -1632,6 +1661,7 @@ function tmSet(){
 function tmStatus(){
   const rows=[{l:`XD　${vname()}`,s:`HP ${G.hp}/${G.max}　MP ${curMp()}/${mpMax()}GB　こうげき ${atkPow()}　ぼうぎょ +${eqSum('xd','def')}`,f:()=>tmStatus()},
     ...G.allies.map(k=>({l:dn(ALLIES[k]),s:`HP ${aHp(k)}/${allyMax(k)}　こうげき ${allyAtk(k)}　ぼうぎょ +${eqSum(k,'def')}`,f:()=>tmStatus()})),
+    ...(G.ev&&G.ev.mon?[{l:`家紋　${monName(G.ev.mon)}`,s:monSvg(G.ev.mon,44),f:()=>tmStatus()}]:[]),
     {l:`CR　${crOf()}`,s:'みんなで つかう おかね',f:()=>tmStatus()},{l:'もどる',s:'',f:()=>tmain()}];
   tmChoose(rows,'メニュー ＞ つよさ',tmain);
 }
@@ -3808,6 +3838,7 @@ function townTalk(mode){
   if(!n&&q&&q.k==='counter')n=TW.npcs.find(n=>n.x===x+dx&&n.y===y+dy);
   if(mode!=='look'&&n){sfx('tap');{const fd=({up:'down',down:'up',left:'right',right:'left'})[TP.dir]||'down';if(n.mv)n.turn=fd;else n.dir=fd}n.wt=240;return townNPC(n)}
   if(mode!=='talk'&&q&&q.shop){sfx('tap');const nw=q.shop==='item'?0:shNew(q.shop);return townSay([['てんいん',nw?'新しいの 仕入れたよ！ 見ていきな。':q.shop==='item'?'やくそうや ドリンクを うっているよ。':q.shop==='tool'?'武器を うっているよ。クレジットで どうぞ。':'防具を うっているよ。クレジットで どうぞ。']],()=>{SHOPTAB=q.shop;SHOPONLY=q.shop;showShop(1)})}
+  if(mode!=='talk'&&q&&q.fn){sfx('tap');return q.fn(q)}
   if(mode!=='talk'&&q&&q.say){sfx('tap');return townSay(q.say.map(t=>['',t]),q.shop?()=>{SHOPTAB=q.shop;SHOPONLY=q.shop;showShop(1)}:undefined)}
   if(mode!=='talk'&&q&&!q.shop&&!q.say){const f=findAt(p,q);if(f)return doFind(f)}
   townSay([['',mode==='talk'?'……はなしかける あいてが いない。':'……とくに かわったものは ない。']]);
@@ -3911,11 +3942,366 @@ const FLD={on:false,raf:0,held:[],steps:0,thr:16,cv:null,cx:null,lastKey:null,ti
 const P={tx:86,ty:20,px:2752,py:640,dir:'down',moving:false,tgx:0,tgy:0,anim:0};
 const FC=6,ROW={down:0,up:1,left:2,right:3},VEC={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const LW=84,LH=104;
+/* ===== つくる イベント（ミニゲーム）：デザインの 歴史から ===== */
+function mgOpen(title,lead,build,done){
+  TW.busy=true;try{staleInput()}catch(e){}const old=document.getElementById('mgov');if(old)old.remove();
+  const o=document.createElement('div');o.id='mgov';o.className='mgov';
+  o.innerHTML=`<div class="mgin"><div class="mgh"><b>${title}</b><button class="mgx" type="button">やめる</button></div><p class="mgl">${lead}</p><div class="mgb"></div></div>`;
+  ['click','pointerdown','pointerup','touchstart','touchend'].forEach(ev=>o.addEventListener(ev,e=>e.stopPropagation()));
+  document.body.appendChild(o);
+  let shut=false;const close=r=>{if(shut)return;shut=true;o.remove();TW.busy=false;try{staleInput()}catch(e){}done&&done(r)};
+  o._close=close;o.querySelector('.mgx').onclick=()=>{sfx('tap');close(null)};
+  const L=o.querySelector('.mgl');build(o.querySelector('.mgb'),close,t=>{L.innerHTML=t});
+}
+const mgB=(l,c='',a='')=>`<button type="button" class="mgbtn ${c}" ${a}>${l}</button>`;
+function mgGive(cr,its){const m=[];if(cr){crAdd(cr);m.push(`<b>${cr}CR</b>`)}for(const k in its||{}){G.items[k]=(G.items[k]||0)+its[k];m.push(`<b>${ITEMS[k].n}</b>×${its[k]}`)}sfx('lvup');try{save()}catch(e){}return m.join('、')+'を もらった！'}
+const mgBye=(who,t)=>()=>townSay([[who,t||'……また いつでも おいで。']]);
+function mgCv(box,ar=.72){const c=document.createElement('canvas'),w=Math.min(420,box.clientWidth||340);c.width=w*2;c.height=Math.round(w*ar)*2;c.className='mgcv';c.style.height=Math.round(w*ar)+'px';box.appendChild(c);const g=c.getContext('2d');g.scale(2,2);c.W=w;c.H=Math.round(w*ar);return [c,g]}
+const cvPt=(c,e)=>{const r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.W/r.width,(e.clientY-r.top)*c.H/r.height]};
+
+/* ---- 1. 活版：活字を さがして、かわら版の 見出しを 組む（1450年ごろ） ---- */
+const KCASE='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだでどばびぶべぼぱぴぷぺぽっゃゅょー！？灯旅村空';
+function ktFind(id,ch,where){return()=>{G.ev=G.ev||{};G.ev.kt=G.ev.kt||{};
+  if(G.ev.kt[id])return townSay([['',where+'。……もう なにも ない。']]);
+  G.ev.kt[id]=1;sfx('ally');townSay([['',`${where}の すきまに、小さな 金属の かけらが はさまっていた。`],['',`裏がえしの 字……「${ch}」の 活字だ！`]])}}
+const ktN=()=>Object.keys((G.ev&&G.ev.kt)||{}).length;
+function kappanTalk(){const W='活版職人';
+  if(EVF('kawara'))return townSay([[W,`見出し「${G.ev.kawara}」、村じゅうで 読まれてるよ。`],[W,'また 組んで みるかい？']],()=>townChoice('',[{l:'組む',s:'',f:()=>kappanGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  if(ktN()<3)return townSay([[W,'いらっしゃい。ここは 活字を 組んで 紙に 刷る 店だ。'],[W,'……ところが 活字が 3つ たりなくてね。子どもらが あそびで 持ち出したらしい。村の どこかに 落ちてるはずなんだが。']]);
+  townSay([[W,'おお、その 活字！ うちのだ。ありがとう！'],[W,'お礼に、あんたが 組んでみな。村の かわら版の 見出しだ。好きな 言葉で いいぞ。'],[W,'ひとつ コツ。活字は 字が 左右 さかさま。刷ると、ちゃんと もとに もどる。']],()=>kappanGame(W))}
+function kappanGame(W){
+  mgOpen('活版　かわら版の 見出しを 組む','ケースから 活字を ひろって、ステッキに ならべよう（2〜8字）。',(b,close,lead)=>{
+    let t=[];
+    b.innerHTML=`<div class="mgrow"><span>ステッキ</span></div><div class="kstick" id="kst"></div><div class="mgrow">${mgB('ひと字 もどす','','id="kbk"')}${mgB('刷る','go','id="kpr"')}</div><div class="kcase">${[...KCASE].map(c=>`<button type="button" class="kt" data-c="${c}">${c}</button>`).join('')}</div><div id="kpp"></div>`;
+    const st=b.querySelector('#kst'),pr=b.querySelector('#kpr');
+    const draw=()=>{st.innerHTML=t.map(c=>`<span class="kt">${c}</span>`).join('');pr.disabled=t.length<2};draw();
+    b.querySelectorAll('.kcase .kt').forEach(k=>k.onclick=()=>{if(t.length>=8){sfx('junk');return}t.push(k.dataset.c);sfx('tap');draw()});
+    b.querySelector('#kbk').onclick=()=>{t.pop();sfx('tap');draw()};
+    pr.onclick=()=>{const s=t.join('');sfx('swing');lead('インキを のせて、紙を かさね……ぎゅっ！');
+      b.innerHTML=`<div class="kpaper"><small>活字の村 かわら版</small><b>${s}</b><p style="margin:8px 0 0;font-size:11px">― 旅の XD 組 ―</p></div><div class="mgrow" style="margin-top:8px">${mgB('これで 刷る！','go','id="kok"')}${mgB('組みなおす','','id="kre"')}</div>`;
+      b.querySelector('#kre').onclick=()=>{sfx('tap');close('re')};
+      b.querySelector('#kok').onclick=()=>{sfx('lvup');close(s)}};
+  },r=>{if(r==='re')return kappanGame(W);if(!r)return mgBye(W)();const first=!EVF('kawara');EVS('kawara');G.ev.kawara=r;
+    townSay([[W,`「${r}」……いい 見出しだ！ さっそく 村に くばろう。`],...(first?[['',mgGive(60,{cache:1})]]:[])])})}
+
+/* ---- 2. 遠近法：消失点を みつけて、奥行きの ある 絵を 描く（ルネサンス） ---- */
+function persTalk(){const W='画家';
+  if(EVF('pers'))return townSay([[W,'あの 絵、アトリエの いちばん いい 場所に かざってあるよ。'],[W,'もう 一枚 描くかい？']],()=>townChoice('',[{l:'描く',s:'',f:()=>persGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'こまった……ぼくの 絵は、ぜんぶ 紙に はりついた みたいに 平たいんだ。'],[W,'むかしの 画家は、道が 遠くの 一点に あつまって 見える ことに 気づいた らしい。……その 点、さがして くれないか。']],()=>persGame(W))}
+function persGame(W){
+  mgOpen('遠近法　奥行きの ある 絵','道の 両はしを たどって、遠くで まじわる 一点（消失点）を タップしよう。',(b,close,lead)=>{
+    const [c,g]=mgCv(b,.72),w=c.W,h=c.H,hy=Math.round(h*.38),vx=Math.round(w*(.32+Math.random()*.36));
+    const L0=[w*.12,h],R0=[w*.86,h],obj=[];let ph=0,tool='木',tap=null;
+    const ctl=document.createElement('div');ctl.className='mgrow';b.appendChild(ctl);
+    const lerp=(a,t)=>[a[0]+(vx-a[0])*t,a[1]+(hy-a[1])*t];
+    const thing=(k,x,y,s)=>{g.save();g.translate(x,y);g.scale(s,s);
+      if(k==='木'){g.fillStyle='#6b4a2a';g.fillRect(-4,-30,8,30);g.fillStyle='#2f7a3a';g.beginPath();g.arc(0,-44,20,0,7);g.fill();g.fillStyle='#4aa04f';g.beginPath();g.arc(-6,-50,10,0,7);g.fill()}
+      else if(k==='家'){g.fillStyle='#e8d7b0';g.fillRect(-26,-36,52,36);g.fillStyle='#b5482f';g.beginPath();g.moveTo(-32,-34);g.lineTo(0,-60);g.lineTo(32,-34);g.fill();g.fillStyle='#5a3a1e';g.fillRect(-6,-18,12,18);g.fillStyle='#ffe27a';g.fillRect(12,-28,8,8)}
+      else if(k==='人'){g.fillStyle='#d94f86';g.fillRect(-6,-26,12,18);g.fillStyle='#3a2a1a';g.fillRect(-5,-8,4,8);g.fillRect(1,-8,4,8);g.fillStyle='#f2c89a';g.beginPath();g.arc(0,-32,6,0,7);g.fill()}
+      else{g.fillStyle='#444';g.fillRect(-2,-50,4,50);g.fillStyle='#ffe27a';g.globalAlpha=.35;g.beginPath();g.arc(0,-52,14,0,7);g.fill();g.globalAlpha=1;g.beginPath();g.arc(0,-52,6,0,7);g.fill()}
+      g.restore()};
+    const draw=()=>{const sky=g.createLinearGradient(0,0,0,hy);sky.addColorStop(0,'#6fa8dc');sky.addColorStop(1,'#d8ecf7');g.fillStyle=sky;g.fillRect(0,0,w,hy);
+      g.fillStyle='#7cb35a';g.fillRect(0,hy,w,h-hy);g.fillStyle='#8fa8c0';g.beginPath();g.moveTo(0,hy);g.quadraticCurveTo(w*.25,hy-28,w*.5,hy);g.quadraticCurveTo(w*.8,hy-36,w,hy);g.fill();
+      const far=ph?1:.42,a=lerp(L0,far),bb=lerp(R0,far);g.fillStyle='#c9b48a';g.beginPath();g.moveTo(L0[0],L0[1]);g.lineTo(a[0],a[1]);g.lineTo(bb[0],bb[1]);g.lineTo(R0[0],R0[1]);g.fill();
+      g.strokeStyle='#8a7350';g.lineWidth=2;g.beginPath();g.moveTo(L0[0],L0[1]);g.lineTo(a[0],a[1]);g.moveTo(R0[0],R0[1]);g.lineTo(bb[0],bb[1]);g.stroke();
+      if(!ph){const fog=g.createLinearGradient(0,hy,0,hy+(h-hy)*.62);fog.addColorStop(0,'#e9eef2');fog.addColorStop(1,'#e9eef200');g.fillStyle=fog;g.fillRect(0,hy-2,w,(h-hy)*.62)}
+      if(tap){g.setLineDash([4,4]);g.strokeStyle='#d94f86';g.lineWidth=1.5;g.beginPath();g.moveTo(L0[0],L0[1]);g.lineTo(tap[0],tap[1]);g.moveTo(R0[0],R0[1]);g.lineTo(tap[0],tap[1]);g.stroke();g.setLineDash([]);g.fillStyle='#d94f86';g.beginPath();g.arc(tap[0],tap[1],4,0,7);g.fill()}
+      obj.slice().sort((p,q)=>p.y-q.y).forEach(o=>thing(o.k,o.x,o.y,o.s))};
+    const tools=()=>{ctl.innerHTML=['木','家','人','灯'].map(k=>mgB(k,tool===k?'on':'','data-k="'+k+'"')).join('')+mgB('ひとつ もどす','','id="pu"')+mgB('完成','go','id="pok"');
+      ctl.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>{tool=x.dataset.k;sfx('tap');tools()});
+      ctl.querySelector('#pu').onclick=()=>{obj.pop();sfx('tap');draw()};
+      const ok=ctl.querySelector('#pok');ok.disabled=obj.length<4;ok.onclick=()=>{const ss=obj.map(o=>o.s),deep=Math.min(...ss)<.35&&Math.max(...ss)>.65;close({deep,n:obj.length})}};
+    c.addEventListener('pointerdown',e=>{const [x,y]=cvPt(c,e);
+      if(!ph){tap=[x,y];draw();if(Math.hypot(x-vx,y-hy)<w*.07){sfx('lvup');ph=1;tap=null;lead('そこだ！ 道も 家も、ぜんぶ その 一点へ 向かう。<br>こんどは 木や 家を 置いてみよう。遠くほど 小さく なるよ（4つ 以上）。');draw();tools()}else{sfx('junk');lead('うーん、線が まじわらない……。道の 両はしを、まっすぐ 先まで のばして みて。')}return}
+      if(y<hy+4){sfx('junk');return}const s=Math.max(.12,(y-hy)/(h-hy));obj.push({k:tool,x,y,s});sfx('tap');draw();tools()});
+    draw();
+  },r=>{if(!r)return mgBye(W)();const first=!EVF('pers');EVS('pers');
+    townSay([[W,r.deep?'……すごい！ 手前の 木は 大きく、遠くの 家は 小さい。絵の 中に 道が つづいてる！':'いいね！ 遠くにも もう少し 置くと、もっと 奥まで 見えるかも。'],[W,'平らな 紙に、遠くまで 歩いて いけそうな 世界が できた。'],...(first?[['',mgGive(40,{herb:2})]]:[])])})}
+
+/* ---- 3. 椅子：使う 人に あわせて 形を きめる（バウハウス 1919） ---- */
+const CHO={seat:['四角','丸'],leg:['木の 4本脚','曲げた 鋼管','3本脚'],back:['高い','低い','なし'],col:['赤','青','黄','白']};
+const CHC={赤:'#d8452f',青:'#2f5fb8',黄:'#e8b82a',白:'#eeeeea'};
+function chairSvg(o){const c=CHC[o.col],m='#9aa4ae';let s='';
+  if(o.back==='高い')s+=`<rect x="98" y="18" width="12" height="70" fill="${c}" stroke="#111" stroke-width="2"/>`;
+  if(o.back==='低い')s+=`<rect x="98" y="52" width="12" height="36" fill="${c}" stroke="#111" stroke-width="2"/>`;
+  if(o.leg==='木の 4本脚')s+=`<rect x="44" y="92" width="8" height="52" fill="#8a5a2e" stroke="#111" stroke-width="2"/><rect x="100" y="92" width="8" height="52" fill="#8a5a2e" stroke="#111" stroke-width="2"/>`;
+  if(o.leg==='曲げた 鋼管')s+=`<path d="M104 92 V140 H50" fill="none" stroke="${m}" stroke-width="7" stroke-linecap="round"/><path d="M104 92 V140 H50" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="1 0" opacity=".3"/>`;
+  if(o.leg==='3本脚')s+=`<path d="M60 94 L42 144 M76 94 V144 M92 94 L110 144" stroke="#8a5a2e" stroke-width="5" stroke-linecap="round"/>`;
+  s+=o.seat==='丸'?`<ellipse cx="76" cy="90" rx="36" ry="9" fill="${c}" stroke="#111" stroke-width="2"/>`:`<rect x="40" y="84" width="72" height="12" fill="${c}" stroke="#111" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 150 150" width="150" height="150" style="background:#f3ead6;border-radius:6px">${s}<line x1="20" y1="145" x2="130" y2="145" stroke="#0003" stroke-width="2"/></svg>`}
+const CHCUS=[
+  {n:'こしの いたい おばあさん',q:'ゆっくり もたれて、すわって いたいのよ。',ok:o=>o.back==='高い'&&o.leg!=='3本脚',g:'ああ……背中が らく。これなら 一日 すわって いられるわ。',b:o=>o.back!=='高い'?'背中が……もたれる ところが ないと、つかれちゃうのよ。':'ちょっと ぐらぐら するわね……。'},
+  {n:'食堂の 店主',q:'店に たくさん 置きたい。しまう ときは 重ねたいんだ。',ok:o=>o.leg==='曲げた 鋼管'||(o.back==='なし'&&o.leg!=='3本脚'),g:'おお、すっと 重なる！ 店が ひろく つかえるぞ。',b:()=>'うーん、これじゃ 重ねられないな……。'},
+  {n:'村の こども',q:'かるくて、じぶんで はこべる いすが いい！',ok:o=>o.leg!=='木の 4本脚'&&o.back!=='高い',g:'かるーい！ どこにでも もってける！',b:()=>'おもたーい……はこべないよ〜。'}];
+function chairTalk(){const W='家具職人';
+  if(EVF('chair'))return townSay([[W,'あんたの 椅子、みんな まいにち つかってるよ。'],[W,'形は、使う 人の ために。……また 作るかい？']],()=>townChoice('',[{l:'作る',s:'',f:()=>chairGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'椅子の 注文が 3つも 来ちまった。手が たりない！'],[W,'飾りは いらない。使う 人が どう すわるか、それだけ 考えて 作ってくれ。']],()=>chairGame(W))}
+function chairGame(W){
+  mgOpen('椅子づくり　使う 人の ための 形','',(b,close,lead)=>{
+    let i=0,ok=0;const o={seat:'四角',leg:'木の 4本脚',back:'高い',col:'赤'};
+    const round=()=>{const C=CHCUS[i];lead(`<b>${C.n}</b>（${i+1}/3）<br>「${C.q}」`);
+      b.innerHTML=`<div style="display:flex;justify-content:center">${chairSvg(o)}</div>`+Object.keys(CHO).map(k=>`<div class="mgrow"><span>${({seat:'座面',leg:'脚',back:'背もたれ',col:'色'})[k]}</span>${CHO[k].map(v=>mgB(v,o[k]===v?'on':'',`data-k="${k}" data-v="${v}"`)).join('')}</div>`).join('')+`<div class="mgrow">${mgB('この 椅子を わたす','go','id="cgo"')}</div>`;
+      b.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>{o[x.dataset.k]=x.dataset.v;sfx('tap');round()});
+      b.querySelector('#cgo').onclick=()=>{const g=C.ok(o);if(g)ok++;sfx(g?'lvup':'junk');lead(`<b>${C.n}</b><br>「${g?C.g:C.b(o)}」${o.col!=='赤'&&i===2&&g?'<br>「'+o.col+'、すき！」':''}`);
+        b.innerHTML=`<div style="display:flex;justify-content:center">${chairSvg(o)}</div><div class="mgrow">${mgB(i<2?'つぎの 人':'おわる','go','id="cnx"')}</div>`;
+        b.querySelector('#cnx').onclick=()=>{sfx('tap');if(++i<3)round();else close(ok)}}};
+    round();
+  },r=>{if(r==null)return mgBye(W)();const first=!EVF('chair')&&r>=2;
+    if(r<2)return townSay([[W,`${r}人 しか よろこばなかったか……。見た目より、すわる 人を 見るんだ。もう一度 やってみな。`]]);
+    EVS('chair');townSay([[W,r===3?'3人とも 大よろこびだ！ あんた、職人の 目を してるね。':'うん、ほとんど 合格だ。'],[W,'形は 使いみちから 生まれる。……むかし、ある 学校が そう 教えたんだ。'],...(first?[['',mgGive(50,{backup:1})]]:[])])})}
+
+/* ---- 4. 浮世絵：版を かさねて 色を 摺る（東の国） ---- */
+const UKV=[{k:'usu',n:'空の 版（うす藍）'},{k:'hi',n:'日の 版'},{k:'koi',n:'波の 版（こい藍）'},{k:'sumi',n:'墨の 版（りんかく）'}];
+const UKSUN={紅:'#d8452f',山吹:'#e8a92a',白:'#fbf6ea'};
+function ukSvg(done,off,sun){const L={
+  usu:`<path fill-rule="evenodd" d="M0 0H300V130H0Z M248 58a26 26 0 1 0 -52 0a26 26 0 1 0 52 0Z" fill="#9cc3e6"/>`,
+  hi:`<circle cx="222" cy="58" r="26" fill="${UKSUN[sun]}"/>`,
+  koi:`<path d="M0 200 V140 C40 120 60 92 104 96 C150 100 150 140 120 138 C150 150 190 120 214 128 C250 138 270 120 300 112 V200Z" fill="#23468f"/>`,
+  sumi:`<g fill="none" stroke="#111" stroke-width="2.5"><path d="M0 140 C40 120 60 92 104 96 C150 100 150 140 120 138 C150 150 190 120 214 128 C250 138 270 120 300 112"/><circle cx="222" cy="58" r="26"/><path d="M36 130 L70 84 L104 128"/><path d="M60 98 L70 84 L82 100"/><path d="M150 168 h40 l-6 8 h-28z"/></g>`};
+  return `<svg viewBox="0 0 300 200" class="uksv"><rect width="300" height="200" fill="#f3ead6"/>${done.map(k=>`<g transform="translate(${off[k]||0},0)" style="mix-blend-mode:multiply">${L[k]}</g>`).join('')}</svg>`}
+function ukiyoTalk(){const W='摺り師';
+  if(EVF('ukiyo'))return townSay([[W,'あんたの 摺った 一枚、店先に はってあるよ。'],[W,'もう 一枚、摺って いくかい？']],()=>townChoice('',[{l:'摺る',s:'',f:()=>ukiyoGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'一枚の 絵に、版木は 何枚も ある。色ごとに 一枚ずつ だ。'],[W,'紙の はしの「見当」に ぴたりと あわせて 摺る。ずれたら おしまい。……やって みるかい。']],()=>ukiyoGame(W))}
+function ukiyoGame(W){
+  mgOpen('多色摺り　版を かさねる','つぎに 摺る 版を えらぼう。',(b,close,lead)=>{
+    const done=[],off={};let sun='紅',raf=0;
+    const pick=()=>{cancelAnimationFrame(raf);const rest=UKV.filter(v=>!done.includes(v.k));
+      if(!rest.length)return fin();lead(done.length?'つぎに 摺る 版を えらぼう。':'つぎに 摺る 版を えらぼう。<br>日の 色は 好きに きめて いい。');
+      b.innerHTML=ukSvg(done,off,sun)+`<div class="mgrow"><span>日の 色</span>${Object.keys(UKSUN).map(s=>mgB(s,sun===s?'on':'',`data-s="${s}"`+(done.includes('hi')?' disabled':''))).join('')}</div><div class="mgrow">${rest.map(v=>mgB(v.n,'','data-v="'+v.k+'"')).join('')}</div>`;
+      b.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>{sun=x.dataset.s;sfx('tap');pick()});
+      b.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{sfx('tap');align(x.dataset.v)})};
+    const align=k=>{lead('紙が 左右に ゆれている。見当の しるしが かさなった ときに「摺る」！');
+      b.innerHTML=`<div class="ukal"><i class="ukm"></i><i class="ukp" id="ukp"></i></div>`+ukSvg(done,off,sun)+`<div class="mgrow">${mgB('摺る','go','id="uks"')}</div>`;
+      const pp=b.querySelector('#ukp'),t0=performance.now(),sp=.0022+done.length*.0006;let cur=0;
+      const tick=t=>{cur=Math.round(Math.sin((t-t0)*sp)*24);pp.style.transform=`translateX(${cur*2}px)`;raf=requestAnimationFrame(tick)};raf=requestAnimationFrame(tick);
+      b.querySelector('#uks').onclick=()=>{cancelAnimationFrame(raf);off[k]=cur;done.push(k);sfx(Math.abs(cur)<=4?'lvup':'swing');setTimeout(pick,250)}};
+    const fin=()=>{const err=Object.values(off).reduce((a,v)=>a+Math.abs(v),0)/4,order=done.indexOf('usu')<done.indexOf('koi');
+      lead(err<=4?'ぴたり！ 色が 一枚に とけあった。':err<=10?'すこし ずれたが、味が ある。':'……だいぶ ずれた。でも、それも 一枚だけの 絵だ。');
+      b.innerHTML=ukSvg(done,off,sun)+`<div class="mgrow">${mgB('この 一枚に する','go','id="ukok"')}${mgB('摺りなおす','','id="ukre"')}</div>`;
+      b.querySelector('#ukok').onclick=()=>close({err,order,sun});b.querySelector('#ukre').onclick=()=>{sfx('tap');close('re')}};
+    pick();
+  },r=>{if(r==='re')return ukiyoGame(W);if(!r)return mgBye(W)();const first=!EVF('ukiyo');EVS('ukiyo');
+    townSay([[W,r.err<=4?'見事だ！ 版が 一枚の 絵に なった。':'うん、手で 摺った 絵は、一枚ずつ ちがう。それで いい。'],[W,r.order?'うすい 色から 濃い 色へ。よく わかってるね。':'うすい 色は 先に 摺ると、濃い 色が きれいに のるんだ。次は ためして みな。'],...(first?[['',mgGive(40,{meal:1})]]:[])])})}
+
+/* ---- 5. 家紋：円と コンパスで 紋を つくる（東の国） ---- */
+const MONM={桜:'<g>'+[0,1,2,3,4].map(i=>`<path transform="rotate(${i*72})" d="M0 0 C-14 -10 -15 -32 -5 -40 L0 -33 L5 -40 C15 -32 14 -10 0 0Z"/>`).join('')+'<circle r="5" fill="#f3ead6"/></g>',
+  灯:'<path d="M0 -40 C18 -18 20 2 0 16 C-20 2 -18 -18 0 -40Z"/><path d="M0 -8 C7 0 7 8 0 12 C-7 8 -7 0 0 -8Z" fill="#f3ead6"/>',
+  葉:'<path d="M0 -40 C24 -20 22 12 0 32 C-22 12 -24 -20 0 -40Z"/><path d="M0 -30 V26" stroke="#f3ead6" stroke-width="3"/>',
+  波:'<path d="M-32 14 C-34 -18 8 -38 30 -14 C14 -26 -8 -18 -6 2 C-4 16 14 16 20 6 C18 30 -30 34 -32 14Z"/>',
+  星:'<circle r="17"/>',
+  矢:'<path d="M-4 30 V-24 L-12 -16 L0 -40 L12 -16 L4 -24 V30Z"/>'};
+const MONK=['','','二つ','三つ','四つ','五つ'];
+function monSvg(o,sz=200){const n=+o.c;let s='';
+  if(n===1)s=`<g transform="scale(1.6)">${MONM[o.m]}</g>`;
+  else for(let i=0;i<n;i++){const a=i*360/n;s+=`<g transform="rotate(${a}) translate(0,-38) scale(.82)">${MONM[o.m]}</g>`}
+  const ring=o.r==='丸に'?'<circle r="90" fill="none" stroke="#111" stroke-width="9"/>':o.r==='二重丸に'?'<circle r="92" fill="none" stroke="#111" stroke-width="5"/><circle r="80" fill="none" stroke="#111" stroke-width="5"/>':o.r==='隅立て角に'?'<path d="M0 -94 L94 0 L0 94 L-94 0Z" fill="none" stroke="#111" stroke-width="8"/>':'';
+  return `<svg viewBox="-100 -100 200 200" width="${sz}" height="${sz}" style="background:#f3ead6;border-radius:50%"><g fill="#111">${s}</g>${ring}</svg>`}
+const monName=o=>`${o.r==='なし'?'':o.r}${MONK[o.c]}${o.m}`;
+function monTalk(){const W='紋屋';
+  if(EVF('mon'))return townSay([[W,`「${monName(G.ev.mon)}」。あんたの 紋だ。旅の 荷に 染めておいたよ。`],[W,'つくりなおすかい？']],()=>townChoice('',[{l:'つくりなおす',s:'',f:()=>monGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'この 国の 家には、それぞれ「紋」が ある。円と コンパスだけで 描ける、かんたんな 形だ。'],[W,'旅の 人。あんたの 紋を つくって みないか。']],()=>monGame(W))}
+function monGame(W){
+  mgOpen('家紋　自分の しるしを つくる','かたち・数・かこみを えらんで、自分だけの 紋を つくろう。',(b,close,lead)=>{
+    const o=Object.assign({m:'灯',c:'3',r:'丸に'},G.ev&&G.ev.mon||{});
+    const draw=()=>{b.innerHTML=`<div style="display:flex;justify-content:center">${monSvg(o)}</div><p class="monn">${monName(o)}</p>`+
+      `<div class="mgrow"><span>かたち</span>${Object.keys(MONM).map(v=>mgB(v,o.m===v?'on':'',`data-k="m" data-v="${v}"`)).join('')}</div>`+
+      `<div class="mgrow"><span>数</span>${['1','2','3','4','5'].map(v=>mgB(v,o.c===v?'on':'',`data-k="c" data-v="${v}"`)).join('')}</div>`+
+      `<div class="mgrow"><span>かこみ</span>${['なし','丸に','二重丸に','隅立て角に'].map(v=>mgB(v,o.r===v?'on':'',`data-k="r" data-v="${v}"`)).join('')}</div>`+
+      `<div class="mgrow">${mgB('この 紋に きめる','go','id="mok"')}</div>`;
+      b.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>{o[x.dataset.k]=x.dataset.v;sfx('tap');draw()});
+      b.querySelector('#mok').onclick=()=>close({...o})};draw();
+  },r=>{if(!r)return mgBye(W)();const first=!EVF('mon');EVS('mon');G.ev.mon=r;
+    townSay([[W,`「${monName(r)}」……うん、あんたらしい。`],[W,'しるしが あれば、遠くからでも あんただと わかる。'],...(first?[['',mgGive(30,{herb:2})]]:[])])})}
+
+/* ---- 6. 書体：看板の 字を えらぶ。遠くから 見て たしかめる（看板の宿場） ---- */
+const FSTY={ゴシック:'font-family:sans-serif;font-weight:900',明朝:'font-family:serif;font-weight:700',細い字:'font-family:sans-serif;font-weight:200;color:#4a3420;letter-spacing:.2em',飾り字:'font-family:serif;font-style:italic;font-weight:700;letter-spacing:-.12em;text-shadow:2px 2px 0 #d94f86,-2px 0 0 #ffe27a;transform:skewX(-12deg)'};
+const FSIGN=[{t:'この先 王都',n:'道しるべ',need:['ゴシック','明朝'],m:{ゴシック:'遠くからでも、すぐ 読める！ 旅人が 迷わない。',明朝:'きりっと して 読みやすい。道しるべに ぴったりだ。'},bad:'……旅人が 字を 読めずに、反対へ 歩いて いった！ 道しるべは 遠くから 読めないと。'},
+  {t:'だんご',n:'茶屋',m:{ゴシック:'元気な 店に 見えるね！',明朝:'老舗の 味が しそう。',細い字:'上品……でも、ちょっと 見えにくいかも。',飾り字:'たのしそう！ 若い 客が 入りそうだ。'}},
+  {t:'くすり',n:'薬屋',m:{ゴシック:'はっきり して、たよれる 感じ。',明朝:'まじめで 信用できそう。',細い字:'しずかで やさしい 店に 見える。',飾り字:'……あやしい 薬を 売って そうだ。'}}];
+function fontTalk(){const W='看板描きの おばあさん';
+  if(EVF('font'))return townSay([[W,'字は 声だよ。同じ 言葉でも、字で 聞こえかたが かわる。'],[W,'また 描いて みるかい？']],()=>townChoice('',[{l:'描く',s:'',f:()=>fontGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'看板の 字を 描きかえて ほしいと 3軒から たのまれてね。……目が かすんで しまって。'],[W,'あんた、えらんで おくれ。ただし 看板は、遠くから 見るものだ。それを 忘れずに。']],()=>fontGame(W))}
+function fontGame(W){
+  mgOpen('書体　看板の 字を えらぶ','',(b,close,lead)=>{
+    let i=0,f='ゴシック',far=false;const pick={};
+    const draw=()=>{const S=FSIGN[i];lead(`<b>${S.n}</b>の 看板（${i+1}/3）。字を えらんで、遠くからも 見て みよう。`);
+      b.innerHTML=`<div class="fsw ${far?'far':''}"><div class="fsign"><span style="display:inline-block;${FSTY[f]}">${S.t}</span></div></div><div class="mgrow"><span>書体</span>${Object.keys(FSTY).map(k=>mgB(k,f===k?'on':'',`data-f="${k}"`)).join('')}</div><div class="mgrow">${mgB(far?'近くで 見る':'遠くから 見る','','id="ffar"')}${mgB('この 字で 描く','go','id="fgo"')}</div>`;
+      b.querySelectorAll('[data-f]').forEach(x=>x.onclick=()=>{f=x.dataset.f;sfx('tap');draw()});
+      b.querySelector('#ffar').onclick=()=>{far=!far;sfx('tap');draw()};
+      b.querySelector('#fgo').onclick=()=>{if(S.need&&!S.need.includes(f)){sfx('junk');lead(S.bad);return}
+        pick[S.n]=f;sfx('lvup');lead(`<b>${S.n}</b>「${S.m[f]}」`);b.innerHTML=`<div class="fsw"><div class="fsign"><span style="display:inline-block;${FSTY[f]}">${S.t}</span></div></div><div class="mgrow">${mgB(i<2?'つぎの 看板':'おわる','go','id="fnx"')}</div>`;
+        b.querySelector('#fnx').onclick=()=>{sfx('tap');far=false;if(++i<3)draw();else close(pick)}}};
+    draw();
+  },r=>{if(!r)return mgBye(W)();const first=!EVF('font');EVS('font');G.ev.font=r;
+    townSay([[W,'ほう……字ひとつで、店の 顔が かわったね。'],[W,'むかし、だれにでも 読める 字を めざして 作られた 書体が あった。いまでは 世界じゅうの 看板に つかわれてる。'],...(first?[['',mgGive(40,{dr:1})]]:[])])})}
+
+/* ---- 7. 曲線：点と ハンドルで なめらかな 線を 引く（線の祠） ---- */
+const BZST=[{n:'アーチ',a:[.12,.78],b:[.88,.78],c1:[.14,.12],c2:[.86,.12]},{n:'波',a:[.08,.5],b:[.92,.5],c1:[.42,-.05],c2:[.58,1.05]},{n:'しずく',a:[.3,.82],b:[.7,.82],c1:[1,.05],c2:[0,.05]}];
+const bzP=(a,c1,c2,b,t)=>{const u=1-t;return [u*u*u*a[0]+3*u*u*t*c1[0]+3*u*t*t*c2[0]+t*t*t*b[0],u*u*u*a[1]+3*u*u*t*c1[1]+3*u*t*t*c2[1]+t*t*t*b[1]]};
+function bezTalk(){const W='曲線職人';
+  if(EVF('bez'))return townSay([[W,'点は 少なく、ハンドルで 曲げる。……もう 手が おぼえたろう。'],[W,'もう 一度 引くかい？']],()=>townChoice('',[{l:'引く',s:'',f:()=>bezGame(W)},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'この 曲線は、むかし 車の 形を きめる ために 考えられた そうだ。'],[W,'点は 2つだけ。のびる「ハンドル」を 引っぱって、手本の 線に かさねて ごらん。']],()=>bezGame(W))}
+function bezGame(W){
+  mgOpen('曲線　ハンドルで 線を 曲げる','',(b,close,lead)=>{
+    const [c,g]=mgCv(b,.8),w=c.W,h=c.H;const info=document.createElement('div');info.className='mgrow';b.appendChild(info);
+    let si=0,S,a,bb,h1,h2,drag=null,passed=false;
+    const P=q=>[q[0]*w,q[1]*h];
+    const setup=()=>{S=BZST[si];a=P(S.a);bb=P(S.b);h1=[a[0],a[1]-20];h2=[bb[0],bb[1]-20];passed=false;draw()};
+    const score=()=>{const T=[],U=[];for(let i=0;i<=30;i++)T.push(bzP(a,P(S.c1),P(S.c2),bb,i/30));for(let i=0;i<=80;i++)U.push(bzP(a,h1,h2,bb,i/80));
+      const d=T.reduce((s,p)=>s+Math.min(...U.map(q=>Math.hypot(p[0]-q[0],p[1]-q[1]))),0)/T.length;return Math.max(0,Math.round(100-d/w*100*5))};
+    const curve=(c1,c2,st,lw,dash)=>{g.setLineDash(dash||[]);g.strokeStyle=st;g.lineWidth=lw;g.beginPath();g.moveTo(a[0],a[1]);g.bezierCurveTo(c1[0],c1[1],c2[0],c2[1],bb[0],bb[1]);g.stroke();g.setLineDash([])};
+    function draw(){g.fillStyle='#14122a';g.fillRect(0,0,w,h);g.strokeStyle='#ffffff10';for(let x=0;x<w;x+=20){g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}for(let y=0;y<h;y+=20){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
+      curve(P(S.c1),P(S.c2),'#ffe27a88',6,[6,6]);g.strokeStyle='#7fd0ff';g.lineWidth=1.5;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(h1[0],h1[1]);g.moveTo(bb[0],bb[1]);g.lineTo(h2[0],h2[1]);g.stroke();
+      curve(h1,h2,'#ffffff',3);[a,bb].forEach(p=>{g.fillStyle='#fff';g.fillRect(p[0]-5,p[1]-5,10,10)});[h1,h2].forEach(p=>{g.fillStyle='#7fd0ff';g.beginPath();g.arc(p[0],p[1],8,0,7);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke()});
+      const sc=score();if(sc>=86&&!passed){passed=true;sfx('lvup')}
+      lead(`<b>${S.n}</b>（${si+1}/3）　青い ハンドルを 引っぱって、点線の 手本に かさねよう。<br>かさなり <b style="color:${sc>=86?'#7fe08a':'#ffe27a'}">${sc}%</b>${passed?'　……いい 線だ！':''}`);
+      info.innerHTML=mgB(si<2?'つぎの 線':'できた','go','id="bzn"'+(passed?'':' disabled'));const n=info.querySelector('#bzn');n.onclick=()=>{sfx('tap');if(++si<3)setup();else close(1)}}
+    c.addEventListener('pointerdown',e=>{const p=cvPt(c,e);const d1=Math.hypot(p[0]-h1[0],p[1]-h1[1]),d2=Math.hypot(p[0]-h2[0],p[1]-h2[1]);drag=d1<d2?(d1<40?h1:null):(d2<40?h2:null);if(drag){c.setPointerCapture(e.pointerId);e.preventDefault()}});
+    c.addEventListener('pointermove',e=>{if(!drag)return;const p=cvPt(c,e);drag[0]=Math.max(0,Math.min(w,p[0]));drag[1]=Math.max(0,Math.min(h,p[1]));draw()});
+    ['pointerup','pointercancel'].forEach(ev=>c.addEventListener(ev,()=>{drag=null}));
+    setup();
+  },r=>{if(!r)return mgBye(W)();const first=!EVF('bez');EVS('bez');
+    townSay([[W,'……見事。点は 少ないのに、線は どこまでも なめらかだ。'],[W,'線の 魔女も、この 引きかたを 好んだと いう。'],...(first?[['',mgGive(60,{dr:1})]]:[])])})}
+
+/* ---- 8. 光のペン：原本を 描くと、複製が ぜんぶ かわる（時の泉） ---- */
+function penTalk(){const W='';
+  if(EVF('pen'))return townSay([[W,'古い 機械が しずかに 光っている。……原本の 形は、いまも おぼえて いるようだ。'],[W,'また 描いて みる？']],()=>townChoice('',[{l:'描く',s:'',f:()=>penGame()},{l:'やめる',s:'',f:()=>{}}]));
+  townSay([[W,'泉の そばに、古い 機械が うまっている。光る ペンが 一本、ささったままだ。'],[W,'……画面に 直接 描ける ペン？']],()=>penGame())}
+function penGame(){
+  mgOpen('光のペン　原本と 複製','上の わくに、光の ペンで なにか 描いて みよう。',(b,close,lead)=>{
+    const top=document.createElement('div');top.style.cssText='display:flex;gap:8px;align-items:flex-start';b.appendChild(top);
+    const m=document.createElement('canvas'),MS=150;m.width=m.height=MS*2;m.className='mgcv';m.style.width=m.style.height=MS+'px';m.W=m.H=MS;top.appendChild(m);const mg=m.getContext('2d');mg.scale(2,2);
+    const side=document.createElement('div');side.className='mgrow';side.style.flexDirection='column';side.style.alignItems='stretch';top.appendChild(side);
+    const [c,g]=mgCv(b,.55),w=c.W,h=c.H;
+    const strokes=[];let cur=null,copied=false,after=0;
+    const POS=[[.12,.3,.5],[.33,.22,.38],[.52,.4,.6],[.72,.2,.42],[.88,.42,.5],[.25,.7,.65],[.66,.72,.7]];
+    const paint=(gx,s,ox,oy,col)=>{gx.strokeStyle=col;gx.lineCap=gx.lineJoin='round';gx.lineWidth=3/Math.max(.3,s)*s;strokes.forEach(st=>{gx.beginPath();st.forEach((p,i)=>{const x=ox+(p[0]-MS/2)*s,y=oy+(p[1]-MS/2)*s;i?gx.lineTo(x,y):gx.moveTo(x,y)});gx.stroke()})};
+    const draw=()=>{mg.fillStyle='#04140c';mg.fillRect(0,0,MS,MS);mg.strokeStyle='#1d4a33';mg.strokeRect(4,4,MS-8,MS-8);mg.shadowColor='#7fe08a';mg.shadowBlur=6;paint(mg,1,MS/2,MS/2,'#9dffb8');mg.shadowBlur=0;
+      const sky=g.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#0b0a2a');sky.addColorStop(1,'#2a1f4a');g.fillStyle=sky;g.fillRect(0,0,w,h);g.fillStyle='#120f22';g.beginPath();g.moveTo(0,h);g.lineTo(0,h*.8);g.quadraticCurveTo(w*.3,h*.62,w*.6,h*.82);g.quadraticCurveTo(w*.85,h*.7,w,h*.78);g.lineTo(w,h);g.fill();
+      if(copied){g.shadowColor='#ffe27a';g.shadowBlur=8;POS.forEach(([x,y,s])=>paint(g,s*.55,x*w,y*h,'#ffe9a8'));g.shadowBlur=0}
+      side.innerHTML=(copied?'':mgB('複製する','go','id="pcp"'+(strokes.length?'':' disabled')))+mgB('ぜんぶ けす','','id="pcl"')+(copied&&after?mgB('おわる','go','id="pok"'):'');
+      const cp=side.querySelector('#pcp');if(cp)cp.onclick=()=>{copied=true;sfx('skill');lead('原本が、夜空に いくつも 複製された！<br>こんどは 上の 原本に、もう ひと筆 描きたして みて。');draw()};
+      side.querySelector('#pcl').onclick=()=>{strokes.length=0;copied=false;after=0;sfx('tap');lead('上の わくに、光の ペンで なにか 描いて みよう。');draw()};
+      const ok=side.querySelector('#pok');if(ok)ok.onclick=()=>close(1)};
+    m.addEventListener('pointerdown',e=>{m.setPointerCapture(e.pointerId);cur=[cvPt(m,e)];strokes.push(cur);e.preventDefault()});
+    m.addEventListener('pointermove',e=>{if(!cur)return;cur.push(cvPt(m,e));draw()});
+    ['pointerup','pointercancel'].forEach(ev=>m.addEventListener(ev,()=>{if(!cur)return;cur=null;if(copied){after++;if(after===1){sfx('lvup');lead('……原本を かえたら、複製も ぜんぶ いっしょに かわった！<br>一つを 直せば、ぜんぶ 直る。')}}draw()}));
+    draw();
+  },r=>{if(!r)return;const first=!EVF('pen');EVS('pen');
+    townSay([['','ペンの 光が すうっと 消えた。……画面に 直接 描き、原本を 直せば 複製も かわる。'],['','いまの 道具の「部品」の 考えかたは、ここから はじまったのかも しれない。'],...(first?[['',mgGive(50,{cache:1})]]:[])])})}
+
+/* ---- 9. ピクトグラム：ことばの 通じない 旅人に 絵で 道を 教える（王都の 船着き場） ---- */
+const PICT={人:'<circle cx="20" cy="8" r="5"/><path d="M13 16h14l-2 12h-3v10h-4V28h-3z"/>',船:'<path d="M4 26h32l-5 8H9z"/><path d="M19 4v20h2V4z"/><path d="M22 6l11 16H22z"/>',
+  ベッド:'<path d="M3 14h3v20H3zM3 28h34v4H3zM34 26h3v8h-3z"/><ellipse cx="11" cy="24" rx="5" ry="3"/><path d="M16 20h20v6H16z"/>',カップ:'<path d="M8 18h20v10a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6z"/><path d="M28 21a4 4 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 6c-3 4 3 6 0 10M21 6c-3 4 3 6 0 10" fill="none" stroke="currentColor" stroke-width="2"/>',
+  矢印:'<path d="M4 16h20V9l12 11-12 11v-7H4z"/>',波:'<path d="M2 20c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="currentColor" stroke-width="4"/><path d="M2 30c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="currentColor" stroke-width="4"/>',
+  木:'<path d="M20 2L34 26H6z"/><path d="M17 26h6v10h-6z"/>',剣:'<path d="M19 2h2l1 24h-4z"/><path d="M12 26h16v3H12z"/><path d="M18 29h4v8h-4z"/>'};
+const PQ=[{g:'（旅人は 海を 指さし、オールを こぐ まねを した）',k:'船',ok:'旅人は 港の 方へ 走って いった！'},{g:'（旅人は 両手を 合わせて ほおに あて、目を とじた）',k:'ベッド',ok:'旅人は 宿の 方へ 歩いて いった。あくびを しながら。'},{g:'（旅人は 湯気を ふーふー する まねを した）',k:'カップ',ok:'旅人は 茶屋を みつけて、手を ふった！'}];
+function pictTalk(){const W='遠い国の 旅人';
+  if(EVF('pict'))return townSay([[W,'（旅人は にこにこ しながら、あなたの 描いた 絵の 看板を 指さした）']]);
+  townSay([[W,'◎△□……？ ……◇◇！'],['','（ことばが まったく 通じない。……でも 身ぶりで、なにかを たずねている）'],['','絵で 伝えて みよう。']],()=>pictGame(W))}
+function pictGame(W){
+  mgOpen('ピクトグラム　絵で 伝える','',(b,close,lead)=>{
+    let i=0,sel=[],col='#2f5fb8';
+    const sign=()=>`<svg viewBox="0 0 120 120" width="140" height="140" style="color:#fff"><rect x="4" y="4" width="112" height="112" rx="14" fill="${col}" stroke="#fff" stroke-width="4"/>${sel[0]?`<g transform="translate(${sel[1]?18:16},${sel[1]?12:16}) scale(${sel[1]?1.9:2.2})" fill="#fff">${PICT[sel[0]]}</g>`:''}${sel[1]?`<g transform="translate(70,72) scale(1)" fill="#fff">${PICT[sel[1]]}</g>`:''}</svg>`;
+    const draw=()=>{const Q=PQ[i];lead(`<b>${W}</b>（${i+1}/3）<br>${Q.g}<br>絵を 2つまで えらんで、看板を つくろう。`);
+      b.innerHTML=`<div style="display:flex;justify-content:center">${sign()}</div><div class="mgrow pict">${Object.keys(PICT).map(k=>`<button type="button" class="mgbtn pic ${sel.includes(k)?'on':''}" data-p="${k}"><svg viewBox="0 0 40 40" width="30" height="30" fill="currentColor" style="color:currentColor">${PICT[k]}</svg></button>`).join('')}</div><div class="mgrow"><span>看板の 色</span>${['#2f5fb8','#2f8a4a','#d8452f'].map(c=>`<button type="button" class="mgbtn ${col===c?'on':''}" data-c="${c}" style="background:${c};width:34px;height:30px"></button>`).join('')}</div><div class="mgrow">${mgB('見せる','go','id="pgo"'+(sel.length?'':' disabled'))}</div>`;
+      b.querySelectorAll('[data-p]').forEach(x=>x.onclick=()=>{const k=x.dataset.p;sfx('tap');if(sel.includes(k))sel=sel.filter(v=>v!==k);else{if(sel.length>=2)sel.shift();sel.push(k)}draw()});
+      b.querySelectorAll('[data-c]').forEach(x=>x.onclick=()=>{col=x.dataset.c;sfx('tap');draw()});
+      b.querySelector('#pgo').onclick=()=>{const Q=PQ[i];if(sel.includes('剣')){sfx('junk');lead('（旅人は 剣の 絵を 見て、まっさおに なった！）……こわがらせて しまった。');return}
+        if(!sel.includes(Q.k)){sfx('junk');lead(`（旅人は 首を かしげた）……${Q.g.replace(/[（）]/g,'')}。なにを したいのかな？`);return}
+        sfx('lvup');lead(Q.ok);b.innerHTML=`<div style="display:flex;justify-content:center">${sign()}</div><div class="mgrow">${mgB(i<2?'つぎ':'おわる','go','id="pnx"')}</div>`;
+        b.querySelector('#pnx').onclick=()=>{sfx('tap');sel=[];if(++i<3)draw();else close(1)}}};
+    draw();
+  },r=>{if(!r)return mgBye('','（旅人は ふしぎそうに 見送った）')();const first=!EVF('pict');EVS('pict');
+    townSay([[W,'◎！ ……アリガト！'],['','（ことばが ちがっても、絵なら 伝わる。船着き場の 人が、その 看板を 港に かけて くれた）'],...(first?[['',mgGive(40,{herb:3})]]:[])])})}
+
+/* ---- 10. ねずみ：画面の 一点を 指す 小さな 相棒（りんごの島） ---- */
+function mouseTalk(n){
+  if(EVF('mouse'))return townSay([['ちいさな ねずみ','チュッ。（しっぽを ふって、画面の すみを 指している）']]);
+  n.cn=(n.cn||0)+1;
+  if(n.cn<3){const p=TW.pl;let t=null;for(let k=0;k<60&&!t;k++){const x=1+Math.floor(Math.random()*(p.w-2)),y=2+Math.floor(Math.random()*(p.h-3));if(!p.sol[y][x]&&!propAt(p,x,y)&&!TW.npcs.some(m=>m.x===x&&m.y===y)&&!(TP.tx===x&&TP.ty===y)&&Math.hypot(x-TP.tx,y-TP.ty)>4)t=[x,y]}
+    sfx('swing');return townSay([['ちいさな ねずみ',n.cn===1?'チュ！？（ちょろちょろっと にげた！）':'チュチュッ！（また にげた！ すばしっこい……）']],()=>{if(t){n.x=n.hx=t[0];n.y=n.hy=t[1];n.px=t[0]*TT;n.py=t[1]*TT}})}
+  EVS('mouse');townSay([['ちいさな ねずみ','……チュ。（つかまえた！ ねずみは 手のひらで まるく なった）'],['','ねずみは ちいさな 前足で、植え込みの 下を ぴたりと 指した。'],['',`そこには……${mgGive(30,{shortcut:1})}`],['ちいさな ねずみ','チュッ。（指した ところに、ちゃんと なにかが ある。ふしぎな ねずみだ）']])}
+
+/* ---- 11. カードの家：ボタンと カードを つなぐ（りんごの島） ---- */
+const CDS=[{k:'玄関',bt:['すすむ']},{k:'廊下',bt:['右の とびら','左の とびら','もどる']},{k:'台所',bt:['もどる']},{k:'庭',bt:['もどる']}];
+function cardTalk(){const W='カードの家の 子';
+  if(EVF('card'))return townSay([[W,'あの 家、もう だれも 迷子に ならないよ！ ボタンを おすと、ちゃんと つぎの カードに 行けるの。']]);
+  townSay([[W,'うちは「カードの家」。へやが 1まいずつの カードで、ボタンを おすと 別の カードに とぶの。'],[W,'でも ボタンが どこにも つながって なくて、みんな 迷子に なっちゃう。……つないで くれる？']],()=>cardGame(W))}
+function cardGame(W){
+  mgOpen('カードの家　ボタンを つなぐ','ボタンを タップすると、とび先の カードが かわるよ。<br>玄関から 台所にも 庭にも 行けて、どこからでも 玄関に もどれるように しよう。',(b,close,lead)=>{
+    const ln={};const nm=CDS.map(c=>c.k);
+    const draw=(hit)=>{b.innerHTML=`<div class="cgrid">${CDS.map(c=>`<div class="ccard ${hit===c.k?'hit':''}"><h4>${c.k}</h4>${c.bt.map((t,j)=>{const to=ln[c.k+j];return `<button type="button" data-b="${c.k+j}">▶ ${t}　→ <b>${to||'？'}</b></button>`}).join('')}</div>`).join('')}</div><div class="mgrow">${mgB('ためしに 歩く','go','id="cgo"')}</div>`;
+      b.querySelectorAll('[data-b]').forEach(x=>x.onclick=()=>{const k=x.dataset.b,cur=ln[k],own=CDS.find(c=>k.startsWith(c.k)).k,opts=[null,...nm.filter(n=>n!==own)];ln[k]=opts[(opts.indexOf(cur||null)+1)%opts.length];sfx('tap');draw()});
+      b.querySelector('#cgo').onclick=test};
+    const reach=s=>{const v=new Set([s]),q=[s];while(q.length){const c=q.shift(),C=CDS.find(x=>x.k===c);C.bt.forEach((_,j)=>{const t=ln[c+j];if(t&&!v.has(t)){v.add(t);q.push(t)}})}return v};
+    const test=()=>{const r=reach('玄関');let bad=null;
+      if(!r.has('台所'))bad='台所に 行けないよ〜。おなか すいた……';else if(!r.has('庭'))bad='庭に 出られないよ〜。';
+      else{const lost=nm.find(n=>!reach(n).has('玄関'));if(lost)bad=`${lost}から 玄関に もどれない！ 迷子に なっちゃう……`}
+      if(bad){sfx('junk');lead(`<b>${W}</b>「${bad}」`);return}
+      const path=['玄関'];{const prev={},q=['玄関'],v=new Set(q);while(q.length){const c=q.shift();if(c==='庭')break;CDS.find(x=>x.k===c).bt.forEach((_,j)=>{const t=ln[c+j];if(t&&!v.has(t)){v.add(t);prev[t]=c;q.push(t)}})}let c='庭',p=[];while(c&&c!=='玄関'){p.unshift(c);c=prev[c]}path.push(...p)}
+      lead(`<b>${W}</b>が 歩いて いく……`);let k=0;const step=()=>{draw(path[k]);sfx('tap');if(++k<path.length)setTimeout(step,550);else setTimeout(()=>{sfx('lvup');close(1)},700)};step()};
+    draw();
+  },r=>{if(!r)return mgBye(W,'……また つなぎに 来てね。')();const first=!EVF('card');EVS('card');
+    townSay([[W,'つながった！ 玄関から 庭まで、ボタンを おすだけで 行ける！'],[W,'カードを つないで、だれでも 迷わない 家を つくる。……むかし、そんな 道具が あったんだって。'],...(first?[['',mgGive(50,{meal:1})]]:[])])})}
+
+/* ---- 12. レイヤー：かさなりを 入れかえて、かくれた 扉を みつける（雲の王都） ---- */
+const LYD={霧:'<g opacity=".88"><rect width="300" height="200" fill="#e9eef2"/><ellipse cx="80" cy="60" rx="90" ry="30" fill="#fff"/><ellipse cx="230" cy="150" rx="100" ry="34" fill="#fff"/></g>',
+  大きな絵:'<rect x="70" y="30" width="160" height="130" fill="#7d5328" stroke="#3a2610" stroke-width="6"/><rect x="82" y="42" width="136" height="106" fill="#9cc3e6"/><path d="M82 148 L130 96 L160 124 L190 90 L218 120 V148Z" fill="#4a7a3a"/><circle cx="190" cy="66" r="12" fill="#ffe27a"/>',
+  扉:'<path d="M118 160 V96 A32 32 0 0 1 182 96 V160Z" fill="#6b3f1d" stroke="#2a1608" stroke-width="4"/><path d="M150 66 V160" stroke="#2a1608" stroke-width="3"/><circle cx="160" cy="124" r="4" fill="#ffe27a"/>',
+  石の壁:'<rect width="300" height="200" fill="#8a8494"/>'+[0,1,2,3,4,5,6].map(r=>[0,1,2,3,4,5].map(c=>`<rect x="${c*56-(r%2?28:0)}" y="${r*30}" width="54" height="28" fill="#9a94a6"/>`).join('')).join('')+'<rect y="180" width="300" height="20" fill="#5a5466"/>'};
+function layerTalk(){const W='画廊の 番人';
+  if(EVF('layer'))return townSay([[W,'あの 扉の 先の 部屋、いまは 画廊の 宝物庫だよ。かさなりの 順番は、だいじ だね。']]);
+  townSay([[W,'この 画廊の 壁には「かくれた 扉が ある」と 言い伝えが あってね。'],[W,'ここの 景色は、すきとおった 何枚もの 層で できてる。……層を 見て みるかい？']],()=>layerGame(W))}
+function layerGame(W){
+  mgOpen('レイヤー　かくれた 扉','右の パネルで、層を かくしたり 上下を 入れかえたり できる。<br>かくれた 扉を みつけよう。',(b,close,lead)=>{
+    const L=[{k:'霧',v:1},{k:'大きな絵',v:1},{k:'扉',v:1},{k:'石の壁',v:1}];let won=false;
+    const draw=()=>{const vis=L.filter(l=>l.v).slice().reverse();const di=L.findIndex(l=>l.k==='扉'),open=L[di].v&&L.slice(0,di).every(l=>!l.v||(l.k!=='霧'&&l.k!=='大きな絵'));
+      b.innerHTML=`<svg viewBox="0 0 300 200" class="uksv" style="background:#000">${vis.map(l=>LYD[l.k]).join('')}</svg><div class="lyr">${L.map((l,i)=>`<div class="${l.v?'':'off'}"><button type="button" data-v="${i}">${l.v?'見えてる':'かくれてる'}</button><b>${l.k}</b><button type="button" data-u="${i}" ${i?'':'disabled'}>▲</button><button type="button" data-d="${i}" ${i<L.length-1?'':'disabled'}>▼</button></div>`).join('')}</div><div class="mgrow">${open?mgB('扉を ひらく','go','id="lgo"'):''}</div>`;
+      if(open&&!won){won=true;sfx('lvup');lead('……壁に、扉が あらわれた！')}else if(!open)won=false;
+      b.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{const l=L[+x.dataset.v];l.v=!l.v;sfx('tap');draw()});
+      b.querySelectorAll('[data-u]').forEach(x=>x.onclick=()=>{const i=+x.dataset.u;[L[i-1],L[i]]=[L[i],L[i-1]];sfx('tap');draw()});
+      b.querySelectorAll('[data-d]').forEach(x=>x.onclick=()=>{const i=+x.dataset.d;[L[i+1],L[i]]=[L[i],L[i+1]];sfx('tap');draw()});
+      const g=b.querySelector('#lgo');if(g)g.onclick=()=>close(1)};
+    draw();
+  },r=>{if(!r)return mgBye(W)();const first=!EVF('layer');EVS('layer');
+    townSay([[W,'扉が……ほんとうに あった！'],['','扉の 奥は、小さな 宝物庫だった。'],...(first?[['',mgGive(80,{backup:1})]]:[])])})}
+
+/* ---- 活字の村（石畳の国）：印刷所・アトリエ・家具工房 ---- */
+{const W=24,H=16,p=mkP('eu','eu',W,H,{name:'活字の村',sub:'石畳に 印刷所が ならぶ 古い 村',spawn:[11,14],exit:[11,12]});
+  border(p,[11,12],{ks:['cypress','tree1','tree2','pine2']});
+  fillG(p,'c',1,7,22,2);fillG(p,'c',11,7,2,9);fillG(p,'c',15,9,6,4);
+  const inn=house(p,{x:1,y:2,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
+  const pr=house(p,{x:9,y:2,w:7,h:5,img:'bld_brown'});prop(p,'shelf_a',pr.x+1,pr.y+1);prop(p,'shelf_b',pr.x+5,pr.y+1);prop(p,'table',pr.x+5,pr.y+3);
+  npc(p,pr.x+2,pr.y+3,{n:'活版職人',c:NM.man,still:1,fn:kappanTalk});
+  const at=house(p,{x:16,y:2,w:7,h:5,img:'bld_blue'});prop(p,'vase',at.x+1,at.y+1,{ns:1});prop(p,'shelf_low',at.x+5,at.y+1);
+  npc(p,at.x+3,at.y+2,{n:'画家',c:NM.mage,still:1,fn:persTalk});
+  const ws=house(p,{x:1,y:9,w:7,h:5,img:'bld_brown'});prop(p,'crate',ws.x+1,ws.y+1);prop(p,'barrel',ws.x+5,ws.y+1);prop(p,'table',ws.x+1,ws.y+3);
+  npc(p,ws.x+4,ws.y+2,{n:'家具職人',c:NM.orange,still:1,fn:chairTalk});
+  prop(p,'fountain',17,10,{fw:2,say:'石畳の ひろばの ふんすい。水の 音が 活字を ひろう 音に にている。'});
+  prop(p,'barrel',21,13,{fn:ktFind('a','灯','たるの かげ')});prop(p,'crate',14,13,{fn:ktFind('b','旅','木箱の すみ')});prop(p,'flowerbed',20,9,{fn:ktFind('c','空','花だんの 土')});
+  prop(p,'bench',15,12,{fw:1});prop(p,'lantern',9,8);prop(p,'lantern',14,8);
+  npc(p,6,8,{n:'村の むすめ',c:NM.woman,fn:()=>townSay([['村の むすめ',EVF('kawara')?`かわら版、読んだよ！「${G.ev.kawara}」だって。だれが 組んだんだろうね。`:'印刷所の おじさん、活字が 見つからないって しょんぼり してたよ。']])});
+  npc(p,19,13,{n:'村の こども',c:NM.child,fn:()=>townSay([['村の こども',EVF('kawara')?'ねえ、かわら版の 字、ぜんぶ さかさまに 組むって ほんと？':'金の かけら？ ……し、しらないよ。ひろばで あそんでた だけだし。']])});
+  npc(p,13,10,{n:'たびびと',c:NM.man,say:['この 村の 本や かわら版は、ぜんぶ 手で 活字を 組んで 刷って いるんだ。','画家の アトリエの 絵は、どれも 平たいって 評判さ。……本人も なやんでる。']});
+}
+/* ほかの 町に つくる イベントを おく */
+function mgPut(id,x,y,o){const p=PLACES[id];if(!p)return;npc(p,x,y,Object.assign({still:1},o))}
+mgPut('east',9,13,{n:'摺り師',c:NM.old,fn:ukiyoTalk});
+mgPut('east',16,13,{n:'紋屋',c:NM.man,fn:monTalk});
+mgPut('rest2',7,10,{n:'看板描きの おばあさん',c:NM.old,fn:fontTalk});
+mgPut('shrine',12,8,{n:'曲線職人',c:NM.mage,fn:bezTalk});
+{const p=PLACES.spring;if(p)prop(p,'obelisk',12,9,{fn:penTalk})}
+mgPut('port',13,11,{n:'遠い国の 旅人',c:NM.orange,fn:pictTalk});
+mgPut('mac',6,11,{n:'ちいさな ねずみ',spr:'sprites/npc_mouse.png',h:18,fn:mouseTalk});
+mgPut('mac',19,4,{n:'カードの家の 子',c:NM.child,fn:cardTalk});
+mgPut('castle',18,4,{n:'画廊の 番人',c:NM.guard,fn:layerTalk});
+
 Object.values(PLACES).forEach(roofSolid);Object.values(PLACES).forEach(slimRoads);
 const WALK=new Image(),LMS=new Image(),LMI=['castle','mac','village','tower','east','storm'];
 let POI={};
 /* ワールドマップで 家の 絵で 見せる 場所 */
-const POIHOUSE={rest1:'bld_brown',rest2:'bld_blue',rest3:'bld_jp_tea',rest4:'bld_red',port:'bld_blue'};
+const POIHOUSE={eu:'bld_red',rest1:'bld_brown',rest2:'bld_blue',rest3:'bld_jp_tea',rest4:'bld_red',port:'bld_blue'};
 const POIDEF={
   shrine:{x:104,y:30,fixed:1,n:'線の祠',s:'線を紡ぐ魔女が暮らす祠'},
   spring:{x:107,y:8,fixed:1,n:'時の泉',s:'時を織る賢者が待つ泉'},
@@ -3928,7 +4314,7 @@ const POIDEF={
   port:{x:127,y:20,fixed:1,n:'王都の 船着き場',s:'雲の王国の 船が とまる 港'},
   rest1:{x:101,y:15,fixed:1,n:'灯守りの村',s:'ランプの 灯が ならぶ 森の 村'},
   rest2:{x:85,y:21,fixed:1,n:'看板の宿場',s:'看板が ずらりと ならぶ 街道の 宿場'},
-  eu:{x:81,y:14,fixed:1,n:'石畳の国',s:'ヨーロッパのような 古い街なみ（未開）'},
+  eu:{x:81,y:14,fixed:1,n:'活字の村',s:'石畳に 印刷所が ならぶ 古い 村'},
   cn:{x:97,y:27,fixed:1,n:'山水の国',s:'中国のような 山と川の国（未開）'},
   rest3:{x:61,y:31,fixed:1,n:'潮風の渡し場',s:'海を行く 旅人の 小さな 宿'},
   rest4:{x:53,y:40,fixed:1,n:'凪の漁村',s:'南の 海に うかぶ 小さな 村'},
