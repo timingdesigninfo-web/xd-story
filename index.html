@@ -3030,7 +3030,7 @@ function stopDsp(st){
 function stopHere(p){const st=CH[G.ch]&&CH[G.ch].stops[G.stop];return st&&p.stop&&st.at===p.at&&!(st.need&&(G.hunt||0)<st.need)?st:null}
 function placeObj(p){
   const st=CH[G.ch].stops[G.stop];
-  if(p.thru)return gateOpen(p.id)?'門は 開いている。左右に すすめば 通りぬけられる':gateElig(p.id)?'門番に 話しかけよう':'通行手形が ない。門は 閉まっている（章を すすめよう）';
+  if(p.thru)return gateOpen(p.id)?'門は 開いている。左右に すすめば 通りぬけられる':gateElig(p.id)?'門番に 話しかけよう':p.id==='pass'?'羅針盤が ない。門は 閉まっている':p.id==='sgate'?'殿の 書状が ない。門は 閉まっている':'通行手形が ない。門は 閉まっている（章を すすめよう）';
   if(st&&st.k==='free')return 'ゆっくり 見てまわろう';
   if(st&&st.k==='gate'&&(G.hunt||0)>=st.need)return '雲の王の ひろまへ（最後の かんもん）';
   if(st&&st.need&&(G.hunt||0)<st.need)return `村の そとで 戦いに なれよう（${G.hunt||0}/${st.need}）`;
@@ -3066,7 +3066,7 @@ function placeScreen(id,tx,ty,dir){
   TW.raf=requestAnimationFrame(townLoop);
   if(p.thru&&gateElig(p.id)&&!gateOpen(p.id))setTimeout(()=>{if(TW.on&&TW.pl===p&&!TW.busy)gateCeremony(p.id)},600);
 if(G.pendLight)setTimeout(showPendLight,700);}
-function applyGate(p){const o=gateOpen(p.id);p.thru.door.forEach(([x,y])=>p.sol[y][x]=!o);TW.npcs.forEach(n=>{if(n.open){const t=o?n.open:n.shut;n.x=t[0];n.y=t[1];n.px=n.x*TT;n.py=n.y*TT;n.hx=n.x;n.hy=n.y;n.dir=o?'down':'left'}})}
+function applyGate(p){const o=gateOpen(p.id);p.thru.door.forEach(([x,y])=>p.sol[y][x]=!o);TW.npcs.forEach(n=>{if(n.open){const t=o?n.open:n.shut;n.x=t[0];n.y=t[1];n.px=n.x*TT;n.py=n.y*TT;n.hx=n.x;n.hy=n.y;n.dir=o?'down':(p.thru.from==='right'?'right':'left')}})}
 function gateCeremony(id){const L=GATEL[id];if(!L)return;G.gt=G.gt||{};
   townSay(L.pass.map(t=>[id==='gate'||id==='pass'||id==='sgate'?'ばんにん':'',t]),()=>{G.gt[id]=1;sfx('ally');applyGate(TW.pl);save()})}
 function gateTalk(n){const id=TW.pl.id,L=GATEL[id];
@@ -3724,16 +3724,17 @@ const GATEL={
   pass:{no:['止まれ。ここは 山の 関所。この先は 嵐の ブラウザ大陸だ。','嵐の 中では 方角が くるう。羅針盤を もたぬ 者を 通せば、二度と もどっては こられん。','……南の 大地の 奥、「まよいの迷宮」に 古い 羅針盤が ねむると 聞く。'],
     pass:['止まれ。……その 羅針盤、まよいの迷宮から 持ちかえったのか。','針が、嵐の 中心を まっすぐ さしている。……よし。','通れ。嵐に 気を つけろ！'],
     ok:['この先は 嵐の 大陸だ。気を つけて いけよ。']}};
-function gateNote(id){return gateOpen(id)?'':gateElig(id)?'門番に 話しかけよう':'通行手形が ない。門は 閉まっている'}
+function gateNote(id){return gateOpen(id)?'':gateElig(id)?'門番に 話しかけよう':id==='pass'?'羅針盤が ない。門は 閉まっている':id==='sgate'?'殿の 書状が ない。門は 閉まっている':'通行手形が ない。門は 閉まっている'}
 function mkGate(id,o){
-  const W=16,Hh=11,gx=7,ry=5,p=mkP(id,id,W,Hh,{name:o.name,sub:o.sub,spawn:[1,ry],exit:null,thru:{axis:'h',rows:[ry,ry+1],gx,ry,sty:o.sty,door:[[gx,ry],[gx,ry+1]],pil:[[gx,ry+2]]}});
+  const W=16,Hh=11,gx=7,ry=5,p=mkP(id,id,W,Hh,{name:o.name,sub:o.sub,spawn:[1,ry],exit:null,thru:{axis:'h',rows:[ry,ry+1],gx,ry,sty:o.sty,from:o.from||'left',door:[[gx,ry],[gx,ry+1]],pil:[[gx,ry+2]]}});
   for(let y=0;y<Hh;y++)for(let x=0;x<W;x++){
     if(y<=3||y>=8){p.g[y][x]='m';p.sol[y][x]=true}
     else if(y===ry||y===ry+1)p.g[y][x]='d'
     else p.g[y][x]='g'}
   p.thru.pil.forEach(([x,y])=>{p.sol[y][x]=true});
   o.deco(p);
-  [0,1].forEach(i=>npc(p,gx,ry+i,{n:'ばんにん',c:o.gc,k:'gate',dir:'left',open:[gx-1,i?ry+2:ry-1],shut:[gx-1,ry+i],say:[''],still:1}));
+  const R=o.from==='right',sx=R?gx+1:gx-1; /* 旅人が 来る がわに 門番が 立つ */
+  [0,1].forEach(i=>npc(p,gx,ry+i,{n:'ばんにん',c:o.gc,k:'gate',dir:R?'right':'left',open:[sx,i?ry+2:ry-1],shut:[sx,ry+i],say:[''],still:1}));
   return p}
 {const t=['pine2','cypress','tree1','pine2'];
  mkGate('gate',{name:'東の関所',sub:'山と海に はさまれた 一本道。ここを 通らねば 東へは 行けない',sty:'jp',gc:NM.guard,deco:p=>{
@@ -3742,18 +3743,18 @@ function mkGate(id,o){
    prop(p,'signpost',5,7,{say:'東の関所。ここから先は 通行手形が いる。「山と 海に はさまれ、道は ここだけ」と 彫られている。'});
    prop(p,'signpost',10,4,{say:'この先、東の国。'});}});}
 {const t=['sakura','pine2','cypress','sakura'];
- mkGate('sgate',{name:'南の関所',sub:'東の国の 南の はし。殿の 許しなく 大陸へは わたれない',sty:'jp',gc:NM.guard,deco:p=>{
+ mkGate('sgate',{from:'right',name:'南の関所',sub:'東の国の 南の はし。殿の 許しなく 大陸へは わたれない',sty:'jp',gc:NM.guard,deco:p=>{
    [2,4,10,13].forEach((x,i)=>prop(p,t[i%4],x,4));[3,11,14].forEach((x,i)=>prop(p,t[(i+2)%4],x,7));
    prop(p,'j_andon',5,4,{ns:1});prop(p,'j_nobori',12,7);prop(p,'barrel',13,4);
    prop(p,'signpost',5,7,{say:'南の関所。「殿の 書状 なき 者、通るべからず」と 書かれている。'});
    prop(p,'signpost',10,4,{say:'この先、橋を わたって キャンバス大陸。'});}});}
 {const t=['pine2','cypress','tree5','pine2'];
- mkGate('pass',{name:'山の関所',sub:'けわしい 山と あらい 海。ここが ただ ひとつの 通り道',sty:'w',gc:NM.green,deco:p=>{
+ mkGate('pass',{from:'right',name:'山の関所',sub:'けわしい 山と あらい 海。ここが ただ ひとつの 通り道',sty:'w',gc:NM.green,deco:p=>{
    [2,4,11,13].forEach((x,i)=>prop(p,t[i%4],x,4));[3,12,14].forEach((x,i)=>prop(p,t[(i+1)%4],x,7));
    prop(p,'obelisk',5,4);prop(p,'obelisk',10,7);prop(p,'torch',6,7,{ns:1});prop(p,'torch',9,4,{ns:1});
    prop(p,'wagon',3,4);prop(p,'barrel',12,7);
    prop(p,'signpost',5,7,{say:'山の関所。「コードは 嘘を つかない」と 彫られている。この先は ブラウザ大陸。'});}});
- PLACES.pass.stop={x:4,y:6,dir:'down'};}
+ PLACES.pass.stop={x:11,y:6,dir:'left'};}
 
 let PADHOOK=null;
 function shell(center,o={}){
@@ -3935,7 +3936,8 @@ function fairyDraw(cx,x,y,t,dir){if(!G.fairy)return;const im=timg('sprites/ch_ff
 function gateDraw(p,objs,cx,camx,camy){
   const T=p.thru,im=timg('sprites/gp_'+T.sty+(gateOpen(p.id)?'_open':'_closed')+'.png');
   if(!(im.complete&&im.naturalWidth))return;
-  [[(T.ry+2)*TT+8]].forEach(([by])=>objs.push({y:by,f:()=>cx.drawImage(im,Math.round((T.gx+.5)*TT-22-camx),Math.round(by-im.naturalHeight-camy))}))}
+  const c=(T.gx+.5)*TT-camx,fl=T.from==='right'; /* 右から 来る 関所は 門を 左右反転 */
+  [[(T.ry+2)*TT+8]].forEach(([by])=>objs.push({y:by,f:()=>{const yy=Math.round(by-im.naturalHeight-camy);if(fl){cx.save();cx.translate(Math.round(c+22),yy);cx.scale(-1,1);cx.drawImage(im,0,0);cx.restore()}else cx.drawImage(im,Math.round(c-22),yy)}}))}
 function drawTown(){
   const cx=TW.cx,p=TW.pl;if(!cx||!p)return;
   if(!p.map){if(!placeReady()){cx.fillStyle='#0b0814';cx.fillRect(0,0,VW,VH);return}bakePlace(p)}
@@ -4549,7 +4551,7 @@ function drawFieldPass(cx,camx,camy,main){
   for(const k in POI){const p=POI[k];objs.push({y:(p.y+1)*TS-1,f:()=>{
     const x=Math.round(p.x*TS+TS/2-camx),y=Math.round((p.y+1)*TS-camy);
     if(GATEREQ[k]){const im=timg('sprites/gp_'+(k==='pass'?'w':'jp')+(gateElig(k)?'_open':'_closed')+'.png');
-      if(im.complete&&im.naturalWidth){const sc=.62,w=im.naturalWidth*sc,h=im.naturalHeight*sc;[y+5].forEach(by=>cx.drawImage(im,Math.round(x-22*sc),Math.round(by-h+0),w,h))}return}
+      if(im.complete&&im.naturalWidth){const sc=.62,w=im.naturalWidth*sc,h=im.naturalHeight*sc,fl=PLACES[k]&&PLACES[k].thru&&PLACES[k].thru.from==='right';[y+5].forEach(by=>{if(fl){cx.save();cx.translate(Math.round(x+22*sc),Math.round(by-h));cx.scale(-1,1);cx.drawImage(im,0,0,w,h);cx.restore()}else cx.drawImage(im,Math.round(x-22*sc),Math.round(by-h+0),w,h)})}return}
     {const pi=(!k.startsWith('dg_')||dgOpen(k)||k==='dg_castle')?timg('sprites/poi_'+k+'.png'):null;if(k.startsWith('dg_')&&!dgOpen(k)&&!(k==='dg_castle'&&pi&&pi.complete&&pi.naturalWidth))return;if(pi&&pi.complete&&pi.naturalWidth){const sc=(k==='dg_castle'?104:76)/pi.naturalHeight,w=pi.naturalWidth*sc;cx.drawImage(pi,Math.round(x-w/2),Math.round(y+10-76),w,76);return}}
     if(k.startsWith('dg_')){if(!dgOpen(k))return;const t=FLD.tick;cx.fillStyle='#00000050';cx.fillRect(x-14,y-3,28,4);
       cx.fillStyle='#6a6470';cx.fillRect(x-14,y-22,28,20);cx.fillStyle='#8a8494';cx.fillRect(x-14,y-22,28,4);cx.fillStyle='#0a0614';cx.fillRect(x-8,y-16,16,14);cx.fillRect(x-6,y-18,12,2);
