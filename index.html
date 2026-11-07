@@ -2,7 +2,7 @@
 /* HP・MPの 文字は ゲージの 上（文字 → ゲージ の じゅん） */
 .inbt .btop .pw .ar .an{order:1!important}.inbt .btop .pw .ar>b{order:2!important}.inbt .btop .pw .ar .mini{order:3!important;margin-top:1px}
 .inbt .lcol .info .btop.n3 .ally .ar .an{order:1!important}.inbt .lcol .info .btop.n3 .ally .ar>b{order:2!important}.inbt .lcol .info .btop.n3 .ally .ar .mini{order:3!important}
-</style><meta name="xd-build" content="20261031105720"><script id="xd-upd">(function(){var B="20261031105720";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){(window.savePos&&window.savePos(),location.reload())}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
+</style><meta name="xd-build" content="20261031105720"><script id="xd-upd">(function(){var B="20261031105720";function chk(){try{fetch("/?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(h){var m=h.match(/name="xd-build" content="(\d+)"/);if(m&&m[1]!==B){location.reload()}}).catch(function(){})}catch(e){}}setTimeout(chk,1500);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});window.addEventListener("pageshow",function(e){if(e.persisted)chk()})})();</script></head><body>
 <title>XD戦記</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1863,7 +1863,7 @@ function phDlg(mode,onload){document.getElementById('phdlg')&&document.getElemen
   o.querySelector('#phno').onclick=()=>o.remove();
   go.onclick=async()=>{go.disabled=true;err.textContent='';
     try{
-      if(mode==='load'){await syncPull(inp.value);const sv2=loadSave();if(onload&&sv2){o.remove();syncToast('合言葉の 記録を 読みこみました（第'+((sv2.g.ch|0)+1)+'章・Lv'+(sv2.g.lv|0)+'）。つづきから はじめます');onload(sv2);return}(window.savePos&&window.savePos(),location.reload());return}
+      if(mode==='load'){await syncPull(inp.value);const sv2=loadSave();if(onload&&sv2){o.remove();syncToast('合言葉の 記録を 読みこみました（第'+((sv2.g.ch|0)+1)+'章・Lv'+(sv2.g.lv|0)+'）。つづきから はじめます');onload(sv2);return}location.reload();return}
       const c=phCheck(inp.value);if(c.err)throw new Error(c.err);
       if(c.v===cur){o.remove();return}
       await syncApi({action:'claim',code:await phHash(c.v)});
@@ -1895,7 +1895,7 @@ function resumeSave(sv){const g=sv&&sv.g;if(g&&((g.ch|0)>=CH.length||g.clear||g.
     $('#clWalk').onclick=()=>{sfx('tap');G.auto=null;if(!(G.pray&&PLACES[G.pray.id])||PLACES[G.pray.id].ds!=null)G.pray={id:'village',tx:11,ty:18};resumeSave({...sv,g:clone(G),_walk:1})};
     return}
   return resumeSave0(sv)}
-function resumeSave0(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const au=G.auto&&PLACES[G.auto.id]?G.auto:null;if(!au&&G.fpos&&(walkable(G.fpos.x,G.fpos.y)||(G.sail&&grid[G.fpos.y]&&grid[G.fpos.y][G.fpos.x]===0))){G.tx=G.fpos.x;G.ty=G.fpos.y;return fieldScreen()}const pr=au||(G.pray&&PLACES[G.pray.id]?G.pray:null);const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(au)placeScreen(au.id,au.tx,au.ty,'down');else if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
+function resumeSave0(sv){audioInit();G=migrateG(sv.g);SNAP=sv.snap?migrateG(sv.snap):clone(G);LASTPL=null;CONT=fieldResume;fixProg();const au=G.auto&&PLACES[G.auto.id]?G.auto:null;const pr=au||(G.pray&&PLACES[G.pray.id]?G.pray:null);const pid=pr?pr.id:'village',L=loc(PLACES[pid].at==='dg'?(PLACES[pid].q||pid):PLACES[pid].at);if(L){G.tx=L.x;G.ty=L.y}if(au)placeScreen(au.id);else if(pr)placeScreen(pr.id,pr.tx,pr.ty,'down');else placeScreen('village',19,16,'down')}
 function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old.remove();return}
   const o=document.createElement('div');o.id='contdlg';o.style.cssText='position:fixed;inset:0;z-index:99998;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px';
   const bs='display:block;width:100%;box-sizing:border-box;font-family:var(--display);font-size:17px;letter-spacing:.25em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:2px solid #fff;border-radius:5px;padding:12px 8px;margin:10px 0 2px;box-shadow:0 0 12px rgba(255,160,220,.7);cursor:pointer';
@@ -1914,7 +1914,7 @@ function contDlg(sv,go){const old=document.getElementById('contdlg');if(old){old
   if(q('#cdph'))q('#cdph').onclick=()=>{o.remove();phDlg('load',sv2=>go(sv2))};
   if(sv)q('#cdbr').onclick=()=>{o.remove();go(sv)};
   if(q('#cdph2'))q('#cdph2').onclick=()=>{o.remove();phDlg(getPh()?'change':'set')};
-  if(q('#cddel')){let arm=0,tm;q('#cddel').onclick=()=>{const b=q('#cddel');if(!arm){arm=1;b.textContent='本当に 消す？（もう一度）';tm=setTimeout(()=>{arm=0;b.textContent='記録を 消す'},2600)}else{clearTimeout(tm);clearSave();try{localStorage.removeItem(PH_KEY)}catch(e){}(window.savePos&&window.savePos(),location.reload())}}}}
+  if(q('#cddel')){let arm=0,tm;q('#cddel').onclick=()=>{const b=q('#cddel');if(!arm){arm=1;b.textContent='本当に 消す？（もう一度）';tm=setTimeout(()=>{arm=0;b.textContent='記録を 消す'},2600)}else{clearTimeout(tm);clearSave();try{localStorage.removeItem(PH_KEY)}catch(e){}location.reload()}}}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
 function newGame(){G={cr:80,ch:0,stop:0,tx:86,ty:20,hp:50,max:50,str:0,mpx:0,lv:1,xp:0,turns:0,wins:0,tut:0,allies:[],pw:[],items:{herb:5,dr:0}};chapterIntro()}
 const need=lv=>Math.round(30+lv*lv*2.6); /* Lv1→2=33 Lv5=95 Lv10=290 */
@@ -3062,7 +3062,7 @@ function placeScreen(id,tx,ty,dir){
   document.querySelectorAll('#pad button').forEach(b=>{const d=b.dataset.d;
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);setHeld(d,true)});
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>setHeld(d,false)))});
-  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};G.fpos=null;if((LM[p.id]||POI[p.id])&&WARPOK(p.id)){G.went=G.went||{};G.went[p.id]=1}saveNow();{const sp=document.querySelector('.objective span');if(sp){const o0=sp.textContent;sp.textContent=(p.id===p.at?'街':'ここ')+'の 入り口で 記録されました';setTimeout(()=>{if(sp.isConnected)sp.textContent=o0},2600)}}
+  TW.on=true;TW.last=performance.now();TW.acc=0;FLD.held=[];G.auto={id:p.id};if((LM[p.id]||POI[p.id])&&WARPOK(p.id)){G.went=G.went||{};G.went[p.id]=1}saveNow();{const sp=document.querySelector('.objective span');if(sp){const o0=sp.textContent;sp.textContent=(p.id===p.at?'街':'ここ')+'の 入り口で 記録されました';setTimeout(()=>{if(sp.isConnected)sp.textContent=o0},2600)}}
   TW.raf=requestAnimationFrame(townLoop);
   if(p.thru&&gateElig(p.id)&&!gateOpen(p.id))setTimeout(()=>{if(TW.on&&TW.pl===p&&!TW.busy)gateCeremony(p.id)},600);
 if(G.pendLight)setTimeout(showPendLight,700);}
@@ -4413,7 +4413,7 @@ function fieldScreen(){DGBG=null;
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);setHeld(d,true)});
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>setHeld(d,false)));
   });
-  FLD.steps=0;FLD.thr=ENC_MIN+(Math.random()*ENC_RND|0);FLD.on=true;FLD.last=performance.now();FLD.acc=0;if(G){G.auto=null;G.fpos={x:G.tx,y:G.ty};try{saveNow()}catch(e){}}
+  FLD.steps=0;FLD.thr=ENC_MIN+(Math.random()*ENC_RND|0);FLD.on=true;FLD.last=performance.now();FLD.acc=0;
   save();showName();
   FLD.raf=requestAnimationFrame(fieldLoop);
 if(G.pendLight)setTimeout(showPendLight,700);}
@@ -4477,7 +4477,7 @@ function arrive(){
   const t=grid[P.ty][P.tx];
   walkRegen();
   if(t!==4&&t!==7&&t!==9){
-    FLD.steps+=t===0?ENC_SEA:1;FLD.ps=(FLD.ps||0)+1;if(FLD.ps%12===0)savePos();
+    FLD.steps+=t===0?ENC_SEA:1;
     if(FLD.steps>=FLD.thr){stopField();CONT=fieldResume;sfx('skill');return encounter()}
   }
 }
@@ -4493,12 +4493,6 @@ function encounter(){
   startBattle(Array.from({length:n},()=>{const m=makeMinion();if(n>1)m.hp=Math.round(m.hp*(n>=4?.72:.85));return m}),false);
 }
 function fieldResume(){save();fieldScreen()}
-/* いまいる 場所を 記録（ページが 閉じられたり 更新で 読みなおされても、そこから つづけられる） */
-function savePos(){try{if(!G||G.clear&&!G.auto&&!G.fpos)return;
-  if(TW.on&&TW.pl){G.auto={id:TW.pl.id,tx:TP.tx,ty:TP.ty};G.fpos=null}
-  else if(FLD.on){G.auto=null;G.fpos={x:G.tx,y:G.ty}}else return;
-  saveNow()}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)savePos()});addEventListener('pagehide',savePos);
 function runStop(st){
   if(st.type==='ally')return village(st.k);
   if(st.type==='boss')return startBattle(BOSSES[st.k],true,{noAlly:st.k==='cloudKing'});
