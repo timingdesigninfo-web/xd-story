@@ -3231,7 +3231,7 @@ const STAGE_SAY={
  'east_in:東の王':[[20,['プロト殿が もどって、町に 活気が もどった。礼を 言うぞ、XD。']],[30,['りんごの島の 話も 聞いた。……そなたの 旅は、国を こえて 人を 動かして おる。']],[50,['ブラウザ大陸の 嵐の 話は、ここまで 届いておる。……気を つけて まいれ。']],[57,['妖精の 城へ 向かうか。……東の国は、そなたの 帰りを 待って おるぞ。']]],
  'east:大臣':[[20,['殿が 上機嫌で のう。……プロト殿の おかげじゃ。']],[50,['嵐の 大陸へ 行かれるとか。……殿が、また 心配して おられる。']]],
  'east_in:大臣':[[20,['殿が 上機嫌で のう。……プロト殿の おかげじゃ。']],[50,['嵐の 大陸へ 行かれるとか。……殿が、また 心配して おられる。']]],
- 'port:船長':[[51,['航海士を 見つけたか！ さあ、船へ 連れて きてくれ。']],[53,['船は いつでも 出せる。……嵐の 大陸は、東へ 回りこむのが 近いぞ。','ただし あの 大陸の 岸は 崖ばかりだ。船を つけられるのは、南の 大地の 北東の「嵐よけの 入り江」だけだ。']],[57,['妖精の 城は、南の 海の「守り人の大地」に ある。……城の ことなら、とちゅうの 潮風の渡し場で 聞くと いい。武運を。']]],
+ 'port:船長':[[51,['航海士を 見つけたか！ さあ、船へ 連れて きてくれ。']],[53,['船は いつでも 出せる。はしごを かけて おいたから、そこから 乗りこめ。……嵐の 大陸は、東へ 回りこむのが 近いぞ。','ただし あの 大陸の 岸は 崖ばかりだ。船を つけられるのは、南の 大地の 北東の「嵐よけの 入り江」だけだ。']],[57,['妖精の 城は、南の 海の「守り人の大地」に ある。……城の ことなら、とちゅうの 潮風の渡し場で 聞くと いい。武運を。']]],
  'village:Dw':[[1,['……外で、もう少し 腕を ならして おいで。灯は、そう すぐには 強くならん。']],[2,['雲の国の 王の城で、Fiが 待っておる。急ぐのじゃ。']],[3,['妖精とは、うまく やっておるか？ 頼りきるなよ。手で 戦うことも、忘れるでないぞ。']],[5,['灯が 明るいのう。……さあ、奪われた 力を 取り戻しに 行け。わしは ここで 灯を 守っておる。']]],
  'village:こども':[[3,['あのね、さっき 光る ちいさい子が 村の 上を とんでたよ。あれが 妖精？　……ちょっと こわいけど、きれい。']],[5,['おじいさんの 灯、ほんとに 明るくなった！　ぼくも 絵、描いてみようかな。']]],
  'village:むらの おんな':[[3,['妖精を 連れた 旅人だなんて……。便利な 力を どう 使うかは、あなた しだい ね。']],[5,['村の 窓に 灯が ともったわ。ひさしぶり……。手を 動かしたく なってきた。']]],
@@ -3600,6 +3600,8 @@ const MEET={
    l:['……これは！ ずっと、待って いたんだ。この 作品を。','ありがとう。見せて くれて ありがとうと、あの人に 伝えて おくれ。','届けて はじめて、作品は 作品に なる。ふたりの 時間が、いま 動きだしたよ。……これが「伝える力」の はじまりだ。'],
    opt:'封筒を とどける',after:()=>{G.keys=(G.keys||[]).filter(k=>k!=='作り手の 封筒');if(!G.keys.includes('待つ人の 手紙'))G.keys.push('待つ人の 手紙');setTimeout(()=>keyToast('待つ人の 手紙'),300)}},
 };
+/* 船着き場の はしごから、そのまま 船に のって 海へ */
+function boardShip(){townOff();LASTPL=null;G.sail=1;G.tx=G.sx;G.ty=G.sy;sfx('skill');CONT=fieldResume;fieldScreen()}
 function shipPic(on,src){
   const old=$('#shipbig');if(old)old.remove();if(!on)return;const v=app.querySelector('.view');if(!v)return;
   const d=document.createElement('div');d.id='shipbig';d.style.cssText='position:absolute;left:0;right:0;top:0;height:66%;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:30;filter:drop-shadow(0 6px 10px #000a)';
@@ -3878,6 +3880,7 @@ function tmFound(){
 function townTalk(mode){
   if(!TW.on||TW.busy||TP.moving)return;
   const p=TW.pl,[dx,dy]=VEC[TP.dir],x=TP.tx+dx,y=TP.ty+dy;
+  if(p.id==='port'&&G.ship&&y<=7&&x>=11&&x<=13){sfx('tap');return townChoice('はしごが かかっている。船に のりこむ？',[{l:'のりこむ',s:'このまま 海へ 出る',f:boardShip},{l:'やめる',s:'',f:()=>{}}])}
   let n=TW.npcs.find(n=>n.x===x&&n.y===y);
   const q=n?null:propAt(p,x,y);
   if(!n&&q&&q.k==='counter')n=TW.npcs.find(n=>n.x===x+dx&&n.y===y+dy);
@@ -3941,7 +3944,11 @@ function drawTown(){
   camx=mw<=VW?Math.round((mw-VW)/2):Math.max(0,Math.min(mw-VW,camx));
   camy=mh<=VH?Math.round((mh-VH)/2):Math.max(0,Math.min(mh-VH,camy));
   cx.fillStyle='#0b0814';cx.fillRect(0,0,VW,VH);cx.drawImage(p.map,-camx,-camy);
-  if(p.shipPic){const im=timg('sprites/ship_big.png');if(im.complete&&im.naturalWidth){const h=p.shipPic.h,w=im.naturalWidth*h/im.naturalHeight,bob=Math.round(Math.sin(TW.tick/40)*1.5);cx.drawImage(im,Math.round(p.shipPic.x*TT+TT/2-w/2-camx),Math.round(p.shipPic.by*TT-h-camy+bob),w,h);cx.drawImage(p.map,0,8*TT,mw,2*TT,-camx,8*TT-camy,mw,2*TT)}}
+  if(p.shipPic){const im=timg('sprites/ship_big.png');if(im.complete&&im.naturalWidth){const h=p.shipPic.h,w=im.naturalWidth*h/im.naturalHeight,bob=Math.round(Math.sin(TW.tick/40)*1.5);cx.drawImage(im,Math.round(p.shipPic.x*TT+TT/2-w/2-camx),Math.round(p.shipPic.by*TT-h-camy+bob),w,h);cx.drawImage(p.map,0,8*TT,mw,2*TT,-camx,8*TT-camy,mw,2*TT);
+    if(G.ship){ /* はしご：甲板から 岸へ */
+      const lx=Math.round(12*TT-camx),top=Math.round(p.shipPic.by*TT-h*.32-camy+bob),bot=Math.round(8*TT+TT*.3-camy),lw=Math.round(TT*.7);
+      cx.fillStyle='#5a3a1e';cx.fillRect(lx,top,4,bot-top);cx.fillRect(lx+lw-4,top,4,bot-top);
+      cx.fillStyle='#a87444';for(let yy=top+6;yy<bot;yy+=Math.max(8,TT/4|0))cx.fillRect(lx+2,yy,lw-4,3);}}}
   const objs=[];
   p.props.forEach(q=>{if(q.gr)return;const ni=npi(q,p);if(ni===0)return;const r=ni?[0,0,ni.w,ni.h]:PP[q.k],bx=(q.x+q.fw/2)*TT+q.dx,by=(q.y+1)*TT+q.dy;
     if(bx+r[2]<camx||bx-r[2]>camx+VW||by<camy||by-r[3]>camy+VH)return;
