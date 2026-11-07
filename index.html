@@ -4366,7 +4366,9 @@ const POIDEF={
   rest3:{x:61,y:31,fixed:1,n:'潮風の渡し場',s:'海を行く 旅人の 小さな 宿'},
   rest4:{x:53,y:40,fixed:1,n:'凪の漁村',s:'南の 海に うかぶ 小さな 村'},
 };
-const walkable=(x,y)=>{if(x<0||y<0||x>=MW||y>=MH)return false;if(x===116&&y>=19&&y<=20&&!(G&&G.gt&&G.gt.gate))return false;if(y===33&&x===39&&!(G&&G.gt&&G.gt.pass&&gateElig('pass')))return false;if(y===32&&x>=110&&x<=111&&!(G&&G.gt&&G.gt.sgate&&G.ch>=2))return false;const t=grid[y][x];if(t===0)return !!(G&&G.ship&&(G.sail||(x===G.sx&&y===G.sy)));return !blocked(t)};
+/* 関所の 橋：ゆるされて いれば 通れる（門の 儀式を 見て いなくても。反対がわから 来ても） */
+function gatePassOK(id){try{return !!(G&&((G.gt&&G.gt[id]&&id!=='pass')||gateElig(id)))}catch(e){return !!(G&&G.gt&&G.gt[id])}}
+const walkable=(x,y)=>{if(x<0||y<0||x>=MW||y>=MH)return false;if(x===116&&y>=19&&y<=20&&!gatePassOK('gate'))return false;if(y===33&&x===39&&!gatePassOK('pass'))return false;if(y===32&&x>=110&&x<=111&&!gatePassOK('sgate'))return false;const t=grid[y][x];if(t===0)return !!(G&&G.ship&&(G.sail||(x===G.sx&&y===G.sy)));return !blocked(t)};
 function snapPOI(){
   for(const k in POIDEF){
     const d=POIDEF[k];if(d.fixed){POI[k]={...d};continue}let best=null,bd=1e9;
