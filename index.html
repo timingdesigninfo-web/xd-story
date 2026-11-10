@@ -988,7 +988,7 @@ const SKILLS=[
   {id:'blend',g:'x_blend',n:'わざアップ',lv:8,mp:5,d:'3ターン、わざの 威力が 5わり 上がる',f:()=>upS(.5,3)},
   {id:'brand',g:'x_brand',n:'弱点攻撃',lv:12,mp:7,d:'かならず あいての 弱点を つく 一撃',f:()=>{Q.push({k:'sure'});hit(1.6)}},
   {id:'voice',g:'x_voice',n:'こうげきアップ',lv:5,mp:4,d:'4ターン、こうげきが 3わり 強くなる',f:()=>upA(.3,4)},
-  {id:'auto',g:'x_auto',n:'自動攻撃',lv:6,mp:6,d:'人形が いまと つぎの ターンに じどうで こうげき',f:()=>{hitF(1.6,'puppet');Q.push({k:'autoN',n:1})}},
+  {id:'auto',g:'x_auto',n:'時間トリガー',lv:6,mp:6,d:'時間が たつと 人形が うごく。いまと つぎの ターンに こうげき',f:()=>{hitF(1.6,'puppet');Q.push({k:'autoN',n:1})}},
   {id:'stack',n:'スタック',lv:7,mp:5,d:'全体攻撃。てきぜんたいに 1.3ばいの ダメージ',f:()=>hit(1.3,false,true)},
   {id:'autoanim',n:'オートアニメート',lv:10,mp:7,d:'人形が なめらかに 動いて 1.3ばいを 3かい',f:()=>{hitF(1.3,'puppet');hitF(1.3,'puppet');hitF(1.3,'puppet')}},
   {id:'states',n:'状態の きりかえ',lv:13,mp:8,d:'3ターン こうげきが 4わり アップ。バリアも はる',f:()=>{upA(.4,3);guard(1.2+G.lv*.1)}},
@@ -1192,7 +1192,7 @@ GG('x_plug','xd','tool',4,100,'プラグインのロッド',{atk:1,d:'スキル�
 
 GG('x_voice','xd','tool',5,160,'ムービーソード',{atk:2,d:'声で うごかす スキル'});
 GG('x_resp','xd','tool',8,360,'レスポンシブソード',{atk:2,d:'のびちぢみ スキル'});
-GG('x_auto','xd','tool',6,280,'オートアニメートの 剣',{atk:3,d:'うごきを つける スキル'});
+GG('x_auto','xd','tool',6,280,'時間トリガーの 剣',{atk:3,d:'時間で うごきだす スキル'});
 
 
 GG('x_share','xd','tool',11,600,'ウェブシェアハンマー',{atk:4,d:'とどける スキル'});
@@ -1576,7 +1576,7 @@ function shotDlg(cv){
     let copied=false;
     if(blob&&navigator.clipboard&&window.ClipboardItem){try{const p=navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);window.open('https://x.com/intent/post?text='+encodeURIComponent(t),'_blank','noopener');await p;copied=true}catch(e){}}
     else window.open('https://x.com/intent/post?text='+encodeURIComponent(t),'_blank','noopener');
-    msg(copied?'画像を コピーしました。Xの 投稿画面に 貼りつけ（⌘V / Ctrl+V）してね。':(url?'Xの 投稿画面を ひらきました。画像は「画像を ほぞん」してから つけてね。':'Xの 投稿画面を ひらきました。'))};
+    msg(copied?'画像を コピーしました。Xの 投稿画面に 貼りつけ（⌘V）してね。':(url?'Xの 投稿画面を ひらきました。画像は「画像を ほぞん」してから つけてね。':'Xの 投稿画面を ひらきました。'))};
 }
 function tmain(){
   if(!app.querySelector('.view'))return openSettings();
@@ -3850,7 +3850,7 @@ const FINDS=[
   {id:'lr_slider',n:'Lrの 明るさスライダー',d:'+1.0に すると、ごはんが おいしそうに 見える。',hp:10},
   {id:'au_tape',n:'Auの 録音テープ',d:'ざわざわした 町の 音が はいっている。'},
   {id:'xd_blue',n:'XDの 設計図の きれはし',d:'すみに「あとで なおす」と 小さく メモ。'},
-  {id:'ctrlz',n:'Ctrl+Zの おまもり',d:'なんど おしても、あの日には もどれない。'},
+  {id:'ctrlz',n:'⌘Zの おまもり',d:'なんど おしても、あの日には もどれない。'},
   {id:'save_btn',n:'保存ボタンの かけら',d:'おすと ちいさく カチッと 鳴る。',cr:15},
   {id:'zoom_glass',n:'ズームの 虫めがね',d:'400%に すると、ほこりが 山に 見える。'},
   {id:'eyedrop',n:'スポイトの ガラス',d:'さわった ものの 色を すこし だけ 吸う。'},
@@ -5116,7 +5116,7 @@ async function runQ(){
     }else if(a.k==='selfhurt'){
       G.hp=Math.max(1,G.hp-a.n);sfx('hurt');jolt('#me','flash');pop('#me','-'+a.n,'dmg');render();await wait(560);
     }else if(a.k==='autoN'){
-      B.autoN=(B.autoN||0)+a.n;sfx('skill');say('人形が じどうで うごきはじめた……！');await wait(560);
+      B.autoN=(B.autoN||0)+a.n;sfx('skill');say('時間トリガー！ 人形が ひとりでに うごきだした……！');await wait(560);
     }else if(a.k==='say'){
       say(a.h);await wait(800);
     }else if(a.k==='rewind'){
