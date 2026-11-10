@@ -1602,7 +1602,7 @@ function tmMap(){
   const lab=(x,y,n,col,dn)=>{const px=(WX(x)+.5)*TS*S,py=(y+.5)*TS*S,ty=dn?py+30:py-13;g.fillStyle=col;g.beginPath();g.arc(px,py,7,0,7);g.fill();g.lineWidth=2.5;g.strokeStyle='#fff';g.stroke();g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.8)';g.strokeText(n,px,ty);g.fillStyle='#fff';g.fillText(n,px,ty)};
   {g.save();g.font='bold italic 30px serif';g.globalAlpha=.85;[...REGIONS.filter(r=>r.lx!=null),SNOWN].forEach(r=>{const py=(r.ly+.5)*TS*S,hw=g.measureText(r.n).width/2+4;let best=null;[-1,0,1].forEach(m=>{const raw=(WX(r.lx)+.5+m*MW)*TS*S,cl=Math.max(hw,Math.min(c.width-hw,raw));if(best==null||Math.abs(cl-raw)<best[1])best=[cl,Math.abs(cl-raw)]});{const px=best[0];g.lineWidth=4;g.strokeStyle='rgba(20,10,30,.75)';g.strokeText(r.n,px,py);g.fillStyle='#ffe9a8';g.fillText(r.n,px,py)}});g.restore();g.font='bold 22px sans-serif';g.textAlign='center'}
   for(const k in LM)if(k!=='storm')lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
-  for(const k of ['eu','rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
+  for(const k of ['eu','keep','rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
   const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#000e;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)';
   const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;color:#fff;font-size:12px;flex:none';
@@ -1819,7 +1819,7 @@ const CH=[
   {y:2028,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'}]},
   {y:2029,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
   {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'}]},
-  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
+  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'keep',type:'story',k:'c_elder'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
 ];
 
 /* ================= state & save ================= */
@@ -3193,7 +3193,8 @@ const S2={
  o_hi:{w:'Ae　時を織る賢者',hint:'時の泉の 賢者に 会う',l:['よく 来た、XD。この泉の まわりを 見よ。つくった ものが、山のように 眠って おるじゃろう。','「まだ 見せられない」「もう少し 直してから」……そう 言って 手元に しまい込む うちに、世界に とどかぬ まま 時が すぎる。','そのためらいが「ペンディ」という 魔物に なった。人々の「伝える力」を 食って 育って おる。','公開する 勇気には、きっかけが いる。東の 原っぱに、作品を 出しそびれた「作り手」が おる。彼から 作品を あずかり、東の 空の 下で 待つ 人へ 届けて きなさい。']},
  o_clear:{w:'Ae　時を織る賢者',hint:'泉の 賢者に ほうこくする',l:['見事じゃ。「伝える力」が もどったな。つくった ものを みんなに とどける。それも 作り手の 仕事じゃ。','わしも 旅に 加わろう。時間の 扱いは 任せなさい。','……さて、残るは「考える力」。山の関所の むこう、ブラウザ大陸の 嵐の主が、最後の 鍵を 握って おる。'],fin:()=>{grantPower('open');if(!G.allies.includes('ae'))G.allies.push('ae');sfx('ally')}},
  c_rumor:{w:'宿の だんなさん',dsp:'clerk_i',c:['#6a8f3a','#3a2a1a'],hint:'潮風の渡し場で、妖精の城の うわさを 聞く',l:['……おや、嵐の 大陸の ほうから 来たのかい。空の 色が 変わったと 思ったら、あんたたち だったか。','妖精の城？ ……南の 大地の 北の はずれに たつ 城だね。まわりは 白い 霧に つつまれて、船で 近づいても 門が 見えないんだ。','その 霧を はらう 方法を 知ってるのは、凪の漁村の おばあさんだけさ。むかし 城の 門を 守っていた「守り人」の 家の 人だよ。','南西の 小さな 島だ。……びんの 手紙と いっしょで、あきらめずに 行けば、きっと とどく。']},
- c_keep:{w:'網あみの おばあさん',dsp:'net',c:['#8a7a9a','#e8e8e8'],hint:'凪の漁村の「守り人」の おばあさんに 会う',l:['……来たかい。妖精の 光を 連れた 旅の 人。','わたしの 家は、むかし 妖精の城の 門を 守る「守り人」だった。王さまが 妖精の 力に のまれてから、門は 霧で とざされて しまったのさ。','あの 霧は、機械じゃ はらえない。手で ひと目ずつ あんだ 網だけが、霧を すくいとれる。','ほら、これを 持っていきな。わたしと 孫で あんだ「守り人の 網」だ。……王さまを、たのんだよ。'],fin:()=>{G.keys=G.keys||[];if(!G.keys.includes('守り人の 網'))G.keys.push('守り人の 網');setTimeout(()=>keyToast('守り人の 網'),300)}},
+ c_keep:{w:'網あみの おばあさん',dsp:'net',c:['#8a7a9a','#e8e8e8'],hint:'凪の漁村の「守り人」の おばあさんに 会う',l:['……来たかい。妖精の 光を 連れた 旅の 人。','わたしの 家は、むかし 妖精の城の 門を 守る「守り人」だった。王さまが 妖精の 力に のまれてから、門は 霧で とざされて しまったのさ。','あの 霧は、機械じゃ はらえない。手で ひと目ずつ あんだ 網だけが、霧を すくいとれる。','ほら、これを 持っていきな。わたしと 孫で あんだ「守り人の 網」だ。','……ただ、網だけでは 門は ひらかない。東の 大地の「守り人の里」で、長に 網へ 灯を あんで もらいな。'],fin:()=>{G.keys=G.keys||[];if(!G.keys.includes('守り人の 網'))G.keys.push('守り人の 網');setTimeout(()=>keyToast('守り人の 網'),300)}},
+ c_elder:{w:'守り人の 長',dsp:'keeper',c:['#7a5a9a','#e8e0d0'],hint:'東の 大地の「守り人の里」で、長に 網を 見せる',l:['……よう 来なすった。その 網、凪の 浜の あの子らが あんだものじゃな。','わしらは 代々、妖精の城の 門を 見守って きた。王が 妖精の 力に のまれて 霧を はってから、だれも 門に 近づけん。','網は 霧を すくう。じゃが 門を ひらくのは「灯」じゃ。人の 手で ともした 灯を、ひと目ずつ 網に あみこむ。','……XD、そなたの 灯を すこし わけて おくれ。','（長は 糸車を まわし、XDの 灯を 網の 目に あみこんだ。網が、ほのかに 光りだした）','これで「灯の 網」じゃ。城は この 大地の 北の はし。……王を、どうか 起こして やって おくれ。'],fin:()=>{G.keys=G.keys||[];const i=G.keys.indexOf('守り人の 網');if(i>=0)G.keys.splice(i,1);if(!G.keys.includes('灯の 網'))G.keys.push('灯の 網');G.hp=G.max;G.mp=G.mmp;Object.values(G.al||{}).forEach(a=>{if(a&&a.max){a.hp=a.max;if(a.mmp)a.mp=a.mmp}});setTimeout(()=>{try{keyToast('灯の 網')}catch(e){}},300)}},
  f_hi:{w:'Fi　生まれたての精霊',hint:'山の関所へ。南の 大地と 嵐の 大陸を むすぶ ただ ひとつの 道',l:['……ここが 山の 関所。この 山の むこうが ブラウザ大陸。空は 嵐に とざされて、その 中心に 人かげが 見える。','あれは フィグム。いまは この 大陸を 力で おさえつける 暴君。……「おまかせの 力」を 取り入れて、さからう 道具を ぜんぶ 従わせて いるの。','最後の 力は「考える力」。あの 暴君から 取りもどさなきゃ。……でも、なにを つくるか、どう 生きるかを 決めるのは、わたしじゃ ない。あなた。','でも、わたしは そばに いる。……嵐の 中は、羅針盤が ないと 方角が わからなく なる。この 関所も、羅針盤が なければ 通して もらえないの。南の 大地の 奥の「まよいの 迷宮」に、羅針盤が ねむってる。取って きて、この 関所を こえよう、XD。']},
  f_clear:{w:'Fi　生まれたての精霊',hint:'Fiの もとへ もどる',l:[['','嵐が やみ、フィグムは ひざを ついた。胸の 奥から、うすい 桃色の 糸が ほどけて いく。','sprites/boss_figma.png'],['フィグム','……私は、いままで……だれかに、動かされて いたのか……？','sprites/boss_figma.png'],['フィグム','……XD。すまなかった。この 大陸の 者たちにも、詫びねば ならん。','sprites/boss_figma.png'],['Fi　生まれたての精霊','あの糸……南の 海の むこう、妖精の城から のびてる。みんなの「おまかせ」の 力を あつめて、フィグムを 暴君に して 操って いた王が いるの。——妖精の王。',PFF],['Fi　生まれたての精霊','フィグムは 悪く ない。力を むりやり 使わされて、この 大陸を おさえつけて いただけ。……それに 妖精の王にも、悪意は ないの。「みんなを しあわせに したい」って、ほんとうに 思ってる。',PFF],['Fi　生まれたての精霊','「考える力」は もどったよ、XD。でも、糸の さきを たたなければ、また 同じことが おきる。……妖精の城へ、行こう。',PFF]],fin:()=>{grantPower('choose');sfx('lvup')}},
 };
@@ -3584,6 +3585,18 @@ function tale(p,x,y,id){const T=RTALE[id];npc(p,x,y,{n:T.n,dsp:T.dsp,still:1,c:N
     townSay([['網あみの むすめ','あっ、網が やぶれちゃった……。おばあちゃんに 見つかる 前に、つくろわないと。'],['網あみの むすめ','……手つだって くれる？']],()=>townChoice('',[{l:'いっしょに つくろう',s:'',f:()=>{EVS('r4net');G.items.herb=(G.items.herb||0)+2;sfx('lvup');townSay([['','XDは むすめと ならんで、ひと目ずつ 網を あんだ。'],['','……手を 動かすと、どこが よわいか、手が 教えてくれる。'],['網あみの むすめ','できた！ ……ありがとう。これ、おばあちゃんの やくそう。'],['','やくそうを 2こ もらった。']])}},{l:'やめておく',s:'',f:()=>{}}]))}});
 }
 
+/* 守り人の里：妖精の城を 見守って きた 人びと。宿・店・礼拝堂・長の 家 */
+{const W=22,H=15,p=mkP('keep','keep',W,H,{name:'守り人の里',sub:'妖精の城を 見守って きた 人びとの 里',spawn:[10,13],exit:[10,11],stop:{x:11,y:9,dir:'down'}});
+  border(p,[10,11],{ks:['pine2','tree1','cypress','tree5']});
+  fillG(p,'d',10,7,2,8);fillG(p,'d',2,7,18,2);fillG(p,'c',8,8,6,3);
+  const inn=house(p,{x:1,y:1,w:7,h:5,img:'bld_red'});furnishInn(p,inn);
+  const sh=house(p,{x:8,y:1,w:6,h:5,img:'bld_brown'});furnishShop(p,sh);npc(p,sh.x+3,sh.y+3,{n:'里の 商人',k:'shop',dsp:'clerk_t',c:NM.man,say:['城の 霧の ちかくは、魔物も 手ごわい。しっかり そなえて いきな。']});
+  const chp=house(p,{x:15,y:1,w:6,h:5,img:'bld_blue'});furnishHome(p,chp,{});npc(p,chp.x+3,chp.y+3,{n:'いのりの おばば',k:'pray',c:NM.old,say:['城へ 行く 者は、ここで 旅の 記録を のこして いくんじゃ。']});
+  prop(p,'well',5,11);prop(p,'lantern',8,10);prop(p,'lantern',14,10);prop(p,'bench',15,12,{fw:2});prop(p,'flowerbed',3,12);prop(p,'barrel',18,11);
+  prop(p,'obelisk',17,9,{say:'石碑に きざまれている。「霧は 網で すくい、門は 灯で ひらく。手で あんだ ものだけが、妖精の 城に とどく」'});
+  npc(p,4,9,{n:'里の こども',c:NM.child,say:['北の 城の まわり、いつも 白い 霧なんだ。でも 夜は、霧の 中で 何か 光ってるよ。','長は 糸車で なんでも あんじゃうんだ。灯だって！']});
+  npc(p,16,8,{n:'見張りの 若者',c:NM.guard,say:['この 里は、城の 門を 見守る ために できた。もう 何十年も、門は 霧の 中だ。','……あんたが 行くのか。たのんだぞ。']});
+}
 /* ---- クエスト：であい・ダンジョン ---- */
 const MEET={
  navi:{x:103,y:33,n:'老航海士',col:['#3a6a8a','#d8d0c0'],hint:'南の 果ての 浜に 住む「老航海士」を さがす',
@@ -4355,7 +4368,7 @@ Object.values(PLACES).forEach(roofSolid);Object.values(PLACES).forEach(slimRoads
 const WALK=new Image(),LMS=new Image(),LMI=['castle','mac','village','tower','east','storm'];
 let POI={};
 /* ワールドマップで 家の 絵で 見せる 場所 */
-const POIHOUSE={eu:'bld_red',rest1:'bld_brown',rest2:'bld_blue',rest3:'bld_jp_tea',rest4:'bld_red',port:'bld_blue'};
+const POIHOUSE={keep:'bld_blue',eu:'bld_red',rest1:'bld_brown',rest2:'bld_blue',rest3:'bld_jp_tea',rest4:'bld_red',port:'bld_blue'};
 const POIDEF={
   shrine:{x:80,y:22,fixed:1,n:'線の祠',s:'線を紡ぐ魔女が暮らす祠'},
   spring:{x:75,y:8,fixed:1,n:'時の泉',s:'時を織る賢者が待つ泉'},
@@ -4372,6 +4385,7 @@ const POIDEF={
   eu:{x:70,y:19,fixed:1,n:'活字の村',s:'石畳に 印刷所が ならぶ 古い 村'},
   cn:{x:97,y:27,fixed:1,n:'山水の国',s:'中国のような 山と川の国（未開）'},
   rest3:{x:61,y:31,fixed:1,n:'潮風の渡し場',s:'海を行く 旅人の 小さな 宿'},
+  keep:{x:79,y:47,fixed:1,n:'守り人の里',s:'妖精の城を 見守って きた 人びとの 里'},
   rest4:{x:53,y:40,fixed:1,n:'凪の漁村',s:'南の 海に うかぶ 小さな 村'},
 };
 /* 関所の 橋：ゆるされて いれば 通れる（門の 儀式を 見て いなくても。反対がわから 来ても） */
