@@ -1165,7 +1165,7 @@ async function allyAct(a){
 }
 
 const ALLYSK={
-  dw:{n:'コードビュー',d:'MPを ぜんぶ かいふくする',f:()=>mpUp(999)},
+  dw:{n:'コードビュー',get d(){return (typeof G!=='undefined'&&G&&G.dwUp)?'MPを ぜんぶ かいふくして、バリアも はる':'MPを ぜんぶ かいふくする'},f:()=>{mpUp(999);if(G&&G.dwUp)guard(2)}},
   ai:{n:'ベクター斬り',d:'1.7ばいの こうげきを 2かい',f:()=>{hit(1.7);hit(1.7)}},
   ae:{n:'タイムリマップ',d:'てきの つぎの こうどうを とばす',f:()=>skipEnemy()},
   ps:{n:'生成塗りつぶし',d:'3.4ばいの ダメージ',f:()=>hit(3.4)},
@@ -1816,10 +1816,10 @@ const ALLIES={
 const CH=[
   {y:2026,t:'消える灯',m:'sad',p:'2026年。XDが目を覚ましてから、十年がたった。村の灯が、少しずつ弱まっている。便利な力があらゆる道具に宿り、人々が手でものを作らなくなったのだ。ずっと傍らにいた隠者Dwも、その波に力を吸われて消えかけている。……XD自身の手からも、「描く力」も「考える力」も、少しずつ抜けていくのを感じる。クリエイターの五つの力（見る・描く・聞く・伝える・考える）を取り戻すため、広場の おじいさんに話しかけよう。',stops:[{at:'village',type:'story',k:'fade'},{at:'village',type:'story',k:'back',need:3},{at:'castle',type:'story',k:'gift'},{at:'castle',type:'story',k:'gate',need:3},{at:'village',type:'story',k:'release'}]},
   {y:2027,t:'ぼやけた世界',m:'sad',p:'XDは、東の国へ向かった。瓦屋根と桜の町。……だが、町の人々は、ものごとを「だいたい」で済ませるようになり、細部が見えなくなっているという。五つの力のひとつ、「見る力」を奪った魔物を探そう。',stops:[{at:'east',type:'story',k:'e_hi'},{at:'dg_see',type:'dungeon',k:'dg_see'},{at:'east',type:'boss',k:'daitai'},{at:'east',type:'story',k:'e_clear'},]},
-  {y:2028,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'}]},
+  {y:2028,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'},{at:'mac',type:'story',k:'dw_mac'}]},
   {y:2029,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
-  {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'}]},
-  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'keep',type:'story',k:'c_elder'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
+  {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'},{at:'spring',type:'story',k:'dw_spring'}]},
+  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'keep',type:'story',k:'c_elder'},{at:'keep',type:'story',k:'dw_keep'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
 ];
 
 /* ================= state & save ================= */
@@ -3223,6 +3223,40 @@ function prayAsk(n){
     if(!SYNC)return townSay([[W,'……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
   townChoice('',[{l:K?'神さまに いのる':'いのる',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:K?'こころを うちあける':'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
+Object.assign(STORYWHO,{dw_mac:['a','dw'],dw_spring:['a','ae'],dw_keep:['a','dw']});
+Object.assign(S2,{
+ dw_mac:{w:'Dw　灯の かげ',dsp:'dwf',hint:'りんごの島で、懐の 灯が ゆれている',l:[
+  ['','Fwの 店の 前を 通ると、懐の 灯が ふるえて、小さな 声が もれた。'],
+  'なつかしい 匂いじゃ。……XD、聞いてくれるか。わしが なぜ 消えかけて おるのか。',
+  'むかし、ウェブの 国に「マクロメ」という 工房が あった。わしは そこで、ページを 組む 職人じゃった。コードと 絵を ふたつの 窓で 見くらべながら、手で 組む。それが わしの 仕事じゃ。',
+  'となりの 作業台には、動きを 吹きこむ Flと、ピクセルを 磨く Fwが おった。三人で、ウェブの 世界を 彩って おったのじゃ。',
+  ['Fw','……ふふ。ひとりごとが 聞こえたわ。Dw、まだ 灯の 中に いたのね。','sprites/ally_fw.png'],
+  'おお、Fw。……元気そうで なによりじゃ。',
+  'やがて 工房は、大きな 国「アドビ」に 迎えられた。そこには 本を 編む Idや、映像を つなぐ Prが おって、それは にぎやかな 日々じゃった。',
+  'じゃが 時が たつほど、道具は「手で 組む もの」から「おまかせで 出てくる もの」に かわった。Flは 眠り、Fwは 店を たたみ……わしも、使われなく なった。',
+  '恨みは せん。ただ ひとつ、心残りが ある。わしが 教えたかった「組む よろこび」を、だれにも 手渡せて おらん ことじゃ。',
+  'XD。おまえが 手で つくる かぎり、わしの 灯は 消えん。……さあ、先へ 行こう。'],
+  fin:()=>{G.dwhist=(G.dwhist||0)|1}},
+ dw_spring:{w:'Ae　時を織る賢者',hint:'時の泉の 賢者が、灯を 見つめている',l:[
+  '……XD。その 懐の 灯、ずいぶん 古い 光を して おるな。見せなさい。……ほう、Dwの 灯か。',
+  ['Dw　灯の かげ','……Aeか。何十年ぶりじゃろう。おまえは まだ 長話を して おるのか。',PDW],
+  '相変わらず なのは、おまえの 口の わるさじゃ。……XD、こやつと わしは、同じ 大きな 国の 釜の飯を くった なかまでの。',
+  'わしは 「時」の 魔法を みがいて きた。動かす 力は いまも ある。じゃが 今は、ボタンひとつで 動きが 生まれる。人は「待つ 時間」を わすれて しまった。',
+  ['Dw　灯の かげ','わしも おなじじゃ。ページは 一言で 生まれるように なった。……便利に なるのは わるくない。ただ、組む 手が 止まるのが さびしい。',PDW],
+  '便利さと、つくる よろこび。どちらも 捨てずに 歩く 若者が、ようやく 現れた ということじゃ。……XD、おまえの ことじゃぞ。',
+  'Idは 本の 国で、Prは 映像の 国で、それぞれ 灯を 守って おる。……いずれ 会う ことに なろう。道は 一本では ないからの。'],
+  fin:()=>{G.dwhist=(G.dwhist||0)|2}},
+ dw_keep:{w:'Dw　灯の かげ',dsp:'dwf',hint:'灯の 網が ほのかに ゆれている',l:[
+  ['','灯の 網が ふくらみ、ふたつの 光が うかんだ。ひとつは 紙の 白。ひとつは フィルムの 紫。'],
+  ['Id　本を 編む 者','……聞こえるか、Dw。わたしは Id。ことばと 絵を ならべて、一冊の 本に する 者だ。'],
+  ['Pr　映像を つなぐ 者','おれは Pr。ばらばらの 場面を つないで、ひとつの 物語に する。……Dwの 灯が 弱ると 聞いて、とんで 来た。'],
+  'Id、Pr……。わざわざ すまんな。',
+  ['Id　本を 編む 者','わたしたちは 妖精の城には 入れない。大きな 国の 掟で、遠くから 見まもる ことしか できない。だから、灯だけ とどける。'],
+  ['Pr　映像を つなぐ 者','おまえが 組む 手を わすれなかった おかげで、おれらも ここまで 残れた。……XD、Dwを たのむ。'],
+  ['','Dwの 灯が、ほんのり 力づよく 燃えた。——コードビューが 強くなった！（バリアも はる）'],
+  'ありがとう、おまえたち。……XD、これで 心おきなく 戦える。わしの 歴史は、ここから おまえが つづける。'],
+  fin:()=>{G.dwhist=(G.dwhist||0)|4;G.dwUp=1;G.keys=G.keys||[];['Idの しおり','Prの フィルム'].forEach(k=>{if(!G.keys.includes(k))G.keys.push(k)});sfx('ally');setTimeout(()=>keyToast('Idの しおり'),300)}},
+});
 const STAGE_SAY={
  'mac_in:Ps':[[21,['語り部の おばあさんは 北西の 森だ。……ナルホロの 耳に、声を とどけて もらおう。']],[23,['語り部の 声が とどいた。……ナルホロは 宮殿の 奥だ。いっしょに 行くぞ。']],[30,['聞く力が もどった。次は 線の 祠だな。……Aiの やつ、無理を していなければ いいが。']],[40,['時の泉の Aeは 気むずかしいが、腕は たしかだ。']],[50,['フィグムの 嵐か。……船の 上でも、おれの 盾は かすまないぜ。']],[57,['妖精の 城だ。……最後まで、いっしょに 行こう。']]],
  'shrine:Ai':[[31,['らくがきの 祠は 南の 浜よ。……ンナモンの 手下が、うようよ いるわ。']],[40,['描く力、もどったわね。時の泉の Aeに よろしく。……あの 人、話が 長いの。']],[50,['フィグムの 嵐……。わたしの 線で、道を 描いて みせる。']],[57,['妖精の 城。……ペンは、まだ 折れて ないわ。']]],
@@ -4831,7 +4865,7 @@ function startBattle(f0,boss,opt={}){staleInput();
   music(battleTrack(boss,f0));
   /* ボスは 章と 仲間の 人数に あわせて 強く する（仲間が ふえるほど 楽に なりすぎない ように） */
   const nAl=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&ASK[k]).length,c1=Math.max(0,G.ch-1);
-  const ks=boss?(1+c1*.13+nAl*.06)*([1.3,1.4,1.7,1.5,1.3][c1]||1.3):1,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
+  const ks=boss?(1+c1*.13+nAl*.06)*([1.3,1.4,1.7,1.5,1.3][c1]||1.3)*1.1:1.1+c1*.04,hk=boss?1+nAl*.35+c1*.3:1,fl=[].concat(f0),f=fl[0];
   const es=fl.map((x,i)=>{const e=mkE(x,i,ks);if(boss&&hk!==1){e.hp=e.max=Math.round(e.max*hk)}return e});
   if(es.length>1){const cnt={};es.forEach(e=>cnt[e.n]=(cnt[e.n]||0)+1);const seen={};es.forEach(e=>{if(cnt[e.n]>1){seen[e.n]=(seen[e.n]||0)+1;e.n+=' '+'ABCDE'[seen[e.n]-1]}})}
   const alk=(opt.noAlly?[]:G.allies).filter(k=>k!=='ff'&&G.allies.includes(k)&&ASK[k]);
@@ -5374,8 +5408,21 @@ async function enemyTurn(){
   B.busy=true;render();
   /* ボスは 仲間の 数だけ 手数が ふえる（5人に 1回では 勝負に ならない） */
   const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0;
+  const e0=B.es[0];if(B.boss&&e0&&e0.drain&&e0.hp>0&&!e0.stun&&!e0.sleep&&B.mp>0){const l=Math.min(B.mp,Math.max(2,Math.round(mpMax()*e0.drain)));B.mp-=l;pop('#me','MP-'+l+'GB','pw');sfx('junk');jolt('#me','flash');say(`<b>${e0.n}</b>が XDの MPを <b>${l}</b> すいとった！`);render();await wait(900)}
   for(const e of B.es){await enemyOne(e);if(B.over)return}
   return roundEnd()}
+/* ボスの 仕掛け：HPが はんぶんを きると 戦いかたが かわる。drain=XDの MPを すう（Dwの コードビューで 立てなおす）／tempo=手数が ふえる（Aeの タイムリマップで ふせぐ）／rage=攻撃が あがる／wall=バリアを はる（貫通・ベクター斬りで くずす） */
+const PHASE={
+ daitai:{say:'ザックーリの 輪郭が さらに ぼやけて、こうげきが あらく なった！',rage:.3},
+ kikinagashi:{say:'うんうん、の 声が かさなり、うずが 2つに ふえた！',tempo:1},
+ rafu:{say:'ラフの 線が にじんで、XDの MPを すいとり はじめた！（MPが へる・Dwの コードビューで 立てなおせる）',drain:.25,rage:.2},
+ okura:{say:'ペンディングの 山が くずれ、時間が かさなって 手が ふえた！（Aeの タイムリマップで ふせげる）',tempo:1,rage:.15},
+ figmaX:{say:'嵐が 渦を まき、XDの MPを すいとり、手数も ふえた！',drain:.25,tempo:1,rage:.2}
+};
+function bossPhase(e0){const ph=PHASE[B.bk];if(!ph||e0.ph||e0.hp<=0||e0.hp>e0.max*.5)return false;e0.ph=1;
+  if(ph.rage){const base=Math.max(...e0.m.filter(x=>x.t==='A'||x.t==='M').map(x=>x.t==='M'?x.v*x.x*.7:x.v),8);e0.str+=Math.round(base*ph.rage)}
+  if(ph.tempo)e0.tempo=ph.tempo;if(ph.drain)e0.drain=ph.drain;
+  return ph.say}
 /* ボスの 必殺：数ターンに 1回、予告して から 全員に 大きな 一撃 */
 const BSPN={daitai:'ざっくり ぜんぶ ふきとばし',kikinagashi:'なるほど なるほどの うず',rafu:'ラフで いいや・ストーム',okura:'ぜんぶ ペンディング',figmaX:'ジェネレート・テンペスト',fairyKing:'おまかせの ゆりかご',cloudKing:'雲の 王の 裁き',nidoneru:'ふかい ふかい 二度寝',mendo:'めんどうの なだれ',nocode:'ノーコード・クラッシュ',canva:'テンプレート・なだれ',gd_see:'かすみの 大波',gd_make:'らくがきの 嵐',gd_choose:'まよいの 迷路落とし'};
 async function bossSpecial(e){const nm=BSPN[B.bk||Object.keys(BOSSES).find(k=>BOSSES[k].n===e.n)]||'ひっさつわざ',base=Math.max(...e.m.filter(x=>x.t==='A'||x.t==='M').map(x=>x.t==='M'?x.v*x.x*.7:x.v),8);
@@ -5390,12 +5437,13 @@ async function enemyOne(e){if(e.hp<=0||B.over)return;
   if(B.boss&&e===B.es[0]&&!e.stun&&!e.sleep){e.spc=(e.spc||0)+1;
     if(e.spRdy){e.spRdy=0;e.spc=0;await bossSpecial(e);if(partyDead()){B.over=true;say('みんな ちからつきた……');await wait(900);return lose()}return}
     if(e.spc>=4&&B.turn>=2){e.spRdy=1;say(`<b>${e.n}</b>は 力を ためている……！`);sfx('skill');pop('#foe','ため','pw',e.id);await wait(1300);return}}
-  const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0,n=1+(e===B.es[0]?nA:0);
+  const nA=B.boss?Math.floor((B.allies||[]).filter(a=>a.hp>0).length*BOSSACT):0,n=1+(e===B.es[0]?nA+(e.tempo||0):0);
   for(let i=0;i<n;i++){const st=e.stun>0||e.sleep;await enemyAct(e);if(B.over)return;if(st||e.hp<=0||partyDead())break;if(i<n-1){say(`<b>${e.n}</b>の れんぞく こうどう！`);await wait(420)}}}
 async function roundEnd(){if(B.over)return;
   if(B.nul>0){B.nul--;if(B.nul<=0){B.nulBlur=false;say('かかげた 光が きえた……')}}
   const e0=B.es[0];
   if(e0.survive&&B.turn>=e0.survive){B.over=true;render();say(`${e0.n}は よゆうの えみを のこして さっていった……。XDは、たっていた。`);await wait(1500);return winBattle(true)}
+  const pz=bossPhase(e0);if(pz){say(`<b>${pz}</b>`);sfx('crit');jolt('#foe','shake');await wait(1500)}
   await wait(300);startTurn();
 }
 async function enemyAct(e){
