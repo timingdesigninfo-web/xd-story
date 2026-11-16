@@ -507,7 +507,7 @@ body #efoe .er .chips:empty{display:none}
 /* ===== 縦画面: 回転せず、上=ステータス／中=ビジュアル／下=テキスト／最下部=操作 ===== */
 @media screen and (orientation:portrait) and (max-width:900px){
   #app{position:fixed;inset:0;width:auto;height:auto;max-width:none;margin:0;gap:0;overflow:hidden;
-    padding:max(6px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+    padding:max(6px,calc(env(safe-area-inset-top,0px) + 12px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
   .ov{inset:0;width:auto;height:auto}
   .op:not(.rot){position:fixed;inset:0;z-index:60;height:auto}
   .fwrap{display:grid;grid-template-columns:minmax(0,1.2fr) auto minmax(0,.8fr);grid-template-rows:auto minmax(0,1fr) auto auto;gap:6px;flex:1;min-height:0;align-items:stretch}
@@ -3989,7 +3989,7 @@ function townStep(){
 function townLoop(t){
   if(!TW.on)return;
   TW.acc+=Math.min(100,t-TW.last);TW.last=t;
-  while(TW.acc>=16.67&&TW.on){townStep();TW.acc-=16.67}
+  while(TW.acc>=15.7&&TW.on){townStep();TW.acc=Math.max(0,TW.acc-16.67)}
   if(TW.on){drawTown();TW.raf=requestAnimationFrame(townLoop)}
 }
 const NMID=new Map([[NM.child,'kid'],[NM.woman,'woman'],[NM.man,'man'],[NM.old,'elder'],[NM.guard,'guard'],[NM.orange,'shop'],[NM.mage,'priest'],[NM.green,'man'],[NM.red,'kid'],[NM.cook,'inn']]);
@@ -4060,7 +4060,10 @@ function drawTown(){
         const g=cx.createRadialGradient(bx,gy,4,bx,gy,r);g.addColorStop(0,'rgba(255,200,110,'+((.42*fl+.4*burst)*Math.max(k,burst)).toFixed(3)+')');g.addColorStop(.35,'rgba(255,160,70,'+(.16*fl*k).toFixed(3)+')');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(bx-r,gy-r,r*2,r*2);cx.restore();
 } /* 村 ぜんたいは 元の 明るさに もどるだけ（重ねて 明るくは しない） */
       /* 暗さの 上に 灯を もう一度 描く。ただし 人が 手前に いる ときは 描かない（人の 上に 台が かぶらない ように） */
-      if(!(TP.ty>q.y&&TP.ty<=q.y+2&&TP.tx>=q.x-1&&TP.tx<=q.x+q.fw))flameDraw(cx,ni,q,bx,by)}}
+      flameDraw(cx,ni,q,bx,by);
+      if(TP.ty>q.y&&TP.ty<=q.y+2&&TP.tx>=q.x-1&&TP.tx<=q.x+q.fw){ /* 近づいても 灯が 暗くならない ように 描いてから、手前に いる 人を もう一度 かさねる */
+        fairyDraw(cx,Math.round(TP.px+TT/2-camx),Math.round(TP.py+TT-12-camy),TW.tick,TP.dir);
+        if(WALK.complete){const fr=TP.anim>0?Math.floor(TP.anim*FC/42)%FC:0;cx.drawImage(WALK,fr*38,ROW[TP.dir]*50,38,50,Math.round(TP.px+TT/2-15-camx),Math.round(TP.py+TT+1-40-12-camy),30,40)}}}}
 }
 /* ================= field ================= */
 let CONT=null;
@@ -4597,7 +4600,7 @@ function stopDone(){
 function fieldLoop(t){
   if(!FLD.on)return;
   FLD.acc+=Math.min(100,t-FLD.last);FLD.last=t;
-  while(FLD.acc>=16.67&&FLD.on){fieldStep();FLD.acc-=16.67}
+  while(FLD.acc>=15.7&&FLD.on){fieldStep();FLD.acc=Math.max(0,FLD.acc-16.67)}
   if(FLD.on){drawField();FLD.raf=requestAnimationFrame(fieldLoop)}
 }
 function drawField(){
