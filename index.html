@@ -5419,6 +5419,40 @@ const PHASE={
  okura:{say:'ペンディングの 山が くずれ、時間が かさなって 手が ふえた！（Aeの タイムリマップで ふせげる）',tempo:1,rage:.15},
  figmaX:{say:'嵐が 渦を まき、XDの MPを すいとり、手数も ふえた！',drain:.25,tempo:1,rage:.2}
 };
+/* ボスの 仕掛けは、その道具の 動きを なぞった ミニゲームで とめられる（成功＝仕掛けを とめて、少し ダメージ） */
+function puzPen(box,close,lead){
+  const H=210;box.innerHTML=`<div class="pzb" style="position:relative;height:${H}px;background:#101524;border:1px solid #3a4a7a;border-radius:6px;overflow:hidden;touch-action:manipulation"><svg width="100%" height="100%" style="position:absolute;inset:0;pointer-events:none"><polyline fill="none" stroke="#6ad0ff" stroke-width="3" points=""/></svg></div>`;
+  const z=box.firstChild,pl=z.querySelector('polyline'),N=5,pts=[];let nx=0,miss=0;
+  for(let i=0;i<N;i++)pts.push([12+i*19+Math.random()*4,18+Math.random()*58]);
+  const sh=pts.map((q,i)=>i).sort(()=>Math.random()-.5);
+  sh.forEach(i=>{const b=document.createElement('button');b.type='button';b.textContent=i+1;b.style.cssText=`position:absolute;left:${pts[i][0]}%;top:${pts[i][1]}%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px solid #fff;background:#243a6a;color:#fff;font:700 18px system-ui`;
+    b.onclick=()=>{if(i===nx){nx++;sfx('tap');b.style.background='#2f9f5f';const w=z.clientWidth,h=z.clientHeight;pl.setAttribute('points',pts.slice(0,nx).map(q=>(q[0]*w/100)+','+(q[1]*h/100)).join(' '));
+        if(nx===N){lead('<b>きれいな 曲線に なった！</b>');setTimeout(()=>close(true),700)}}
+      else{miss++;nx=0;sfx('hurt');pl.setAttribute('points','');z.querySelectorAll('button').forEach(x=>x.style.background='#243a6a');lead('順番が ちがう！ 1から やりなおし（ミス'+miss+'）');if(miss>=3)setTimeout(()=>close(false),600)}};z.appendChild(b)})}
+function puzKey(box,close,lead){
+  box.innerHTML=`<div style="position:relative;height:70px;background:#101524;border:1px solid #3a4a7a;border-radius:6px;margin:10px 0"><div class="zn" style="position:absolute;top:0;bottom:0;background:rgba(80,200,140,.35);border-left:2px solid #5fd49a;border-right:2px solid #5fd49a"></div><div class="ph" style="position:absolute;top:-4px;bottom:-4px;width:3px;background:#ffd24a;box-shadow:0 0 8px #ffd24a"></div></div><div class="pzi" style="text-align:center;margin-bottom:8px;color:#cfe">キーフレーム 0/3　ミス 0/3</div><div style="text-align:center">${mgB('◆ キーフレームを うつ','','style="font-size:18px;padding:12px 22px"')}</div>`;
+  const zn=box.querySelector('.zn'),ph=box.querySelector('.ph'),inf=box.querySelector('.pzi');let hit=0,miss=0,dir=1,x=0,sp=.9,zx=0,zw=18,alive=true,last=performance.now();
+  const newZ=()=>{zw=Math.max(10,18-hit*3);zx=10+Math.random()*(80-zw);zn.style.left=zx+'%';zn.style.width=zw+'%'};newZ();
+  const tick=t=>{if(!alive||!document.body.contains(box))return;const dt=t-last;last=t;x+=dir*sp*dt/10*(1+hit*.35);if(x>100){x=100;dir=-1}if(x<0){x=0;dir=1}ph.style.left=x+'%';requestAnimationFrame(tick)};requestAnimationFrame(tick);
+  box.querySelector('button').onclick=()=>{if(!alive)return;if(x>=zx&&x<=zx+zw){hit++;sfx('ally');if(hit>=3){alive=false;lead('<b>タイムリマップ せいこう！</b>');setTimeout(()=>close(true),700)}else newZ()}else{miss++;sfx('hurt');if(miss>=3){alive=false;setTimeout(()=>close(false),500)}}inf.textContent=`キーフレーム ${hit}/3　ミス ${miss}/3`}}
+const PUZCODE=[
+ {c:['<div class="card">','  <h1>灯の 村</h1>','  <p>ようこそ','</div>'],b:2,w:'<p>が とじられて いない'},
+ {c:['<img src="map.png" alt="地図">','<a href="town.html>村へ</a>','<button>すすむ</button>'],b:1,w:'href の " が とじられて いない'},
+ {c:['.box{','  color: red','  padding: 8px;','}'],b:1,w:'行末の ; が ぬけている'},
+ {c:['<ul>','  <li>薬草</li>','  <lo>宝箱</lo>','</ul>'],b:2,w:'li が lo に なっている'},
+ {c:['<h1>XD戦記</h1>','<p>はじまり</p>','</h2>'],b:2,w:'h1 を h2 で とじている'},
+ {c:['<button onclick="go()">','  すすむ','</buton>'],b:2,w:'button の つづりが ちがう'}];
+function puzCode(box,close,lead){
+  const q=PUZCODE.slice().sort(()=>Math.random()-.5).slice(0,3);let i=0,ok=0,ng=0;
+  const show=()=>{const d=q[i];lead(`<b>コードビュー</b>：${i+1}/3　まちがっている 行を タップ！`);box.innerHTML=d.c.map((l,j)=>`<button type="button" class="mgbtn" data-j="${j}" style="display:block;width:100%;text-align:left;font:14px ui-monospace,monospace;margin:4px 0;white-space:pre">${l.replace(/</g,'&lt;')}</button>`).join('')+'<div class="pzr" style="margin-top:6px;color:#cfe;min-height:1.4em"></div>';
+    box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const good=+b.dataset.j===d.b;if(good)ok++;else ng++;sfx(good?'ally':'hurt');box.querySelectorAll('button').forEach(x=>x.disabled=true);b.style.outline='2px solid '+(good?'#5fd49a':'#ff6a6a');box.querySelector('.pzr').textContent=(good?'せいかい：':'ざんねん：')+d.w;
+      setTimeout(()=>{i++;if(ng>=2)return close(false);if(i>=3)return close(ok>=2);show()},1100)})};show()}
+const PUZ={
+ rafu:{t:'ペンツール（Ai）',lead:'ラフの 線を ていねいに なぞる。アンカーポイントを 1→5 の 順に タップ！',f:puzPen,ok:'ていねいな 線が ラフの にじみを 打ち消した！MPを すう 力が とまった！'},
+ okura:{t:'タイムライン（Ae）',lead:'動く ◆ が 緑の ゾーンに 重なった しゅんかんに タップ！ 3かい 決めれば 時間が ほどける。',f:puzKey,ok:'キーフレームが 決まり、かさなった 時間が ひとつに もどった！手数が もとに もどる！'},
+ figmaX:{t:'コードビュー（Dw）',lead:'3つの コードから、まちがって いる 行を さがせ。2つ 見つければ 成功！',f:puzCode,ok:'コードの ほころびを 見やぶった！嵐の 吸いとりが とまった！'}
+};
+function bossPuz(k){return new Promise(res=>{const d=PUZ[k];if(!d)return res(null);mgOpen(d.t,d.lead,(box,close,lead)=>d.f(box,close,lead),r=>res(r))})}
 function bossPhase(e0){const ph=PHASE[B.bk];if(!ph||e0.ph||e0.hp<=0||e0.hp>e0.max*.5)return false;e0.ph=1;
   if(ph.rage){const base=Math.max(...e0.m.filter(x=>x.t==='A'||x.t==='M').map(x=>x.t==='M'?x.v*x.x*.7:x.v),8);e0.str+=Math.round(base*ph.rage)}
   if(ph.tempo)e0.tempo=ph.tempo;if(ph.drain)e0.drain=ph.drain;
@@ -5444,6 +5478,9 @@ async function roundEnd(){if(B.over)return;
   const e0=B.es[0];
   if(e0.survive&&B.turn>=e0.survive){B.over=true;render();say(`${e0.n}は よゆうの えみを のこして さっていった……。XDは、たっていた。`);await wait(1500);return winBattle(true)}
   const pz=bossPhase(e0);if(pz){say(`<b>${pz}</b>`);sfx('crit');jolt('#foe','shake');await wait(1500)}
+  if(pz&&PUZ[B.bk]){say(`<b>……仕掛けを とめられるかも！</b>（${PUZ[B.bk].t}）`);await wait(1100);const r=await bossPuz(B.bk);
+    if(r){e0.drain=0;e0.tempo=0;const dm=Math.round(e0.max*.08);e0.hp=Math.max(1,e0.hp-dm);pop('#foe','-'+dm,'dmg',e0.id);sfx('lvup');say(`<b>${PUZ[B.bk].ok}</b>`);render();await wait(1800)}
+    else{say('……うまく いかなかった！ 仕掛けは そのままだ。');await wait(1100)}}
   await wait(300);startTurn();
 }
 async function enemyAct(e){
