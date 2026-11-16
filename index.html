@@ -829,21 +829,52 @@ Object.assign(TR,{
   tower2:trVar('tower',{tp:3,bpm:72,lt:'triangle',lv:1.6,arpEvery:2}),
   storm2:trVar('storm',{tp:-4,bpm:124,lt:'p25',lv:1.0,bass:'pulse',bt:'sawtooth',bv:.4}),
 });
+/* ---- 新しい曲：洞窟（ダンジョン）／最終決戦（音数を ふやした 壮大な 曲）／ボス・街・マップの 追加 ---- */
+Object.assign(TR,{
+  cave:{bpm:88,lt:'triangle',lv:1.5,lvib:1,pad:1,arp:1,arpM:'bell',arpT:'sine',arpEvery:2,bass:'drone',bt:'sine',bv:1.5,drum:5,
+    chords:[[38,'m'],[38,'m'],[34,'M'],[33,'7'],[38,'m'],[41,'M'],[36,'M'],[33,'7']],
+    lead:SB([74,1,1,1,77,1,1,1],[76,1,74,1,72,1,1,1],[70,1,1,1,74,1,77,1],[73,1,1,1,76,1,1,0],[77,1,1,1,81,1,1,1],[79,1,77,1,76,1,1,1],[72,1,76,1,79,1,76,1],[73,1,1,1,1,1,1,0])},
+  last:{bpm:160,grand:1,lt:'p25',lv:1.4,harm:1,dbl:1,dv:1.3,pad:1,arp:2,bass:'gallop',bv:1.9,drum:3,timp:1,roll:1,
+    sec:[{harm:1,bass:'gallop',timp:1,drum:2,arp:2,dbl:0,roll:0},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:0},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1,lv:1.5},{harm:1,bass:'gallop',timp:1,drum:3,arp:2,dbl:1,roll:1,lv:1.7}],
+    chords:[[40,'m'],[40,'m'],[48,'M'],[50,'M'],  [40,'m'],[48,'M'],[50,'M'],[47,'7'],  [45,'m'],[40,'m'],[48,'M'],[50,'M'],  [45,'m'],[47,'7'],[40,'m'],[47,'7']],
+    lead:SB(
+      [76,76,0,79,83,1,86,83],[88,1,86,1,83,1,79,1],[84,84,0,79,84,1,88,84],[86,1,90,1,86,83,79,83],
+      [88,88,0,91,95,1,98,95],[96,1,91,1,88,1,84,88],[90,1,86,1,90,93,95,1],[95,1,1,1,94,95,98,95],
+      [93,1,93,1,88,1,84,88],[91,1,88,1,83,79,83,88],[96,1,91,1,96,1,100,96],[98,1,95,1,90,1,86,90],
+      [93,1,88,93,1,100,96,93],[95,1,98,1,95,1,90,1],[100,1,95,91,95,1,91,88],[95,1,94,1,95,1,1,0])},
+});
+Object.assign(TR,{
+  cave2:trVar('cave',{tp:-2,bpm:80,lt:'p12',lv:1.1,arpEvery:1,bass:'oom',bt:'triangle',bv:1,drum:6}),
+  cave3:trVar('cave',{tp:3,bpm:96,lt:'sawtooth',lv:.5,harm:1,arpEvery:2,bass:'fifth',bt:'square',bv:.45,drum:4}),
+  last2:trVar('last',{tp:2,bpm:176,lt:'sawtooth',lv:.6,dv:1.5}),
+  boss3:trVar('boss',{tp:3,bpm:160,lt:'p12',lv:1.2,harm:0,dbl:1,bass:'gallop',bt:'square',bv:.5,drum:3}),
+  boss4:trVar('boss',{tp:-5,bpm:150,lt:'triangle',lv:1.7,harm:1,arp:1,bass:'march',bt:'square',bv:.5,drum:4}),
+  boss5:trVar('boss',{tp:-1,bpm:180,lt:'sawtooth',lv:.6,dbl:1,harm:1,arp:2,bass:'gallop',bt:'sawtooth',bv:.4,drum:3}),
+  battle5:trVar('battle',{tp:4,bpm:164,lt:'p12',lv:1.1,harm:1,arp:2,bass:'march',bt:'square',bv:.5,drum:3}),
+  battle6:trVar('battle',{tp:-7,bpm:152,lt:'triangle',lv:1.7,harm:0,arp:1,bass:'gallop',bt:'sine',bv:1.3,drum:4}),
+  field4:trVar('field',{tp:-4,bpm:112,lt:'p12',lv:1.2,harm:0,arp:1,arpM:'bell',bass:'walk',bt:'triangle',drum:6}),
+  field5:trVar('field',{tp:2,bpm:130,lt:'p25',lv:1.0,harm:1,bass:'march',bt:'square',bv:.5,drum:5}),
+  town4:trVar('town',{tp:7,bpm:96,lt:'triangle',lv:1.6,arp:1,bass:'oom',drum:6}),
+  town5:trVar('town',{tp:-5,bpm:84,lt:'p12',lv:1.1,bass:'long',bt:'sine',drum:0}),
+  castle3:trVar('castle',{tp:3,bpm:100,lt:'p25',lv:1.0,dbl:1,bass:'oom',bt:'triangle',drum:6}),
+});
 function pickFrom(arr,key){SND.last=SND.last||{};let c=arr.filter(x=>x!==SND.last[key]);if(!c.length)c=arr;const v=c[Math.floor(Math.random()*c.length)];SND.last[key]=v;return v}
 function poolPick(pool,key){return pool.includes(SND.track)?SND.track:pickFrom(pool,key||pool[0])} /* おなじ仲間の曲が かかっているあいだは そのまま */
-const fieldTrack=()=>poolPick(['field','field2','field3']);
+const fieldTrack=()=>poolPick(['field','field2','field3','field4','field5']);
+const BOSSTRK={fairyKing:'last',figmaX:'boss5',daitai:'boss',kikinagashi:'boss3',rafu:'boss4',okura:'boss2'};
 function battleTrack(boss,fl){
-  if(boss)return pickFrom(['boss','boss2'],'boss');
+  if(boss){const f1=[].concat(fl||[])[0],k=Object.keys(BOSSES).find(k=>[].concat(BOSSES[k])[0]===f1);if(BOSSTRK[k])return BOSSTRK[k];return pickFrom(['boss','boss2','boss3','boss4'],'boss')}
   const at=(TW.on&&TW.pl&&TW.pl.at)||'';const strong=[].concat(fl||[]).some(e=>(e.hp||0)>=60);
-  const pool=at==='dg'||at==='tower'?['battle4','battle3']:at==='storm'?['battle2','battle3']:strong?['battle2','battle']:['battle','battle3','battle4','battle2'];
+  const pool=at==='dg'||at==='tower'?['battle4','battle3','battle6']:at==='storm'?['battle2','battle3','battle5']:strong?['battle2','battle','battle5']:['battle','battle3','battle4','battle2','battle5','battle6'];
   return pickFrom(pool,'battle')}
 function placeTrack(p){const a=p&&p.at;
-  if(a==='castle'||a==='mac')return poolPick(['castle','castle2']);
-  if(a==='tower'||a==='dg')return poolPick(['tower','tower2']);
+  if(a==='castle'||a==='mac')return poolPick(['castle','castle2','castle3']);
+  if(a==='dg'){const d=p.ds|0;return d>=3?poolPick(['castle','castle2','castle3']):d===2?'cave3':d===1?'cave2':'cave'}
+  if(a==='tower')return poolPick(['tower','tower2']);
   if(a==='storm')return poolPick(['storm','storm2']);
   if(a==='east'||a==='town'||a==='gate'||a==='pass')return poolPick(['east','east2']);
   if(a==='shrine'||a==='spring')return'shrine';
-  return poolPick(['town','town2','town3'])}
+  return poolPick(['town','town2','town3','town4','town5'])}
 function music(name){
   if(SND.track===name)return;SND.track=name;SND.step=0;SND.ended=0;if(SND.mbus)SND.mbus.gain.cancelScheduledValues(0),SND.mbus.gain.value=2.1;
   if(!SND.ctx)return;SND.next=SND.ctx.currentTime+.08;
@@ -5531,7 +5562,8 @@ async function roundEnd(){if(B.over)return;
   if(B.nul>0){B.nul--;if(B.nul<=0){B.nulBlur=false;say('かかげた 光が きえた……')}}
   const e0=B.es[0];
   if(e0.survive&&B.turn>=e0.survive){B.over=true;render();say(`${e0.n}は よゆうの えみを のこして さっていった……。XDは、たっていた。`);await wait(1500);return winBattle(true)}
-  const pz=bossPhase(e0);if(pz){say(`<b>${pz}</b>`);sfx('crit');jolt('#foe','shake');await wait(1500)}
+  const pz=bossPhase(e0);if(pz&&B.bk==='fairyKing')music('last2');
+  if(pz){say(`<b>${pz}</b>`);sfx('crit');jolt('#foe','shake');await wait(1500)}
   if(pz&&PUZ[B.bk]){say(`<b>……仕掛けを とめられるかも！</b>（${PUZ[B.bk].t}）`);await wait(1100);const r=await bossPuz(B.bk);
     if(r){e0.drain=0;e0.tempo=0;if(PUZ[B.bk].cut)e0.str=Math.round(e0.str/2);const dm=Math.round(e0.max*.08);e0.hp=Math.max(1,e0.hp-dm);pop('#foe','-'+dm,'dmg',e0.id);sfx('lvup');say(`<b>${PUZ[B.bk].ok}</b>`);render();await wait(1800)}
     else{say('……うまく いかなかった！ 仕掛けは そのままだ。');await wait(1100)}}
