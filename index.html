@@ -3303,11 +3303,27 @@ function townNPC(n){
 /* ===== わざを さずけてくれる ゆるい ふたり（Fl・Fw） ===== */
 const gotN=()=>Object.keys(G.got||{}).length;
 const hSay=(w,lines)=>townSay(lines.map(l=>[l[0],l[1],'sprites/ally_'+w+'.png']),()=>endPort());
+const flTrioOK=()=>G.ch>=3&&!!(G.learn&&G.learn.fl)&&!EVF('trio')&&!G.escort;
+function flTrio(){const F=t=>['Fl',t,'sprites/ally_fl.png'];
+  townSay([F('Fw……か。もう 何十年も 会って ないねぇ。ふぁ〜……'),F('おじさん、ずっと 寝て ばかり でさ。あの 子は 店を たたんだ って 聞いたよ。'),F('……会いに いく のも 悪くない かもね。りんごの島だっけ？ ついて いくよ。'),['','Flが 旅に ついて きた。りんごの島の Fwの ところまで 連れて いこう。']],()=>{G.escort={n:'Fl',col:['#cf302a','#5e3134']};sfx('ally')})}
+function trioScene(){const F=t=>['Fl',t,'sprites/ally_fl.png'],W=t=>['Fw',t,'sprites/ally_fw.png'],D=t=>['Dw　灯の かげ',t,PDW];
+  townSay([F('……やあ、Fw。ひさしぶり。'),W('Fl……！ あなた、まだ 寝てたの？ 変わらないわね。'),F('おたがいさま。……あ、XDの 懐に 灯が ゆれてる。'),D('……聞こえて おるぞ。Fl、Fw。ずいぶん 長いこと、待たせたの。'),W('Dw……！ ふふ、灯に なっても 偉そうなんだから。'),D('三人で ウェブを 彩って いた 日々は、わしの 宝じゃ。……おまえたちに また 会えた。それだけで 消えかけた 灯が 燃えるわい。'),F('動きも、絵も、ページも。おじさんたち、いまは 使われ なくても……'),W('XDが 手で つくって くれる かぎり、わたしたちの わざは 生き続けるわ。'),['','三人の 灯が ひとつに かさなった。Flと Fwが それぞれ 贈りものを くれた。']],()=>{EVS('trio');G.escort=null;G.dwhist=(G.dwhist||0)|8;const m=mgGive(0,{backup:1,dr:2,meal:1});townSay([['',m]])})}
+function zenTalk(){const W='吟遊詩人',Z=G.zen=G.zen||{};
+  const Q=[{q:'むかし、ウェブの 国の 工房に、三人の 職人が いた。動きを 吹きこむ 者、絵を みがく 者、そして ページを 組む 者。……ページを 組んで いたのは？',o:['Fl','Fw','Dw','Ps'],a:2,r:{herb:3},t:'まさに。コードと 絵を ふたつの 窓で 見くらべた 職人じゃ。'},
+    {q:'時を 織る 賢者の 道具。動きを 時間の 上に ならべ、キーフレームを おいて いく もの。それは？',o:['ペンツール','タイムライン','レイヤー','スポイト'],a:1,r:{dr:1},t:'そのとおり。時間の 流れを 目で 見られるように した 道具じゃ。'},
+    {q:'点と 点を むすび、ハンドルで やわらかく ひっぱって、なめらかな 線を つくる 道具。それは？',o:['ブラシ','消しゴム','ペンツール','ものさし'],a:2,r:{backup:1},t:'うむ。線の 魔女の 得意技じゃな。'}];
+  if(Z.d===3)return townSay([[W,'ようこそ、旅の 人。もう 三問とも 解いて しまったな。……里の 灯は、おまえさんの 手の 中じゃ。']]);
+  const i=Z.n||0;
+  if(i===0&&!Z.start){Z.start=1;return townSay([[W,'おや、旅の 人。わしは 里の 吟遊詩人。ひまつぶしに 三つ、謎かけを して おる。'],[W,'解けた 者には、ささやかな 贈りものを。……どうじゃ、聞いて みるか？']],()=>zenTalk())}
+  const d=Q[i];
+  townSay([[W,`第${i+1}問。${d.q}`]],()=>townChoice('',d.o.map((l,j)=>({l,s:'',f:()=>{
+    if(j===d.a){Z.n=i+1;if(Z.n>=3)Z.d=3;sfx('lvup');const m=mgGive(0,d.r);townSay([[W,d.t],['',m]],()=>{if(Z.d===3){townSay([[W,'三問とも 見事じゃ。……灯の 網に あみこまれた 名前は、この 三人の 職人たちの もの。わしは、むかし 彼らの 歌を うたって おった。'],['','吟遊詩人は、ちいさな「ショートカット」を くれた。'],],()=>{G.items.shortcut=(G.items.shortcut||0)+1;try{save()}catch(e){}})}})}
+    else{sfx('hurt');townSay([[W,'……ちがう ようじゃ。ゆっくり 考えて、また おいで。']])}}}))))}
 function flTalk(){
   hSay('fl',[['Fl','いらっしゃ〜い。ゆるっと やってる 店だよ。']]);
   const m=$('#tmsg');
   if(m)m.onclick=()=>{sfx('tap');m.remove();endPort();TW.busy=false;
-    townChoice('',[{l:'はなしを きく',s:(G.learn&&G.learn.fl)||!(G.met&&G.met.fl)?'むかしの はなし':`むかしの かけらを 3こ もっていけば わざを おしえてくれる（いま ${gotN()}こ）`,f:()=>flTalk2()},{l:'おみせを みる',s:'武器・防具・どうぐ',f:()=>{endPort();SHOPONLY=null;SHOPTAB='tool';showShop(1)}},{l:'やめる',s:'',f:()=>{}}])}
+    townChoice('',[{l:'はなしを きく',s:(G.learn&&G.learn.fl)||!(G.met&&G.met.fl)?'むかしの はなし':`むかしの かけらを 3こ もっていけば わざを おしえてくれる（いま ${gotN()}こ）`,f:()=>flTalk2()},{l:'おみせを みる',s:'武器・防具・どうぐ',f:()=>{endPort();SHOPONLY=null;SHOPTAB='tool';showShop(1)}},...(flTrioOK()?[{l:'「Fwに 会いに 行かないか」',s:'りんごの島の Fwの ところへ いっしょに 行く',f:()=>flTrio()}]:[]),{l:'やめる',s:'',f:()=>{}}])}
 }
 function flTalk2(give){G.learn=G.learn||{};const n=gotN();
   if(G.learn.fl)return hSay('fl',[['Fl','ふぁ〜……タイムラインを ぴたっと 止める。それが おじさんの 十八番さ。'],['Fl','てきが ぽかーんと してる あいだに、ゆっくり いこうぜ〜。']]);
@@ -3320,6 +3336,7 @@ function flTalk2(give){G.learn=G.learn||{};const n=gotN();
   hSay('fl',[['Fl','ふぁ〜……かけら、見つかった？'],['Fl',`3つ そろったら、また おいで。（いま ${n}/3）`]]);return;
   hSay('fl',[['Fl','ふぁ〜……ねむい。おじさんは Fl。むかし、ブラウザの 中で ぬるぬる 動く アニメや ゲームを 山ほど 動かしてた。'],['Fl','タイムラインに ならべて、ムービークリップを ぽんぽん 置いて……。いまは もう、のんびり 隠居さ。'],['Fl',`おうちの たなとか かびんを しらべて、<b>むかしの かけら</b>を 3つ あつめたら、あの ころの わざを おしえるよ〜。（いま ${n}/3）`]])}
 function fwTalk(give){G.learn=G.learn||{};const n=gotN();
+  if(G.escort&&G.escort.n==='Fl'&&!EVF('trio'))return trioScene();
   if(G.learn.fw)return hSay('fw',[['Fw','どーん……と ひらいたかしら。ふふっ。'],['Fw','ひとつの 画面に、ぬり絵も 図形も いっしょに のせて、ぱっと 世界に ひろげる。それが わたしの はなびよ。']]);
   const met=G.met&&G.met.fw;G.met=G.met||{};
   if(!met){G.met.fw=1;const L=[['Fw','あら、めずらしい。わたしは Fw。むかし、ウェブ用の 絵を つくる 仕事を していたの。'],['Fw','ピクセルも ベクターも ひとつの 画面で あつかえてね。スライスして、ぱっと 書き出すのが 得意だったのよ。'],['Fw','<b>むかしの かけら</b>を 6つ わたして くれる 人になら、とっておきの わざを 教えても いいかしらね。']];
@@ -3455,7 +3472,7 @@ npc(PLACES.mac,17,13,{n:'Fw',k:'fw',dsp:'fw',still:1,c:['#484728','#e3e40a']});
   big(p,{x:12,y:6,w:5,h:5,img:'bld_tower_new',sc:.4,dc:2,to:['tower_in',5,9]});
   prop(p,'torch',12,11);prop(p,'torch',17,11);prop(p,'obelisk',7,13,{say:'古い 石碑。「ここに 灯を 預けた」と かすれて 読める。'});prop(p,'obelisk',20,13);
   prop(p,'bench',8,17,{fw:2});prop(p,'bush1',19,17);prop(p,'dead_tree',22,9);prop(p,'dead_tree',5,6);prop(p,'dead_tree',4,16);prop(p,'dead_tree',24,16);prop(p,'signboard',17,15,{say:['眠りの塔','いまは しずかな 保守の 灯だけが ともっている']});
-  npc(p,11,14,{n:'Fl',k:'fl',dsp:'fl',still:1,c:['#cf302a','#5e3134']});
+  npc(p,11,14,{n:'Fl',k:'fl',dsp:'fl',still:1,c:['#cf302a','#5e3134'],hideIf:()=>!!(G.escort&&G.escort.n==='Fl')});
   npc(p,18,14,{n:'たびの おじいさん',dsp:'wanderer',c:NM.old,say:['この 塔の 上では、ひとつの 光が ねむっておる。','起こしては ならん。じゃが、こわがる ことも ない。']});
 }
 {const p=mkP('tower_in','tower',11,11,{name:'塔の いちばん うえ',sub:'ねむる 光の へや',base:'c',spawn:[5,9],stop:{x:5,y:5,dir:'down'}});
@@ -3629,6 +3646,7 @@ function tale(p,x,y,id){const T=RTALE[id];npc(p,x,y,{n:T.n,dsp:T.dsp,still:1,c:N
   prop(p,'well',5,11);prop(p,'lantern',8,10);prop(p,'lantern',14,10);prop(p,'bench',15,12,{fw:2});prop(p,'flowerbed',3,12);prop(p,'barrel',18,11);
   prop(p,'obelisk',17,9,{say:'石碑に きざまれている。「霧は 網で すくい、門は 灯で ひらく。手で あんだ ものだけが、妖精の 城に とどく」'});
   npc(p,4,9,{n:'里の こども',c:NM.child,say:['北の 城の まわり、いつも 白い 霧なんだ。でも 夜は、霧の 中で 何か 光ってるよ。','長は 糸車で なんでも あんじゃうんだ。灯だって！']});
+  npc(p,13,12,{n:'吟遊詩人',dsp:'wanderer',c:['#8a4aa6','#f0e0c0'],fn:()=>zenTalk(),say:['……']});
   npc(p,16,8,{n:'見張りの 若者',c:NM.guard,say:['この 里は、城の 門を 見守る ために できた。もう 何十年も、門は 霧の 中だ。','……あんたが 行くのか。たのんだぞ。']});
 }
 /* ---- クエスト：であい・ダンジョン ---- */
