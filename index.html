@@ -1849,8 +1849,8 @@ const CH=[
   {y:2027,t:'ぼやけた世界',m:'sad',p:'XDは、東の国へ向かった。瓦屋根と桜の町。……だが、町の人々は、ものごとを「だいたい」で済ませるようになり、細部が見えなくなっているという。五つの力のひとつ、「見る力」を奪った魔物を探そう。',stops:[{at:'east',type:'story',k:'e_hi'},{at:'dg_see',type:'dungeon',k:'dg_see'},{at:'east',type:'boss',k:'daitai'},{at:'east',type:'story',k:'e_clear'},]},
   {y:2028,t:'ふさがれた声',m:'sad',p:'XDは、りんごの島へ向かった。琥珀の宮殿の街では、人々が「うんうん」と うなずくばかりで、だれの話も 本当には 聞いていない。五つの力のひとつ、「聞く力」を奪った魔物を探そう。',stops:[{at:'mac',type:'story',k:'h_hi'},{at:'mt_hear',type:'meet',k:'mt_hear'},{at:'mac',type:'story',k:'h_bring'},{at:'mac',type:'boss',k:'kikinagashi'},{at:'mac',type:'story',k:'h_clear'},{at:'mac',type:'story',k:'dw_mac'}]},
   {y:2029,t:'とまった線',m:'sad',p:'線の祠の灯が、消えかけている。「ラフでいいや」「あとで清書しよう」……そうして、だれもペンを 動かさなくなった。「描く力」を奪った魔物を探して、祠へ向かおう。',stops:[{at:'shrine',type:'story',k:'m_hi'},{at:'dg_make',type:'dungeon',k:'dg_make'},{at:'shrine',type:'boss',k:'rafu'},{at:'shrine',type:'story',k:'m_clear'}]},
-  {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'},{at:'spring',type:'story',k:'dw_spring'}]},
-  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'keep',type:'story',k:'c_elder'},{at:'keep',type:'story',k:'dw_keep'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
+  {y:2030,t:'ねむる作品',m:'sad',p:'時の泉のほとりでは、つくったものが 山のように 眠っている。「まだ 見せられない」「もう少し 直してから」……そうして 世界に とどかないまま、時だけが すぎていく。「伝える力」を取り戻しに、泉へ向かおう。',stops:[{at:'spring',type:'story',k:'o_hi'},{at:'mt_open1',type:'meet',k:'mt_open1'},{at:'mt_open2',type:'meet',k:'mt_open2'},{at:'spring',type:'boss',k:'okura'},{at:'spring',type:'story',k:'o_clear'},{at:'spring',type:'story',k:'dw_spring'},{at:'spring',type:'story',k:'iv_spring'}]},
+  {y:2031,t:'嵐の向こうへ',m:'sad',p:'山の関所のむこう、ブラウザ大陸。妖精の力を手にした嵐の主フィグムが、暴君となって、最後の力「考える力」を 握っている。……なにを つくり、どう 生きるのか。それを決めるのは、妖精ではなく、XD自身だ。',stops:[{at:'port',type:'story',k:'ship_get'},{at:'navi',type:'meet',k:'navi'},{at:'port',type:'story',k:'ship_set'},{at:'pass',type:'story',k:'f_hi'},{at:'dg_choose',type:'dungeon',k:'dg_choose'},{at:'pass',type:'story',k:'f_trio'},{at:'pass',type:'boss',k:'studio'},{at:'pass',type:'boss',k:'framer'},{at:'pass',type:'boss',k:'canva'},{at:'storm',type:'boss',k:'figmaX'},{at:'storm',type:'story',k:'f_clear'},{at:'rest3',type:'story',k:'c_rumor'},{at:'rest4',type:'story',k:'c_keep'},{at:'keep',type:'story',k:'c_elder'},{at:'keep',type:'story',k:'dw_keep'},{at:'dg_castle',type:'dungeon',k:'dg_castle'}]},
 ];
 
 /* ================= state & save ================= */
@@ -3052,11 +3052,11 @@ function stopSpr(st){
   if(t==='ally'){const a=ALLIES[k];return k==='dw'?'sprites/ally_dw_map.png':sprite(a.n,a.col[0],a.col[1])}
   if(k==='cloudKing')return 'sprites/king_map.png';
   const b=BOSSES[k];return sprite(b.n,b.col[0],b.col[1])}
-const DSPS=['xd','ff','dw','dwf','ps','ae','ai','prott','prottf'];
+const DSPS=['xd','ff','dw','dwf','ps','ae','ai','prott','prottf','studio','framer','canva','invision'];
 function stopDsp(st){
   let t=st.type,k=st.k;
   if(t==='story'){if(['fade','back','dwfall'].includes(k))return'dwf';if(k==='e_hi')return'prottf';[t,k]=STORYWHO[k]||['b','x'];if(t!=='a'&&k!=='prott')return null}
-  else if(t!=='ally')return null;
+  else if(t!=='ally'&&t!=='boss')return null;
   return DSPS.includes(k)?k:null}
 function stopHere(p){const st=CH[G.ch]&&CH[G.ch].stops[G.stop];return st&&p.stop&&st.at===p.at&&!(st.need&&(G.hunt||0)<st.need)?st:null}
 function placeObj(p){
@@ -3254,7 +3254,7 @@ function prayAsk(n){
     if(!SYNC)return townSay([[W,'……ここでは 合言葉を きざむことが できないようです。']]);phDlg(getPh()?'change':'set')})};
   townChoice('',[{l:K?'神さまに いのる':'いのる',s:'旅の 記録を のこして、HPが 全回復する',f:yes},{l:K?'こころを うちあける':'ざんげする',s:'合言葉を 決める・かえる',f:zange},{l:'やめる',s:'',f:()=>{TW.busy=false}}])
 }
-Object.assign(STORYWHO,{dw_mac:['a','dw'],dw_spring:['a','ae'],dw_keep:['a','dw']});
+Object.assign(STORYWHO,{iv_spring:['b','invision'],f_trio:['b','studio'],dw_mac:['a','dw'],dw_spring:['a','ae'],dw_keep:['a','dw']});
 Object.assign(S2,{
  dw_mac:{w:'Dw　灯の かげ',dsp:'dwf',hint:'りんごの島で、懐の 灯が ゆれている',l:[
   ['','Fwの 店の 前を 通ると、懐の 灯が ふるえて、小さな 声が もれた。'],
@@ -3277,6 +3277,19 @@ Object.assign(S2,{
   '便利さと、つくる よろこび。どちらも 捨てずに 歩く 若者が、ようやく 現れた ということじゃ。……XD、おまえの ことじゃぞ。',
   'Idは 本の 国で、Prは 映像の 国で、それぞれ 灯を 守って おる。……いずれ 会う ことに なろう。道は 一本では ないからの。'],
   fin:()=>{G.dwhist=(G.dwhist||0)|2}},
+ iv_spring:{w:'インビスオン　老舗の賢者',dsp:'invision',hint:'時の泉の ほとりで、老いた賢者が 水晶球を 見つめている',l:[
+  ['インビスオン　老舗の賢者','……旅の 子か。わしは インビスオン。本と 水晶球を 携える、老いぼれの 賢者じゃ。','sprites/b_invision.png'],
+  ['インビスオン　老舗の賢者','むかしは「みんなで 画面を 見て、コメントを 重ねる」やりかたを 世に ひろめた。世界じゅうの 工房が、わしの 水晶球を のぞいて おったものよ。','sprites/b_invision.png'],
+  ['インビスオン　老舗の賢者','じゃが 時代は うつる。若い 道具たちが、もっと 軽やかに 現れた。わしの 水晶球は、もう 灯らん。……この 泉で、静かに 終わりを 待って おる。','sprites/b_invision.png'],
+  ['インビスオン　老舗の賢者','終わる ことは、恥では ない。ためこんだ 知恵を 次へ 手渡す ことが、わしの 最後の 仕事じゃ。','sprites/b_invision.png'],
+  ['インビスオン　老舗の賢者','XD。「見せられない」と 抱えこんだ ままでは、作品も 道具も、同じ 道を たどる。おまえは、世に 渡す 側で あれ。','sprites/b_invision.png'],
+  ['インビスオン　老舗の賢者','この 水晶球を 持って いけ。……ブラウザ大陸の 山の 関所には、若い 挑戦者が 三人 待って おる。スタティオ、フラマー、キンバ。みな、腕は 本物じゃ。侮るで ないぞ。','sprites/b_invision.png']],
+  fin:()=>{G.keys=G.keys||[];if(!G.keys.includes('インビスオンの 水晶球'))G.keys.push('インビスオンの 水晶球');try{mgGive(0,{dr:2,backup:1})}catch(e){}sfx('ally');setTimeout(()=>{try{keyToast('インビスオンの 水晶球')}catch(e){}},300)}},
+ f_trio:{w:'スタティオ　国産の刺客',dsp:'studio',hint:'山の関所に、三人の挑戦者が 待ちかまえている',l:[
+  ['スタティオ　国産の刺客','……来たな、XD。この 山の 関所は、ブラウザ大陸の 入り口。フィグムの 嵐の 下で 働く 者は、みんな ここを 通る。','sprites/b_studio.png'],
+  ['フラマー　コード派の挑戦者','ぼくは フラマー。本物の コードで 動く ものを つくる。絵が 動くだけの 道具に、この 先は 渡せないよ。','sprites/b_framer.png'],
+  ['キンバ　なんでも屋の魔法使い','わたしは キンバ。だれでも ワンクリックで 素敵に なれるの。……手で ていねいに つくる 道具、きらいじゃ ないけど、時間が かかりすぎるわ。','sprites/boss_canva.png'],
+  ['スタティオ　国産の刺客','三人 いっぺんでは 不公平だ。ひとりずつ、順に 勝負しよう。「まかせる」ほうが 速い、と いう 答えを 見せて やる。','sprites/b_studio.png']]},
  dw_keep:{w:'Dw　灯の かげ',dsp:'dwf',hint:'灯の 網が ほのかに ゆれている',l:[
   ['','灯の 網が ふくらみ、ふたつの 光が うかんだ。ひとつは 紙の 白。ひとつは フィルムの 紫。'],
   ['Id　本を 編む 者','……聞こえるか、Dw。わたしは Id。ことばと 絵を ならべて、一冊の 本に する 者だ。'],
@@ -4028,7 +4041,7 @@ function townLoop(t){
   if(TW.on){drawTown();TW.raf=requestAnimationFrame(townLoop)}
 }
 const NMID=new Map([[NM.child,'kid'],[NM.woman,'woman'],[NM.man,'man'],[NM.old,'elder'],[NM.guard,'guard'],[NM.orange,'shop'],[NM.mage,'priest'],[NM.green,'man'],[NM.red,'kid'],[NM.cook,'inn']]);
-const NPCH={sketch:44,miller:34,baker:34,kannushi:38,wanderer:35,navi:37,captain:38,minister:36,keeper:35,lamp:34,ferry:37,sign:35,net:34,fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
+const NPCH={invision:42,studio:42,framer:40,canva:40,sketch:44,miller:34,baker:34,kannushi:38,wanderer:35,navi:37,captain:38,minister:36,keeper:35,lamp:34,ferry:37,sign:35,net:34,fl:40,fw:39,ai:42,xd:40,ff:33,dw:42,dwf:41,ps:46,ae:42,prott:42,prottf:42,kid:33,woman:34,man:36,elder:33,inn:35,shop:35,priest:38,guard:43,noble:34,forest_b:36,stamp:33,clerk_t:38,clerk_p:37,clerk_i:34};
 function npcId(n){if(n.k==='inn')return'inn';if(n.k==='shop')return'shop';if(n.n==='おばあさん')return'inn';return NMID.get(n.c)||null}
 function drawNpc(cx,n,x,y){
   cx.fillStyle='#00000040';cx.fillRect(x-9,y-3,18,4);
