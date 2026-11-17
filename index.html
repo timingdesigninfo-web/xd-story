@@ -3081,7 +3081,7 @@ function placeScreen(id,tx,ty,dir){
   const st=stopHere(p);TW.npcs=p.npcs.filter(n=>!(n.hideIf&&n.hideIf(st))).map(n=>({...n}));
   TW.npcs.forEach(n=>{if(n.k==='dgchest'&&G.dgdone&&G.dgdone[p.q||id]){n.spr='sprites/dg_chest_open.png';n.h=36}});
   if(st){const s=(p.stopP&&(st.k==='e_hi'||st.k==='e_clear'))?p.stopP:p.stop;const og=TW.npcs.find(n=>n.x===s.x&&n.y===s.y&&n.dsp);TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=(S2[st.k]&&S2[st.k].dsp)||stopDsp(st)||(og&&og.dsp); /* その場に いる 人の 絵を つかう */TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',stop:st,still:1,...(S2[st.k]&&S2[st.k].c?{c:S2[st.k].c}:{spr:stopSpr(st)}),n:'',...(dsp?{dsp,h:NPCH[dsp]}:{})})}
-  if(!st&&p.stop&&KEEPA[p.at]){const K=KEEPA[p.at],al=ALLIES[K.k],ci=CH.findIndex(c=>c.stops.some(q=>q.k===K.hi)),si=ci<0?0:CH[ci].stops.findIndex(q=>q.k===K.hi);
+  if(!st&&p.stop&&KEEPA[p.at]&&!G.allies.includes(KEEPA[p.at].k)){const K=KEEPA[p.at],al=ALLIES[K.k],ci=CH.findIndex(c=>c.stops.some(q=>q.k===K.hi)),si=ci<0?0:CH[ci].stops.findIndex(q=>q.k===K.hi);
     if(al&&ci>=0&&(G.ch>ci||(G.ch===ci&&G.stop>si))){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:al.n,dsp:K.k,h:NPCH[K.k],say:[al.say||'……'],still:1})}}
   if(!st&&id==='village'&&G.ch>=1&&G.ch<=4&&!G.allies.includes('dw')&&p.stop){const s0=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s0.x&&n.y===s0.y));TW.npcs.push({x:s0.x,y:s0.y,dir:s0.dir||'down',n:'Dw',k:'dwjoin',spr:'sprites/ally_dw_map.png',dsp:'dw',h:NPCH.dw,say:['……']})}
   if(!st&&id==='village'&&G.ch===0){const s=p.stop;TW.npcs=TW.npcs.filter(n=>!(n.x===s.x&&n.y===s.y));const dsp=G.stop>=4?'dw':'dwf';TW.npcs.push({x:s.x,y:s.y,dir:s.dir||'down',n:'Dw',spr:'sprites/ally_dw_map.png',dsp,h:NPCH[dsp],say:['……']})}
@@ -3110,7 +3110,7 @@ function townOff(){TW.on=false;cancelAnimationFrame(TW.raf);FLD.held=[];const m=
 function townLeave(){const p=TW.pl;if(p&&p.exitTo){townOff();return placeScreen(p.exitTo[0],p.exitTo[1],p.exitTo[2],'down')}townOff();KL=null;fieldResume()}
 function townSay(lines,done){
   TW.busy=true;let i=0;const v=$('.view');if(!v)return;
-  const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();TW.busy=false;done&&done()}else show()};
+  const show=()=>{let m=$('#tmsg');if(!m){m=document.createElement('div');m.id='tmsg';m.className='tmsg';v.appendChild(m);m.onclick=()=>{sfx('tap');i++;if(i>=lines.length){m.remove();endPort();TW.busy=false;done&&done()}else show()};
       m._skip=()=>{ /* Bで 会話を ぬける：のこりの 行の 処理だけ して、さいごまで 読んだのと おなじに */for(let j=i+1;j<lines.length;j++)if(typeof lines[j][3]==='function')try{lines[j][3]()}catch(e){}endPort();m.remove();TW.busy=false;done&&done()}}
     const [who,tx,pt]=lines[i];m.innerHTML=`${who?`<b class="who">${who}</b>`:''}${tx}<i>Aで つぎへ ▼</i>`;
     if(!pt)endPort(); /* 立ち絵の ない 行では 前の 人の 立ち絵を のこさない */
