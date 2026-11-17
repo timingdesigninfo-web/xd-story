@@ -3046,7 +3046,7 @@ function carve(p,B,isH){
 function wallRule(fx,fy,tx,ty){for(const H of TW.pl.houses){if(!H.free||!H.free.size)continue;
   const inI=(x,y)=>x>H.x&&x<H.x+H.w-1&&y>H.y&&y<H.y+H.h-1,fr=(x,y)=>H.free.has(x+','+y);
   if((inI(fx,fy)&&fr(tx,ty))||(inI(tx,ty)&&fr(fx,fy)))return true}return false}
-const STORYWHO={back:['a','dw'],fade:['a','dw'],seek:['a','ff'],merge:['b','figma'],sale:['b','cloudKing'],cancel:['b','figma'],dwfall:['a','dw'],dwvenge:['a','dw'],king:['b','cloudKing'],gift:['b','cloudKing'],gate:['b','cloudKing'],release:['a','dw'],e_hi:['b','prott'],e_clear:['b','prott'],h_hi:['a','ps'],h_bring:['a','ps'],h_clear:['a','ps'],m_hi:['a','ai'],m_clear:['a','ai'],o_hi:['a','ae'],o_clear:['a','ae'],f_hi:['a','ff'],f_clear:['b','figma']};
+const STORYWHO={back:['a','dw'],fade:['a','dw'],seek:['a','ff'],merge:['b','figma'],sale:['b','cloudKing'],cancel:['b','figma'],dwfall:['a','dw'],dwvenge:['a','dw'],king:['b','cloudKing'],gift:['b','cloudKing'],gate:['b','cloudKing'],release:['a','dw'],e_hi:['b','prott'],e_clear:['b','prott'],h_hi:['a','ps'],h_bring:['a','ps'],h_hear:['a','ps'],h_clear:['a','ps'],m_hi:['a','ai'],m_clear:['a','ai'],o_hi:['a','ae'],o_clear:['a','ae'],f_hi:['a','ff'],f_clear:['b','figma']};
 function stopSpr(st){
   let t=st.type,k=st.k;if(t==='story'){[t,k]=STORYWHO[k]||['b','cloudKing'];t=t==='a'?'ally':'boss'}
   if(t==='ally'){const a=ALLIES[k];return k==='dw'?'sprites/ally_dw_map.png':sprite(a.n,a.col[0],a.col[1])}
