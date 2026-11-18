@@ -151,7 +151,7 @@ img.px,canvas.px{image-rendering:pixelated;image-rendering:crisp-edges}
 .op .sub.show{opacity:1}
 .op .card{position:absolute;left:0;right:0;top:40%;text-align:center;font-family:var(--display);color:#fff;opacity:0;z-index:2;transition:opacity 1.6s;pointer-events:none;letter-spacing:.3em;font-size:calc(var(--u) * 6)}
 .op .card small{display:block;font-size:.45em;color:var(--gold);letter-spacing:.4em;margin-bottom:.6em}
-.op .opskip{position:absolute;right:10px;top:10px;z-index:5;background:#000a}
+.op .opskip{position:absolute;right:10px;top:max(56px,calc(env(safe-area-inset-top,0px) + 12px));z-index:5;background:#000a}
 .op .tbg{position:absolute;inset:0;background:linear-gradient(#03020a,#150f44 60%,#35276f)}
 .op .opstart{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:5;opacity:0;pointer-events:none;transition:opacity 1.2s;font-family:var(--display);font-size:calc(var(--u) * 5.5);padding:.4em 1.5em;color:#fff;background:linear-gradient(#e0309a,#9b1d7a);border:calc(var(--u)*.6) solid #fff;border-radius:calc(var(--u)*1.2);box-shadow:0 0 calc(var(--u)*4) rgba(255,160,220,.7);cursor:pointer;letter-spacing:.3em}
 .op .opstart.on{opacity:1;pointer-events:auto}
@@ -381,10 +381,11 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .rcol .ab small{font-size:10px;color:var(--mute);text-align:center;line-height:1.2;white-space:nowrap}
 }
 .askp{animation:askp .5s ease-out}@keyframes askp{0%{filter:brightness(1.8)}100%{filter:none}}
-.mgov{position:fixed;inset:0;z-index:99980;background:#05040cf2;display:flex;justify-content:center;overflow:auto;padding:max(10px,env(safe-area-inset-top)) 10px 18px;color:#fff;font-size:14px;line-height:1.5}
+.mgov{position:fixed;inset:0;z-index:99980;background:#05040cf2;display:flex;justify-content:center;overflow:auto;padding:max(60px,calc(env(safe-area-inset-top,0px) + 16px)) 10px calc(24px + env(safe-area-inset-bottom,0px));color:#fff;font-size:14px;line-height:1.5}
+.mgx2{display:block;width:100%;margin-top:14px;min-height:48px;font-size:15px!important;border-radius:8px!important}
 .mgin{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;height:max-content}
 .mgh{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#26308f,#0a1160);border:2px solid #f4f4f4;border-radius:6px;padding:6px 10px;box-shadow:0 0 0 2px #000}
-.mgh b{color:#ffe27a;font-size:15px}.mgx{background:none;border:1px solid #fff8;color:#fff;border-radius:4px;padding:3px 10px;font:inherit;font-size:12px}
+.mgh b{color:#ffe27a;font-size:15px}.mgx{background:#0006;border:1px solid #fff8;color:#fff;border-radius:6px;padding:8px 16px;min-height:40px;font:inherit;font-size:14px}
 .mgl{margin:0;min-height:3em;background:#0a1160cc;border:2px solid #f4f4f4;border-radius:6px;padding:8px 10px}.mgl b{color:#ffe27a}
 .mgb{display:flex;flex-direction:column;gap:8px}
 .mgbtn{background:#1c2470;color:#fff;border:2px solid #f4f4f4;border-radius:6px;padding:7px 10px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 0 0 2px #000}
@@ -423,7 +424,7 @@ canvas{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .crd-k{color:#c9a6ff;letter-spacing:.2em;font-size:13px;margin:36px 0 18px}
 .crd-r{margin:22px 0}.crd-r small{display:block;color:#9fb0e8;font-size:12px;letter-spacing:.12em}.crd-r b{display:block;font-size:20px;font-weight:600;margin-top:4px}
 .crd-big{font-size:28px;font-weight:700;color:#ffe27a;letter-spacing:.14em}
-.crd-skip{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:2}
+.crd-skip{position:absolute;top:max(56px,calc(env(safe-area-inset-top,0px) + 12px));right:12px;z-index:2}
 .efl{opacity:0;animation:eflin 1.2s ease forwards}@keyframes eflin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .tport{position:absolute;right:-3%;top:2%;height:76%;max-width:58%;object-position:right top;object-fit:contain;z-index:7;image-rendering:pixelated;filter:brightness(1.2) saturate(1.15) contrast(1.04);animation:ptin2 .25s ease-out;pointer-events:none}
 .tport[src*="/b_"]{height:auto;width:68%;max-width:68%;right:-7%;max-height:82%;object-fit:cover;object-position:top right;-webkit-mask-image:linear-gradient(to top,transparent 0,#000 22%),linear-gradient(to right,transparent 0,#000 18%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to top,transparent 0,#000 22%),linear-gradient(to right,transparent 0,#000 18%);mask-composite:intersect}@keyframes ptin2{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
@@ -1635,7 +1636,7 @@ function tmMap(){
   for(const k in LM)if(k!=='storm')lab(LM[k].x,LM[k].y,LM[k].n,'#ff4d9a');
   for(const k of ['eu','keep','rest1','rest2','rest3','rest4','dg_castle'])if(POI[k]&&(k!=='dg_castle'||dgOpen(k)))lab(POI[k].x,POI[k].y,POIDEF[k].n,k==='dg_castle'?'#c58bff':'#7fe08a',k==='rest1');
   if(G.ship&&G.sx!=null)lab(G.sx,G.sy,'船','#7fd0ff');
-  const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#000e;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)';
+  const o=document.createElement('div');o.id='wmapov';o.style.cssText='position:fixed;inset:0;z-index:99990;background:#000e;display:flex;flex-direction:column;padding-top:max(52px,calc(env(safe-area-inset-top,0px) + 10px));padding-bottom:env(safe-area-inset-bottom)';
   const top=document.createElement('div');top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;color:#fff;font-size:12px;flex:none';
   top.innerHTML='<span>せかいちず　<span style="opacity:.75">指で うごかせる・赤い点＝いまの いち・左右の はしは つながっている</span></span><button id="wmapx" style="flex:none;padding:10px 18px;font-size:15px;position:relative;z-index:2;border-radius:6px;border:1px solid #fff8;background:#26308f;color:#fff;font-weight:700">とじる</button>';
   const vp=document.createElement('div');vp.style.cssText='flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;cursor:grab;border-top:1px solid #fff3';
@@ -2106,8 +2107,8 @@ function adminPanel(){
 @media screen and (orientation:portrait) and (max-width:900px){
  #optbar{inset:0;width:auto;display:block}
  #optbar button{position:absolute!important;min-height:44px;padding:8px 20px;font-size:16px;white-space:nowrap;border-radius:5px;letter-spacing:.3em}
- #optbar .k-snd{left:calc(14px + env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
- #optbar .k-skip{right:calc(14px + env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 22px)}
+ #optbar .k-snd{left:calc(14px + env(safe-area-inset-left,0px));top:max(56px,calc(env(safe-area-inset-top,0px) + 22px))}
+ #optbar .k-skip{right:calc(14px + env(safe-area-inset-right,0px));top:max(56px,calc(env(safe-area-inset-top,0px) + 22px))}
  #optbar .k-code{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 70px);font-size:18px;padding:10px 40px}
  #optbar .k-fs{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:auto!important;font-size:14px;letter-spacing:.06em;padding:8px 12px}
  #optbar .k-idea{left:calc(14px + env(safe-area-inset-left,0px));transform:none;right:auto;top:calc(env(safe-area-inset-top,0px) + 74px);bottom:auto;width:auto!important;font-size:12px;letter-spacing:.04em;padding:6px 4px;min-height:0;margin:0}
@@ -4178,11 +4179,11 @@ const LW=84,LH=104;
 function mgOpen(title,lead,build,done){
   TW.busy=true;try{staleInput()}catch(e){}const old=document.getElementById('mgov');if(old)old.remove();
   const o=document.createElement('div');o.id='mgov';o.className='mgov';
-  o.innerHTML=`<div class="mgin"><div class="mgh"><b>${title}</b><button class="mgx" type="button">やめる</button></div><p class="mgl">${lead}</p><div class="mgb"></div></div>`;
+  o.innerHTML=`<div class="mgin"><div class="mgh"><b>${title}</b><button class="mgx" type="button">やめる</button></div><p class="mgl">${lead}</p><div class="mgb"></div><button class="mgx mgx2" type="button">やめる</button></div>`;
   ['click','pointerdown','pointerup','touchstart','touchend'].forEach(ev=>o.addEventListener(ev,e=>e.stopPropagation()));
   document.body.appendChild(o);
   let shut=false;const close=r=>{if(shut)return;shut=true;o.remove();TW.busy=false;try{staleInput()}catch(e){}done&&done(r)};
-  o._close=close;o.querySelector('.mgx').onclick=()=>{sfx('tap');close(null)};
+  o._close=close;o.querySelectorAll('.mgx').forEach(x=>x.onclick=()=>{sfx('tap');close(null)});
   const L=o.querySelector('.mgl');build(o.querySelector('.mgb'),close,t=>{L.innerHTML=t});
 }
 const mgB=(l,c='',a='')=>`<button type="button" class="mgbtn ${c}" ${a}>${l}</button>`;
@@ -4461,9 +4462,23 @@ function cardTalk(){const W='カードの家の 子';
   if(EVF('card'))return townSay([[W,'あの 家、もう だれも 迷子に ならないよ！ ボタンを おすと、ちゃんと つぎの カードに 行けるの。']]);
   townSay([[W,'うちは「カードの家」。へやが 1まいずつの カードで、ボタンを おすと 別の カードに とぶの。'],[W,'でも ボタンが どこにも つながって なくて、みんな 迷子に なっちゃう。……つないで くれる？']],()=>cardGame(W))}
 function cardGame(W){
-  mgOpen('カードの家　ボタンを つなぐ','ボタンを タップすると、とび先の カードが かわるよ。<br>玄関から 台所にも 庭にも 行けて、どこからでも 玄関に もどれるように しよう。',(b,close,lead)=>{
+  mgOpen('カードの家　ボタンを つなぐ','ボタンを タップすると、矢印の とび先が かわるよ。<br>下の 3つの ✔ を ぜんぶ そろえよう。',(b,close,lead)=>{
     const ln={};const nm=CDS.map(c=>c.k);
-    const draw=(hit)=>{b.innerHTML=`<div class="cgrid">${CDS.map(c=>`<div class="ccard ${hit===c.k?'hit':''}"><h4>${c.k}</h4>${c.bt.map((t,j)=>{const to=ln[c.k+j];return `<button type="button" data-b="${c.k+j}">▶ ${t}　→ <b>${to||'？'}</b></button>`}).join('')}</div>`).join('')}</div><div class="mgrow">${mgB('ためしに 歩く','go','id="cgo"')}</div>`;
+    const POS={玄関:{x:105,y:12,w:150,ic:'🚪'},廊下:{x:105,y:150,w:150,ic:'🪜'},台所:{x:18,y:345,w:140,ic:'🍳'},庭:{x:202,y:345,w:140,ic:'🌳'}},COL={玄関:'#ffd34d',廊下:'#4fd8ff',台所:'#ff7aa8',庭:'#6be06b'};
+    const BH=34,GAP=8,TOP=40;CDS.forEach(c=>{const P=POS[c.k];P.h=TOP+c.bt.length*(BH+GAP)+4;P.cx=P.x+P.w/2;P.cy=P.y+P.h/2});
+    const goals=()=>{const r=reach('玄関');return[['玄関から 台所に 行ける',r.has('台所')],['玄関から 庭に 行ける',r.has('庭')],['どこからでも 玄関に もどれる',nm.every(n=>reach(n).has('玄関'))]]};
+    const draw=(hit)=>{const arrows=[];
+      CDS.forEach((c,si)=>c.bt.forEach((t,j)=>{const to=ln[c.k+j];if(!to)return;const S=POS[c.k],T=POS[to],nb=c.bt.length,fs=(j+1)/(nb+1),fe=.18+.21*si;
+        const by=S.y+TOP+j*(BH+GAP)+BH/2;let d,sx,sy;
+        const outer=(c.k==='玄関'&&(to==='台所'||to==='庭'))||(to==='玄関'&&(c.k==='台所'||c.k==='庭'));
+        if(outer){const L=(c.k==='台所'||to==='台所');const ex=L?T.x:T.x+T.w,ey=(T.y+22+si*10);const ox=L?6:354;sx=L?S.x:S.x+S.w;sy=by;d=`M${sx} ${sy} C${ox} ${sy},${ox} ${ey},${ex} ${ey}`;if(c.k==='玄関'){sy=by}}
+        else if(Math.abs(T.cy-S.cy)>=60){const down=T.cy>S.cy;sx=S.x+S.w*fs;sy=down?S.y+S.h:S.y;const ex=T.x+T.w*fe,ey=down?T.y:T.y+T.h;const m=(sy+ey)/2;d=`M${sx} ${sy} C${sx} ${m},${ex} ${m},${ex} ${ey}`}
+        else{const r=T.cx>S.cx;sx=r?S.x+S.w:S.x;sy=by;const ex=r?T.x:T.x+T.w,ey=T.y+24+si*8;d=`M${sx} ${sy} C${(sx+ex)/2} ${sy},${(sx+ex)/2} ${ey},${ex} ${ey}`}
+        arrows.push(`<path d="${d}" fill="none" stroke="${COL[c.k]}" stroke-width="3" marker-end="url(#ah${si})"/><circle cx="${sx}" cy="${sy}" r="4.5" fill="${COL[c.k]}"/>`)}));
+      const defs=`<defs>${nm.map((k,i)=>`<marker id="ah${i}" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><path d="M0 0L10 5L0 10z" fill="${COL[k]}"/></marker>`).join('')}</defs>`;
+      const cards=CDS.map(c=>{const P=POS[c.k];return `<g><rect x="${P.x}" y="${P.y}" width="${P.w}" height="${P.h}" rx="12" fill="${hit===c.k?'#fff4c2':'#f0e8d6'}" stroke="${hit===c.k?'#ffb300':COL[c.k]}" stroke-width="${hit===c.k?6:3}"/><text x="${P.x+12}" y="${P.y+27}" font-size="18" font-weight="bold" fill="#2a2018">${P.ic} ${c.k}</text>${c.bt.map((t,j)=>{const to=ln[c.k+j],yy=P.y+TOP+j*(BH+GAP);return `<g data-b="${c.k+j}" style="cursor:pointer"><rect x="${P.x+10}" y="${yy}" width="${P.w-20}" height="${BH}" rx="8" fill="${to?'#1b2060':'#fff'}" stroke="${COL[c.k]}" stroke-width="2.5" ${to?'':'stroke-dasharray="5 4"'}/><text x="${P.x+P.w/2}" y="${yy+22}" text-anchor="middle" font-size="12" font-weight="bold" fill="${to?'#fff':'#777'}">▶ ${t}${to?` → <tspan fill="${COL[to]}">${to}</tspan>`:'　→ ？'}</text></g>`}).join('')}</g>`}).join('');
+      const gl=goals();
+      b.innerHTML=`<svg viewBox="0 0 360 446" style="width:100%;height:auto;background:#2b2440;border-radius:12px">${defs}${cards}${arrows.join('')}</svg><div class="cgoal">${gl.map(([t,ok])=>`<div style="color:${ok?'#8cf08c':'#ffb0b0'}">${ok?'✔':'✖'} ${t}</div>`).join('')}</div><div class="mgrow">${mgB('ためしに 歩く','go','id="cgo"')}</div>`;
       b.querySelectorAll('[data-b]').forEach(x=>x.onclick=()=>{const k=x.dataset.b,cur=ln[k],own=CDS.find(c=>k.startsWith(c.k)).k,opts=[null,...nm.filter(n=>n!==own)];ln[k]=opts[(opts.indexOf(cur||null)+1)%opts.length];sfx('tap');draw()});
       b.querySelector('#cgo').onclick=test};
     const reach=s=>{const v=new Set([s]),q=[s];while(q.length){const c=q.shift(),C=CDS.find(x=>x.k===c);C.bt.forEach((_,j)=>{const t=ln[c+j];if(t&&!v.has(t)){v.add(t);q.push(t)}})}return v};
